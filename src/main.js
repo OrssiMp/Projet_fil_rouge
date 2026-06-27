@@ -14,6 +14,7 @@ import BaseHero from "./ui/BaseHero.vue";
 import BaseInput from "./ui/BaseInput.vue";
 import RoadmapInitial from "./ui/RoadmapInitial.vue";
 import RoadmapStep from "./ui/RoadmapStep.vue";
+import SideBar from './layouts/SideBar.vue'
 // 🚨 1. Import de AOS et de ses styles CSS
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -39,6 +40,7 @@ app.component("BaseIcon", BaseIcon);
 app.component("BaseImage", BaseImage);
 app.component("RoadmapInitial",RoadmapInitial)
 app.component("RoadmapStep",RoadmapStep)
+app.component("Sidebar",SideBar)
 
 // 🚨 2. Initialisation globale de AOS
 AOS.init({
