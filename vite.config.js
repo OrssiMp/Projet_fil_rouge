@@ -8,5 +8,5 @@ export default defineConfig({
     vue(),
     tailwindcss()
   ],
-  base: 'https://github.com/OrssiMp/Projet_fil_rouge/',
+  base: '/Projet_fil_rouge/', 
 })
