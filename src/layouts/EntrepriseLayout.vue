@@ -12,7 +12,6 @@
 
 
 <script setup>
-// import EnterpriseSidebar from '../components/entreprise/EnterpriseSidebar.vue';
-import Sidebar from '../layouts/Sidebar.vue';
+import Sidebar from './Sidebar.vue';
 // import EnterpriseTopbar from '../components/entreprise/EnterpriseTopbar.vue';
 </script>
