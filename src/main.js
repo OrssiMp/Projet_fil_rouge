@@ -19,6 +19,9 @@ import SideBar from './layouts/SideBar.vue'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { mockAuth } from "./utils/mockAuth.js";
+import SidebarCandidat from "./layouts/SidebarCandidat.vue";
+import PublicLayout from "./layouts/PublicLayout.vue";
+import EntrepriseLayout from "./layouts/EntrepriseLayout.vue";
 
 mockAuth.init();
 mockAuth.getUser();
@@ -40,7 +43,12 @@ app.component("BaseIcon", BaseIcon);
 app.component("BaseImage", BaseImage);
 app.component("RoadmapInitial",RoadmapInitial)
 app.component("RoadmapStep",RoadmapStep)
+// layouts
 app.component("Sidebar",SideBar)
+app.component("SideBarCandidat",SidebarCandidat)
+app.component("PublicLayout",PublicLayout)
+app.component("EntrepriseLayout",EntrepriseLayout)
+
 
 // 🚨 2. Initialisation globale de AOS
 AOS.init({
