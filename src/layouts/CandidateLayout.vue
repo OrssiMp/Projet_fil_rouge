@@ -11,8 +11,6 @@
 </template>
 
 <script setup>
-
-import Dashboard from '../pages/candidat/Dashboard.vue';
 import SidebarCandidat from './SidebarCandidat.vue';
 
 </script>
