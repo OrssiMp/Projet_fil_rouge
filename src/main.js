@@ -22,6 +22,7 @@ import { mockAuth } from "./utils/mockAuth.js";
 import SidebarCandidat from "./layouts/SidebarCandidat.vue";
 import PublicLayout from "./layouts/PublicLayout.vue";
 import EntrepriseLayout from "./layouts/EntrepriseLayout.vue";
+import NavBar from "./components/NavBar.vue";
 
 mockAuth.init();
 mockAuth.getUser();
@@ -30,6 +31,7 @@ const app = createApp(App);
 
 app.use(router);
 
+app.component("NavBar",NavBar)
 // composants de base 
 app.component("BaseAlert", BaseAlert);
 app.component("BaseBadge", BaseBadge);

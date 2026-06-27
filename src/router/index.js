@@ -24,7 +24,7 @@ const routes = [
   {
     path: "/offres/:id",
     name: "JobDetail",
-    component: () => import("../pages/JobDetail.vue"),
+    component: () => import("../pages/jobDetail.vue"),
     meta: { layout: "AppLayout" },
   },
   {
@@ -83,7 +83,7 @@ const routes = [
   {
     path: "/candidat/dashboard",
     name: "CandidatDashboard",
-    component: () => import("../pages/candidat/Dashboard.vue"),
+    component: () => import("../pages/candidat/DashBoard.vue"),
     meta: {
       layout: "DashboardLayout",
       requiresAuth: true,
@@ -134,7 +134,7 @@ const routes = [
     path: "/entreprises",
     name: "Entreprises",
     component: () => import("../pages/candidat/CompaniesCatalog.vue"),
-    meta: {
+  meta: {
       layout: "AppLayout",
       requiresAuth: true,
       role: "candidat",
