@@ -1,0 +1,12 @@
+  <NavBar></NavBar>
+  <Main></Main>
+  <TheFooter/>
+  <div class>
+    <SideBar />
+  <router-view></router-view>
+  </div>
+  <Register/>
+  <EntrepriseHome/>
+  <ChooseAccountPage />
+  <RegisterCandidate />
+  <About />
