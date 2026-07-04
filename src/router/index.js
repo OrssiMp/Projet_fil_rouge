@@ -182,6 +182,17 @@ const routes = [
     },
   },
   {
+    path: "/entreprise/stats",
+    name: "EntrepriseStats",
+    component: () => import("../pages/entreprise/Stats.vue"),
+    meta: {
+      layout: "DashboardLayout",
+      requiresAuth: true,
+      role: "entreprise",
+      title: "Statistiques",
+    },
+  },
+  {
     path: "/entreprise/candidats",
     name: "EntrepriseCandidats",
     component: () => import("../pages/entreprise/CandidatList.vue"),
