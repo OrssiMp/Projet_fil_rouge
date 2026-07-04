@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-8 select-none">
 
-    <!-- <BaseBreadcrumbs class="mb-6" /> -->
+    <BaseBreadCrumbs class="mb-6" :items="breadcrumbs" />
 
     <BaseCard density="spacious" class="mb-8">
       <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
@@ -42,7 +42,7 @@
             Sauvegarder
           </BaseButton>
 
-          <BaseButton variant="accent" icon="chevron-droite" class="w-full sm:w-auto" @click="postule()">
+          <BaseButton variant="accent" icon="chevron-droite" class="lg:w-50 sm:w-auto" @click="postule()">
             Postuler maintenant
           </BaseButton>
         </div>
@@ -228,6 +228,11 @@ const jobs = [
 ];
 const jobId = computed(() => Number(route.params.id));
 
+const breadcrumbs = computed(() => [
+  { title: 'Offres', path: '/offres' },
+  { title: job.value.title || 'Détails de l\'offre', path: `/offres/${jobId.value}` },
+]);
+
 const job = computed(() => {
   return jobs.find((item) => item.id === jobId.value) || jobs[0];
 });
@@ -236,7 +241,7 @@ const job = computed(() => {
 function postule() {
   // On vérifie si la valeur est bien un nombre valide avant de naviguer
   const idNumerique = parseInt(jobId.value);
-  
+
   if (isNaN(idNumerique)) {
     console.warn(jobId.value.toString())
     console.error("Impossible de naviguer : jobId n'est pas un nombre valide.", jobId.value);

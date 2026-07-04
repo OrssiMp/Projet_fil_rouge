@@ -1,18 +1,14 @@
 <template>
   <div class="min-h-screen bg-base-200/50 pb-16 select-none">
-    
+
     <header class="bg-base-100 border-b border-base-200 py-12">
       <div class="max-w-6xl mx-auto px-4">
         <div class="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-          
-          <div class="w-28 h-28 md:w-32 md:h-32 rounded-full border-4 border-base-100 shadow-xl overflow-hidden shrink-0">
-            <BaseImage 
-              :src="candidate.avatar" 
-              :alt="`Photo de profil de ${candidate.name}`" 
-              ratio="1/1"
-              priority
-              rounded="full"
-            />
+
+          <div
+            class="w-28 h-28 md:w-32 md:h-32 rounded-full border-4 border-base-100 shadow-xl overflow-hidden shrink-0">
+            <BaseImage :src="candidate.avatar" :alt="`Photo de profil de ${candidate.name}`" ratio="1/1" priority
+              rounded="full" />
           </div>
 
           <div class="flex-grow flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
@@ -23,7 +19,8 @@
               <p class="text-emerald-700 font-extrabold text-base md:text-lg mb-3">
                 {{ candidate.title }}
               </p>
-              <div class="flex flex-wrap justify-center md:justify-start gap-3 text-xs font-semibold text-base-content/60">
+              <div
+                class="flex flex-wrap justify-center md:justify-start gap-3 text-xs font-semibold text-base-content/60">
                 <span class="flex items-center gap-1">📍 {{ candidate.location }}</span>
                 <span>•</span>
                 <span>💼 {{ candidate.experienceYears }} d'expérience</span>
@@ -49,10 +46,11 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 mt-8">
+      <BaseBreadCrumbs class="mb-6" :items="breadcrumbs" />
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
         <div class="lg:col-span-8 flex flex-col gap-8">
-          
+
           <BaseCard density="spacious" data-aos="fade-up">
             <h2 class="text-xl font-black text-base-content tracking-tight mb-4">
               Résumé professionnel
@@ -66,15 +64,12 @@
             <h2 class="text-xl font-black text-base-content tracking-tight mb-6">
               Parcours & Expériences
             </h2>
-            
+
             <div class="relative border-l-2 border-base-200 pl-6 ml-2 flex flex-col gap-8">
-              <div 
-                v-for="(exp, index) in candidate.experiences" 
-                :key="index"
-                class="relative"
-              >
-                <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-emerald-600 border-4 border-base-100 shadow-sm"></span>
-                
+              <div v-for="(exp, index) in candidate.experiences" :key="index" class="relative">
+                <span
+                  class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-emerald-600 border-4 border-base-100 shadow-sm"></span>
+
                 <span class="text-xs font-black text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md">
                   {{ exp.period }}
                 </span>
@@ -95,14 +90,10 @@
             <h2 class="text-xl font-black text-base-content tracking-tight px-1">
               Projets mis en avant
             </h2>
-            
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <BaseCard 
-                v-for="(project, index) in candidate.projects" 
-                :key="index"
-                density="normal"
-                class="card-interactive border-base-200/60"
-              >
+              <BaseCard v-for="(project, index) in candidate.projects" :key="index" density="normal"
+                class="card-interactive border-base-200/60">
                 <h3 class="text-base font-black text-base-content tracking-tight mb-1">
                   {{ project.name }}
                 </h3>
@@ -112,7 +103,8 @@
                 <p class="text-xs md:text-sm text-base-content/70 leading-relaxed font-medium mb-4">
                   {{ project.description }}
                 </p>
-                <a :href="project.link" target="_blank" class="text-xs font-bold text-emerald-700 hover:underline inline-flex items-center gap-1">
+                <a :href="project.link" target="_blank"
+                  class="text-xs font-bold text-emerald-700 hover:underline inline-flex items-center gap-1">
                   Voir le projet ↗
                 </a>
               </BaseCard>
@@ -122,17 +114,14 @@
         </div>
 
         <div class="lg:col-span-4 flex flex-col gap-6" data-aos="fade-up" data-aos-delay="200">
-          
+
           <BaseCard density="normal" class="border-base-200/60">
             <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">
               Compétences
             </h3>
             <div class="flex flex-wrap gap-1.5">
-              <span 
-                v-for="skill in candidate.skills" 
-                :key="skill"
-                class="bg-base-200 text-base-content/80 text-xs font-bold px-3 py-1.5 rounded-xl border border-base-300/30"
-              >
+              <span v-for="skill in candidate.skills" :key="skill"
+                class="bg-base-200 text-base-content/80 text-xs font-bold px-3 py-1.5 rounded-xl border border-base-300/30">
                 {{ skill }}
               </span>
             </div>
@@ -143,11 +132,7 @@
               Langues
             </h3>
             <div class="flex flex-col gap-3 text-xs md:text-sm font-medium">
-              <div 
-                v-for="lang in candidate.languages" 
-                :key="lang.name"
-                class="flex justify-between items-center"
-              >
+              <div v-for="lang in candidate.languages" :key="lang.name" class="flex justify-between items-center">
                 <span class="text-base-content/70 font-semibold">{{ lang.name }}</span>
                 <span class="text-emerald-700 font-extrabold text-xs uppercase bg-emerald-50 px-2 py-0.5 rounded">
                   {{ lang.level }}
@@ -164,13 +149,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { useAuth } from '../../composables/useAuth';
+
+const route = useRoute();
 
 const candidate = ref({
   name: "Orsi Malik",
   title: "Développeur Web Junior (Full-Stack)",
-  avatar: "https://placehold.co/150", 
+  avatar: "https://placehold.co/150",
   location: "Brazzaville, République du Congo",
   experienceYears: "2 ans",
   availability: "Disponible immédiatement",
@@ -212,6 +200,11 @@ const candidate = ref({
     }
   ]
 });
+
+const breadcrumbs = computed(() => [
+  { title: 'Candidats', path: '/candidats' },
+  { title: candidate.value.name || 'Détail candidat', path: `/candidats/details/${route.params.id}` },
+]);
 
 const $auth = useAuth();
 
