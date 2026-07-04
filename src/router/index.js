@@ -285,7 +285,13 @@ router.beforeEach((to, from, next) => {
       ? `${to.meta.title} | ${appName}`
       : appName;
 
-  const dynamicLayouts = ["JobList", "Entreprises", "Candidats", "CompanyDetail"];
+  const dynamicLayouts = [
+    "JobList",
+    "Entreprises",
+    "Candidats",
+    "CompanyDetail",
+    "JobDetail",
+  ];
   if (dynamicLayouts.includes(to.name) && user) {
     to.meta.layout = "DashboardLayout";
   }
