@@ -171,10 +171,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 
-const searchQuery = ref('');
+const route = useRoute();
+const searchQuery = ref(route.query.q || '');
 const locationQuery = ref('');
 
 const filters = reactive({
@@ -225,6 +227,11 @@ const jobs = ref([
 ]);
 
 // Moteur de recherche et de filtres croisés
+// Keep searchQuery in sync with the route `q` param so the hero can prefill it.
+watch(() => route.query.q, (q) => {
+  searchQuery.value = q || '';
+});
+
 const filteredJobs = computed(() => {
   return jobs.value.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
