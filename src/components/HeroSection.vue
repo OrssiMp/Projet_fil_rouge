@@ -11,14 +11,14 @@
         <template #actions>
             <!-- 🎯 On ajoute `relative` ici pour positionner le dropdown par rapport à ce formulaire -->
             <!-- 🖱️ @focusin et @focusout détectent si l'utilisateur interagit avec l'input ou le bouton -->
-            <BaseForm @submit.prevent="handleSearch" class="w-full relative" @focusin="isOpen = true"
+            <BaseForm @submit.prevent="handleSearch" class="w-full relative min-w-0" @focusin="isOpen = true"
                 @focusout="handleBlur">
                 <div
-                    class="flex flex-col sm:flex-row gap-3 sm:gap-2 items-end sm:items-center bg-base-100 p-2 rounded-2xl border border-base-200 shadow-lg relative z-50">
+                    class="flex flex-col sm:flex-row gap-3 sm:gap-2 items-end sm:items-center bg-base-100 p-2 rounded-2xl border border-base-200 shadow-lg relative z-50 min-w-0">
 
-                    <div class="flex-grow w-full">
+                    <div class="flex-grow w-full min-w-0">
                         <BaseInput v-model="searchQuery" type="text"
-                            placeholder="Poste, compétences,Ville ,entreprise..." icon="search" class="w-full"
+                            placeholder="Poste, compétences, ville, entreprise..." icon="search" class="w-full min-w-0"
                             autocomplete="off" />
                     </div>
 
@@ -35,7 +35,7 @@
                     leave-from-class="opacity-100 translate-y-0 scale-100"
                     leave-to-class="opacity-0 translate-y-2 scale-95">
                     <div v-show="isOpen && searchQuery.length > 1"
-                        class="absolute top-[calc(60%+0.5rem)] left-0 right-0 bg-base-100 border border-base-200 shadow-2xl rounded-2xl overflow-hidden flex flex-col max-h-[420px] z-100">
+                        class="absolute top-full left-0 right-0 mt-3 bg-base-100 border border-base-200 shadow-2xl rounded-2xl overflow-hidden flex flex-col max-h-[420px] z-50">
                         <!-- En-tête des résultats -->
                         <div
                             class="px-5 py-3 border-b border-base-200/60 bg-base-50 flex justify-between items-center shrink-0">

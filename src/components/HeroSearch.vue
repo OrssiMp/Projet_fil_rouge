@@ -1,14 +1,14 @@
 <template>
-  <div class="relative w-full max-w-2xl mx-auto z-50">
+  <div class="relative w-full max-w-2xl mx-auto z-50 px-4">
 
-    <div class="relative flex items-center group">
+    <div class="relative flex items-center group min-w-0">
       <span class="absolute left-5 text-base-content/40 text-lg transition-colors group-focus-within:text-accent">
         <BaseIcon name="search" />
       </span>
 
       <input v-model="searchQuery" @focus="isOpen = true" @blur="handleBlur" type="text"
         placeholder="Rechercher une compétence, une offre, une entreprise..."
-        class="w-full h-14 pl-14 pr-12 rounded-2xl bg-base-100 border-2 border-base-200/80 shadow-sm focus:outline-none focus:border-accent text-sm md:text-base font-semibold text-base-content transition-all placeholder:text-base-content/40" />
+        class="w-full min-w-0 h-14 pl-14 pr-12 rounded-2xl bg-base-100 border-2 border-base-200/80 shadow-sm focus:outline-none focus:border-accent text-sm md:text-base font-semibold text-base-content transition-all placeholder:text-base-content/40" />
 
       <button v-show="searchQuery" @click="clearSearch"
         class="absolute right-3 btn btn-ghost btn-sm btn-circle text-base-content/40 hover:text-base-content">
@@ -21,7 +21,7 @@
       leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0 scale-100"
       leave-to-class="opacity-0 translate-y-2 scale-95">
       <div v-show="isOpen && searchQuery.length > 1"
-        class="absolute top-full left-0 right-0 mt-3 bg-base-100 border border-base-200 shadow-2xl rounded-2xl overflow-hidden flex flex-col max-h-[420px]">
+        class="absolute top-full left-0 right-0 mt-3 bg-base-100 border border-base-200 shadow-2xl rounded-2xl overflow-hidden flex flex-col max-h-[420px] min-w-0">
         <div class="px-5 py-3 border-b border-base-200/60 bg-base-50 flex justify-between items-center shrink-0">
           <span class="text-[10px] font-black text-base-content/50 uppercase tracking-widest">
             Résultats pour "{{ searchQuery }}"
