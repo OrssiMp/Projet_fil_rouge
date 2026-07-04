@@ -259,6 +259,15 @@ router.beforeEach((to, from, next) => {
     });
   }
 
+  if (user && ["Home", "EntrepriseLandingPage"].includes(to.name)) {
+    return next({
+      name:
+        user.role === "entreprise"
+          ? "EntrepriseDashboard"
+          : "CandidatDashboard",
+    });
+  }
+
   const appName = "Mosalah";
   document.title =
     typeof to.meta.title === "string"
