@@ -29,7 +29,8 @@
           <div class="dropdown dropdown-end" v-if="currentUser">
             <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar btn-sm border border-base-300">
               <div class="w-8 h-8 rounded-full overflow-hidden bg-base-300 flex items-center justify-center">
-                <img v-if="currentUser.avatar" :src="currentUser.avatar" alt="Avatar" class="object-cover w-full h-full" />
+                <img v-if="currentUser.avatar" :src="currentUser.avatar" alt="Avatar"
+                  class="object-cover w-full h-full" />
                 <BaseIcon v-else name="user" class="text-base-content/60 text-xs" />
               </div>
             </div>
@@ -62,13 +63,38 @@
             <span class="badge badge-sm badge-accent ml-2 font-bold text-[10px]">CANDIDAT</span>
           </div>
 
+          <div class="px-4 py-3 text-[11px] uppercase tracking-[0.24em] text-base-content/50 font-semibold">
+            Navigation
+          </div>
+
           <ul class="menu p-4 gap-1.5 text-sm font-medium">
-            <li v-for="(item, index) in menuItems" :key="index">
-              <router-link :to="item.to" 
-                class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200"
-                active-class="bg-accent text-white font-bold shadow-md shadow-accent/20">
-                <BaseIcon :name="item.icon" class="text-lg shrink-0" />
-                <span>{{ item.label }}</span>
+            <li v-for="(item, index) in primaryMenu" :key="`primary-${index}`">
+              <router-link :to="item.to" v-slot="{ isActive }">
+                <div :class="[
+                  'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
+                  isActive ? 'bg-accent text-white font-bold shadow-md shadow-accent/20' : 'hover:bg-base-200'
+                ]">
+                  <BaseIcon :name="item.icon" class="text-lg shrink-0" />
+                  <span>{{ item.label }}</span>
+                </div>
+              </router-link>
+            </li>
+          </ul>
+
+          <div class="px-4 py-3 text-[11px] uppercase tracking-[0.24em] text-base-content/50 font-semibold mt-4">
+            Explorer
+          </div>
+
+          <ul class="menu p-4 gap-1.5 text-sm font-medium">
+            <li v-for="(item, index) in secondaryMenu" :key="`secondary-${index}`">
+              <router-link :to="item.to" v-slot="{ isActive }">
+                <div :class="[
+                  'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
+                  isActive ? 'bg-accent text-white font-bold shadow-md shadow-accent/20' : 'hover:bg-base-200'
+                ]">
+                  <BaseIcon :name="item.icon" class="text-lg shrink-0" />
+                  <span>{{ item.label }}</span>
+                </div>
               </router-link>
             </li>
           </ul>
@@ -77,8 +103,10 @@
         <div class="p-4 border-t border-base-200 bg-base-200/30" v-if="currentUser">
           <div class="flex items-center gap-3 px-2 mb-3">
             <div class="avatar placeholder">
-              <div class="bg-accent text-white rounded-xl w-9 h-9 font-bold text-sm overflow-hidden flex items-center justify-center">
-                <img v-if="currentUser.avatar" :src="currentUser.avatar" alt="Avatar" class="object-cover w-full h-full" />
+              <div
+                class="bg-accent text-white rounded-xl w-9 h-9 font-bold text-sm overflow-hidden flex items-center justify-center">
+                <img v-if="currentUser.avatar" :src="currentUser.avatar" alt="Avatar"
+                  class="object-cover w-full h-full" />
                 <span v-else>{{ userInitials }}</span>
               </div>
             </div>
@@ -88,8 +116,7 @@
             </div>
           </div>
 
-          <button
-            @click="logout"
+          <button @click="logout"
             class="btn btn-ghost btn-sm w-full justify-start text-error hover:bg-error/10 rounded-xl gap-3 normal-case font-semibold">
             <BaseIcon name="logout" class="text-base" />
             <span>Déconnexion</span>
@@ -120,15 +147,19 @@ onMounted(() => {
   }
 });
 
-// Éléments de menu configurés pour l'espace candidat
-const menuItems = [
+// Navigation principale du candidat
+const primaryMenu = [
   { label: 'Tableau de bord', to: '/candidat/dashboard', icon: 'dashboard' },
   { label: 'Mes candidatures', to: '/candidat/applications', icon: 'offre' },
   { label: 'Messages', to: '/message', icon: 'message' },
-  {label:'Tout les Entreprises', to: {name: 'Entreprises'}, icon: 'entreprise' ,role:'candidat'},
-  {label:'Tout les offres', to: '/offres', icon: 'offre'},
-  { label: 'Mon Profil CV', to: '/candidat/profile', icon: 'candidat' },
-  { label: 'Paramètres', to: '/candidat/settings', icon: 'reglage' }
+  { label: 'Mon profil', to: '/candidat/profile', icon: 'candidat' },
+];
+
+// Liens complémentaires pour la recherche d'opportunités
+const secondaryMenu = [
+  { label: 'Toutes les offres', to: '/offres', icon: 'offre' },
+  { label: 'Toutes les entreprises', to: { name: 'Entreprises' }, icon: 'entreprise' },
+  { label: 'Paramètres', to: '/candidat/settings', icon: 'reglage' },
 ];
 
 // Extraction et calcul des initiales à la volée depuis le store réactif
@@ -136,6 +167,6 @@ const userInitials = computed(() => {
   const userName = currentUser.value?.name;
   if (!userName) return '??';
   const parts = userName.trim().split(' ');
-  return parts.map(p => p[0]).join('').toUpperCase().slice(0, 2);
+  return parts.map((p) => p[0]).join('').toUpperCase().slice(0, 2);
 });
 </script>
