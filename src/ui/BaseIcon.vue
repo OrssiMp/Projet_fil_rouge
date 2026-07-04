@@ -53,7 +53,29 @@ const iconMapping = {
   'localisation': 'fa-solid fa-location-dot',
   'pin': 'fa-solid fa-location-dot',
   'statistiques': 'fa-solid fa-chart-simple',
-  'dashboard': 'fa-solid fa-gauge'
+  'dashboard': 'fa-solid fa-gauge',
+
+  // --- NAVIGATION ET CONTROLES ---
+  'menu': 'fa-solid fa-bars',
+  'hamburger': 'fa-solid fa-bars',
+  'chevron-bas': 'fa-solid fa-chevron-down',
+  'chevron-droite': 'fa-solid fa-chevron-right',
+  'chevron-gauche': 'fa-solid fa-chevron-left',
+  'close': 'fa-solid fa-xmark',
+  'fermer': 'fa-solid fa-xmark',
+  'about': 'fa-solid fa-info-circle',
+
+  // --- ENTREPRISE / DOCUMENTS ---
+  'document': 'fa-solid fa-file-alt',
+  'profile': 'fa-solid fa-id-badge',
+  'profil': 'fa-solid fa-id-badge',
+  'location': 'fa-solid fa-location-dot',
+  'schedule': 'fa-solid fa-calendar-days',
+  'cloche': 'fa-solid fa-bell',
+  'erreur': 'fa-solid fa-triangle-exclamation',
+  'info': 'fa-solid fa-circle-info',
+  'success': 'fa-solid fa-circle-check',
+  'warning': 'fa-solid fa-triangle-exclamation',
 };
 
 const iconClass = computed(() => {
