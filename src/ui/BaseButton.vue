@@ -7,6 +7,7 @@
       variantClass,
       sizeClass,
       roundClass,
+      shadow ? '' : 'shadow-md',
       loading ? 'pointer-events-none opacity-80' : ''
     ]"
   >
@@ -27,6 +28,7 @@ const props = defineProps({
   variant: { type: String, default: 'primary' }, // 'primary', 'accent', 'outline', 'ghost'
   size: { type: String, default: 'md' },         // 'sm', 'md', 'lg'
   round: { type: Boolean, default: false },     // true = rounded-full, false = rounded-xl
+  shadow: { type: Boolean, default: false },   // true = shadow-md, false = no shadow
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   icon: { type: String, default: '' }            // Nom de l'icône si besoin

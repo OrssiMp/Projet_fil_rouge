@@ -1,13 +1,20 @@
 <script setup>
 import EntrepriseLayout from "./EntrepriseLayout.vue";
 import CandidateLayout from "./CandidateLayout.vue";
+import { useAuth } from "../composables/useAuth";
+import {ref} from 'vue'
+// const props = defineProps({
+//     role: {
+//         type: String,
+//         required: true,
+//     },
+// });
 
-const props = defineProps({
-    role: {
-        type: String,
-        required: true,
-    },
-});
+const role =ref('candidat')
+const {isAuthenticated,currentUser}= useAuth();
+if(isAuthenticated.value){
+    role.value = currentUser.value.role;
+}
 </script>
 
 <template>
@@ -23,8 +30,4 @@ const props = defineProps({
         </CandidateLayout>
     </template>
 
-    <template v-else>
-        <div>Dashboard role inconnue : {{ role }}</div>
-        <router-view />
-    </template>
 </template>

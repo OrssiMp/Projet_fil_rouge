@@ -154,7 +154,7 @@ const searchQuery = ref('');
 const selectedSkills = ref([]);
 
 // Liste des filtres technologiques populaires en rapport avec les stacks de l'app
-const popularSkills = ['React.js', 'Vue.js', 'Node.js', 'TypeScript', 'Tailwind CSS', 'PHP', 'Laravel', 'Figma'];
+const popularSkills = ['React.js', 'Vue.js', 'Node.js', 'TypeScript', 'Tailwind CSS', 'PHP','Figma', 'SQL', 'Python', 'Excel', 'Secretariat'];
 
 // Données fictives simulant l'ensemble des candidats enregistrés sur la plateforme
 const globalCandidates = ref([
@@ -194,11 +194,11 @@ const globalCandidates = ref([
   {
     id: 104,
     name: 'Isabelle Moreau',
-    headline: 'UI/UX Designer',
+    headline: 'Sécretaire Administrative',
     location: 'Ouesso, Congo',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop',
-    bio: 'Conception d\'interfaces centrées sur l\'utilisateur, prototypage haute fidélité et mise en place de Design Systems cohérents.',
-    skills: ['Figma', 'Web Design', 'Prototypage'],
+    bio: 'Professionnelle de l\'administration et de la gestion de bureau, avec une forte expérience dans la coordination d\'équipes et la gestion documentaire.',
+    skills: ['Excel', 'Access', 'Organisation', 'Communication','Secretariat'],
     isAvailable: true,
     isBookmarked: false
   },

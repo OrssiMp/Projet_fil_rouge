@@ -1,5 +1,12 @@
-import { createRouter, createWebHashHistory } from "vue-router";
-import { computed } from "vue";
+import { createRouter, createWebHashHistory, useRoute } from "vue-router";
+import { computed, ref } from "vue";
+import { useAuth } from "../composables/useAuth.js";
+
+const userRoleExist = ref(false);
+const currentLayout = ref("AppLayout");
+const route = useRoute();
+let currentUserRole = ref("candidat");
+let isConnected = ref(false);
 
 const routes = [
   // --- 🌍 SECTION PUBLIQUE & APPS (Layout dynamique intelligent) ---
@@ -19,38 +26,50 @@ const routes = [
     path: "/offres",
     name: "JobList",
     component: () => import("../pages/JobList.vue"),
-    meta: { layout: "AppLayout" },
+    meta: {
+      layout: currentLayout,
+      role: "candidat",
+    },
   },
   {
     path: "/offres/:id",
     name: "JobDetail",
     component: () => import("../pages/jobDetail.vue"),
-    meta: { layout: "AppLayout" },
+    meta: {
+      layout: isConnected.value ? "AppLayout" : "DashboardLayout",
+      role: currentUserRole.value,
+    },
   },
   {
     path: "/offres/:id/postuler",
     name: "JobApply", // Correction du doublon de nom de route
     component: () => import("../pages/candidat/JobPostule.vue"),
-    meta: { layout: "AppLayout" },
+    meta: {
+      layout: isConnected.value ? "AppLayout" : "DashboardLayout",
+      role: currentUserRole.value,
+    },
     props: true,
   },
   {
     path: "/message",
     component: () => import("../pages/Message.vue"),
-    meta: { layout: "AppLayout" },
+    meta: { 
+      layout: "DashboardLayout", 
+      role: currentUserRole.value 
+    },
   },
   {
     path: "/entreprises/details/:id",
     name: "CompanyDetail", // Nom unique corrigé
     component: () => import("../pages/entreprise/CompanyDetail.vue"),
-    meta: { layout: "DashboardLayout" },
+    meta: { layout: "DashboardLayout", role: currentUserRole.value },
     props: true,
   },
   {
     path: "/entreprise/dashboard/offres",
     name: "EntrepriseOffres",
     component: () => import("../pages/entreprise/JobManagement.vue"),
-    meta: { layout: "DashBoardLayout", role: "entreprise" },
+    meta: { layout: "DashboardLayout", role: "entreprise" },
   },
 
   // --- 🔐 SECTION AUTHENTIFICATION (Layout minimaliste) ---
@@ -78,7 +97,20 @@ const routes = [
     component: () => import("../pages/Login.vue"),
     meta: { layout: "AuthLayout" },
   },
-
+  {
+    path: "/dashboard",
+    name: "DashboardRedirect",
+    component: () => {
+      return currentUserRole.value === "candidat"
+        ? import("../pages/candidat/DashBoard.vue")
+        : import("../pages/entreprise/Dashboard.vue");
+    },
+    meta: {
+      layout: "DashboardLayout",
+      role: currentUserRole.value,
+      requiresAuth: true,
+    },
+  },
   // --- 🎛️ SECTION DASHBOARDS (Layout d'espace de travail avec Sidebar) ---
   {
     path: "/candidat/dashboard",
@@ -100,6 +132,7 @@ const routes = [
       requiresAuth: true,
       role: "candidat",
     },
+    props: true,
   },
   {
     path: "/candidat/profile",
@@ -134,9 +167,8 @@ const routes = [
     path: "/entreprises",
     name: "Entreprises",
     component: () => import("../pages/candidat/CompaniesCatalog.vue"),
-  meta: {
+    meta: {
       layout: "AppLayout",
-      requiresAuth: true,
       role: "candidat",
     },
   },
@@ -147,8 +179,6 @@ const routes = [
 
     meta: {
       layout: "AppLayout",
-      requiresAuth: true,
-      role: "entreprise",
     },
   },
   {
@@ -195,7 +225,6 @@ const routes = [
     component: () => import("../pages/application/GlobalCandidatCatalog.vue"),
     meta: {
       layout: "AppLayout",
-
     },
   },
   // --- 🚫 ERREUR 404 ---
@@ -212,36 +241,50 @@ const router = createRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-  // const {
-  //   currentUser: { value:{role} },
-  // } = useAuth();
-  // console.log(role);
-  // if (role ==='') {
-    
-  // } else {
-    
+const offLineOnlyName = ["Home", "About", "EntrepriseLandingPage"];
+router.beforeEach((to, from, next) => {
+  const { currentUser, isAuthenticated } = useAuth();
+
+  if (isAuthenticated.value) {
+    currentUserRole.value = currentUser.value.role;
+    isConnected.value = isAuthenticated.value;
+    console.log(currentUserRole.value);
+  }
+
+  // Layout par défaut
+  to.meta.layout = to.meta.defaultLayout || to.meta.layout || "AppLayout";
+
+  // Pages publiques qui changent selon la connexion
+  const dynamicLayouts = ["JobList", "Entreprises", "Candidats"];
+
+  if (dynamicLayouts.includes(to.name)) {
+    to.meta.layout = isAuthenticated.value ? "DashboardLayout" : "AppLayout";
+  }
+  // if (isConnected.value) {
+  //   // 1. Si l'utilisateur est connecté et essaie d'aller sur une page "Visiteur"
+  //   if (offLineOnlyName.includes(to.name) && isConnected.value) {
+  //     console.log(`Utilisateur connecté, redirection vers le tableau de bord`);
+
+  //     // On redirige vers la route générique /dashboard
+  //     return next({ name: "DashboardRedirect" });
+  //   }
   // }
-// const {isAuthenticated}=useAuth()
-// console.log(is)
-//   next()
-  
-// });
-// 🛡️ Middleware de simulation d'authentification mis à jour (Sans next())
-// router.beforeEach((to) => {
-//   const user = JSON.parse(localStorage.getItem("mosalah_user") || "null");
 
-//   // 1. Si la page nécessite d'être connecté et que l'utilisateur ne l'est pas
-//   if (to.meta.requiresAuth && !user) {
-//     return "/login"; // On retourne directement le chemin de redirection
-//   }
+  // Protection des routes
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
+    return next("/login");
+  }
 
-//   // 2. Si la page requiert un rôle spécifique et que l'utilisateur n'a pas le bon rôle
-//   if (to.meta.role && user?.role !== to.meta.role) {
-//     return "/"; // On le renvoie à l'accueil
-//   }
+  // Vérification du rôle
+  if (
+    to.meta.role &&
+    isAuthenticated.value &&
+    currentUser.value.role !== to.meta.role
+  ) {
+    return next("/");
+  }
 
-//   // 3. Sinon, on ne retourne rien (ou true) pour laisser la navigation s'effectuer normalement
-//   return true;
-// });
+  next();
+});
+
 export default router;

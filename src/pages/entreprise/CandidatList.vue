@@ -203,12 +203,12 @@ const candidates = ref([
   {
     id: 4,
     name: 'Isabelle Moreau',
-    headline: 'UI/UX Designer',
+    headline: 'Sécretaire Administrative',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop',
     status: 'En attente',
     applicationsCount: 1,
     date: '26/10/2024',
-    skills: ['Figma', 'Web Design']
+    skills: ['Excel', 'Access', 'Organisation', 'Communication','Secretariat']
   },
   {
     id: 5,

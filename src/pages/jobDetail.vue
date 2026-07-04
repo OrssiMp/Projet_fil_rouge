@@ -41,11 +41,10 @@
           <BaseButton variant="outline" icon="reglage" class="w-full sm:w-auto">
             Sauvegarder
           </BaseButton>
-          <router-link to="/postuler">
-            <BaseButton variant="accent" icon="chevron-droite" class="w-full sm:w-auto">
-              Postuler maintenant
-            </BaseButton>
-          </router-link>
+
+          <BaseButton variant="accent" icon="chevron-droite" class="w-full sm:w-auto" @click="postule()">
+            Postuler maintenant
+          </BaseButton>
         </div>
       </div>
     </BaseCard>
@@ -151,28 +150,26 @@
         passionnée chez {{ job.company }}.
       </template>
       <template #actions>
-        <router-link to="/postuler">
-          <BaseButton variant="accent" icon="chevron-droite" class="px-12">
-            Postuler maintenant
-          </BaseButton>
-        </router-link>
+        <BaseButton variant="accent" icon="chevron-droite" class="px-12" @click="postule()">
+          Postuler maintenant
+        </BaseButton>
       </template>
     </BaseHero>
   </div>
 </template>
 <script setup>
 import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 
 const jobs = [
-  // id:1
   {
     id: 1,
     title: "Développeur Frontend",
     company: "ABC Tech",
-    location: "Pointe-Noire (Hybride)",
+    location: "Pointe-Noire ",
     contractType: "CDI",
     postedAt: "Publié il y a 2 jours",
     salary: "À discuter",
@@ -199,42 +196,55 @@ const jobs = [
   // id:2
   {
     id: 2,
-    title: "Développeur Backend",
-    company: "XYZ Digital",
+    title: "Sécretaire Administratif",
+    company: "IMMOcool Agency",
     location: "Brazzaville",
-    contractType: "CDD",
+    contractType: "CID",
     postedAt: "Publié il y a 5 jours",
     salary: "500 000 FCFA",
     description: [
-      "XYZ Digital cherche un backend developer orienté API et architecture.",
-      "Vous travaillerez sur les services métiers et la base de données.",
+      "IMMOcool Agency, cherche un sécretaire administratif pour assure l’ensemble des tâches administratives des collaborateurs qu’elle seconde au quotidien..",
+      "Vous travaillerez sur la prise de rendez-vous, organisation de l’agenda, courrier, gestion des appels téléphoniques et autres tâches administratives.",
     ],
     responsibilities: [
-      "Créer des API robustes",
-      "Concevoir la base de données",
-      "Maintenir la logique serveur",
+      "Gérer les appels téléphoniques et les courriels entrants",
+      "Organiser l’agenda",
+      "Gérer la correspondence et les documents administratifs",
     ],
     skills: [
-      { name: "Node.js", highlight: true },
-      { name: "Express", highlight: false },
-      { name: "MySQL", highlight: false },
+      { name: "Excel", highlight: true },
+      { name: "Access", highlight: true },
+      { name: "Word", highlight: false },
     ],
-    skillsDescription: "Solide niveau backend requis.",
+    skillsDescription: "Solide niveau avec les outils bureautiques et logiciels de gestion requis.",
     profile: [
-      "2 ans d’expérience minimum",
-      "Bonne maîtrise SQL",
-      "Rigueur technique",
+      "1 à 3 ans d’expérience minimum",
+      "Bonne maîtrise des outils bureautiques",
+      "Eloquence et sens de l’organisation",
     ],
     companyDescription:
-      "XYZ Digital développe des plateformes métiers et outils SaaS.",
+      "IMMOcool Agency est une agence de services immobiliers connectant propriétaires et locataires partout en République du Congo.",
   },
 ];
-
 const jobId = computed(() => Number(route.params.id));
 
 const job = computed(() => {
   return jobs.find((item) => item.id === jobId.value) || jobs[0];
 });
+
+
+function postule() {
+  // On vérifie si la valeur est bien un nombre valide avant de naviguer
+  const idNumerique = parseInt(jobId.value);
+  
+  if (isNaN(idNumerique)) {
+    console.warn(jobId.value.toString())
+    console.error("Impossible de naviguer : jobId n'est pas un nombre valide.", jobId.value);
+    return; // On bloque la redirection pour éviter l'erreur de route
+  }
+
+  router.push(`/offres/${idNumerique}/postuler`);
+}
 
 const jobOverview = computed(() => {
   if (!job.value) return [];
@@ -247,50 +257,3 @@ const jobOverview = computed(() => {
   ];
 });
 </script>
-<!-- <script setup>
-import { computed } from 'vue';
-
-
-const job = {
-  title: "Développeur Frontend",
-  company: "ABC Tech",
-  location: "Pointe-Noire (Hybride)",
-  contractType: "CDI",
-  postedAt: "Publié il y a 2 jours",
-  salary: "À discuter",
-  description: [
-    "ABC Tech est à la recherche d'un(e) Développeur(se) Frontend talentueux(se) et passionné(e) pour rejoindre notre équipe technique en pleine croissance à Pointe-Noire. Dans ce rôle, vous serez au cœur de la création d'interfaces utilisateur modernes, intuitives et performantes pour nos solutions logicielles SaaS.",
-    "Vous travaillerez en étroite collaboration avec nos designers UX/UI et nos développeurs backend pour transformer des concepts innovants en réalités interactives, offrant ainsi une expérience utilisateur exceptionnelle à nos clients."
-  ],
-  responsibilities: [
-    "Concevoir et développer des interfaces utilisateur modernes, réactives et accessibles en utilisant les dernières technologies web.",
-    "Intégrer des API RESTful de manière efficace pour assurer une communication fluide entre le frontend et le backend.",
-    "Optimiser les performances des applications pour garantir des temps de chargement rapides et une navigation sans faille.",
-    "Collaborer activement avec les équipes produit, design et backend au sein d’un environnement agile."
-  ],
-  skills: [
-    { name: "HTML5 / CSS3", highlight: false },
-    { name: "JavaScript (ES6+)", highlight: false },
-    { name: "React / Vue.js", highlight: true },
-    { name: "API REST", highlight: false },
-    { name: "UI/UX Focus", highlight: false },
-    { name: "Git", highlight: false }
-  ],
-  skillsDescription: "Nous recherchons une solide maîtrise des fondamentaux du web, ainsi qu’une expérience avérée avec au moins un framework moderne (React ou Vue de préférence). Une forte sensibilité à l’expérience utilisateur et au design est essentielle.",
-  profile: [
-    "Niveau Junior à Intermédiaire (1 à 3 ans d'expérience).",
-    "Grande autonomie et capacité à résoudre des problèmes complexes de manière proactive.",
-    "Excellent esprit d’équipe et communication claire.",
-    "Rigueur dans l’écriture du code (clean code, tests).",
-    "Curiosité technique et volonté d’apprendre en continu."
-  ],
-  companyDescription: "ABC Tech est une entreprise dynamique spécialisée dans le développement de solutions numériques innovantes. Nous aidons les entreprises à moderniser leurs outils et à optimiser leurs processus grâce à des logiciels sur mesure et performants."
-};
-
-const jobOverview = computed(() => [
-  { label: 'Date de publication', value: job.postedAt, icon: 'cloche' },
-  { label: 'Type de contrat', value: job.contractType, icon: 'offre' },
-  { label: 'Lieu', value: job.location, icon: 'location' },
-  { label: 'Salaire', value: job.salary, icon: 'dashboard' } // Remplacement de l'icône manquante par 'dashboard' ou une valeur sûre
-]);
-</script> -->

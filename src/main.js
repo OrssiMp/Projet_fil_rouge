@@ -24,8 +24,6 @@ import PublicLayout from "./layouts/PublicLayout.vue";
 import EntrepriseLayout from "./layouts/EntrepriseLayout.vue";
 import NavBar from "./components/NavBar.vue";
 
-mockAuth.init();
-mockAuth.getUser();
 
 const app = createApp(App);
 
