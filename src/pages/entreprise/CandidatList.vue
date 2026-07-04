@@ -1,10 +1,11 @@
 <template>
   <div class="w-full text-left select-none" data-aos="fade-up">
-    
+
     <!-- EN-TÊTE DE LA PAGE -->
     <div class="mb-6">
       <h1 class="text-2xl md:text-3xl font-black text-base-content tracking-tight mb-1">Candidats Reçus</h1>
-      <p class="text-sm text-base-content/60 font-medium">Visualisez et filtrez les candidats ayant postulé à vos offres.</p>
+      <p class="text-sm text-base-content/60 font-medium">Visualisez et filtrez les candidats ayant postulé à vos
+        offres.</p>
     </div>
 
     <!-- RECHERCHE ET FILTRES -->
@@ -13,19 +14,13 @@
         <span class="absolute inset-y-0 left-3 flex items-center opacity-40">
           🔍
         </span>
-        <input 
-          v-model="searchQuery"
-          type="text" 
-          placeholder="Rechercher un candidat, compétence, offre..." 
-          class="input input-bordered w-full pl-10 rounded-xl text-sm font-medium bg-white border-base-300 focus:outline-none focus:border-[#006643] h-11"
-        />
+        <input v-model="searchQuery" type="text" placeholder="Rechercher un candidat, compétence, offre..."
+          class="input input-bordered w-full pl-10 rounded-xl text-sm font-medium bg-white border-base-300 focus:outline-none focus:border-[#006643] h-11" />
       </div>
-      
+
       <div class="flex gap-2">
-        <select 
-          v-model="statusFilter"
-          class="select select-bordered rounded-xl text-sm font-bold bg-white border-base-300 focus:outline-none focus:border-[#006643] h-11 min-h-[44px]"
-        >
+        <select v-model="statusFilter"
+          class="select select-bordered rounded-xl text-sm font-bold bg-white border-base-300 focus:outline-none focus:border-[#006643] h-11 min-h-[44px]">
           <option value="All">Tous les statuts</option>
           <option value="Postulé">Postulé</option>
           <option value="En entretien">En entretien</option>
@@ -34,129 +29,48 @@
           <option value="Rejeté">Rejeté</option>
         </select>
 
-        <button class="btn bg-[#006643] hover:bg-[#004d32] border-none text-white font-bold rounded-xl px-5 flex items-center gap-2 text-sm h-11 min-h-[44px]">
+        <button
+          class="btn bg-[#006643] hover:bg-[#004d32] border-none text-white font-bold rounded-xl px-5 flex items-center gap-2 text-sm h-11 min-h-[44px]">
           <span>LayoutFiltrer</span> Filtrer
         </button>
       </div>
     </div>
 
-    <!-- TABLEAU DES CANDIDATS -->
-    <div class="bg-white border border-base-300 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.01)]">
-      <div class="overflow-x-auto">
-        <table class="table w-full border-collapse">
-          <!-- Entête du tableau -->
-          <thead>
-            <tr class="border-b border-base-200 bg-base-100/50 text-base-content/80 font-black text-xs uppercase tracking-wider">
-              <th class="py-4 px-6">Candidat</th>
-              <th class="py-4 px-4">Status</th>
-              <th class="py-4 px-4">Offres Appliquées</th>
-              <th class="py-4 px-4">Date de Candidature</th>
-              <th class="py-4 px-4">Compétences Clés</th>
-              <th class="py-4 px-6 text-center">Actions</th>
-            </tr>
-          </thead>
-          
-          <!-- Corps du tableau -->
-          <tbody class="divide-y divide-base-200">
-            <tr 
-              v-for="candidate in filteredCandidates" 
-              :key="candidate.id"
-              class="hover:bg-base-200/20 transition-colors font-medium text-sm text-base-content/90"
-            >
-              <!-- Colonne : Infos Candidat -->
-              <td class="py-4 px-6">
-                <div class="flex items-center gap-3">
-                  <div class="avatar">
-                    <div class="w-11 h-11 rounded-xl border border-base-200 overflow-hidden">
-                      <img :src="candidate.avatar" :alt="candidate.name" class="object-cover w-full h-full" />
-                    </div>
-                  </div>
-                  <div class="min-w-0">
-                    <h3 class="font-black text-base-content tracking-tight text-sm md:text-base leading-tight">{{ candidate.name }}</h3>
-                    <p class="text-xs text-base-content/50 truncate mt-0.5">{{ candidate.headline }}</p>
-                  </div>
-                </div>
-              </td>
-
-              <!-- Colonne : Statut avec Badge coloré -->
-              <td class="py-4 px-4 whitespace-nowrap">
-                <span 
-                  class="badge font-bold text-xs px-2.5 py-1.5 border"
-                  :class="getStatusClass(candidate.status)"
-                >
-                  {{ candidate.status }}
-                </span>
-              </td>
-
-              <!-- Colonne : Offres appliquées -->
-              <td class="py-4 px-4 whitespace-nowrap text-base-content/70">
+    <!-- LISTE DES CANDIDATS EN CARTES -->
+    <div v-if="filteredCandidates.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <CandidateCard v-for="candidate in filteredCandidates" :key="candidate.id" :candidate="candidate"
+        @bookmark="toggleBookmark">
+        <template #actions>
+          <div class="grid gap-3 w-full mt-2">
+            <div class="grid grid-cols-2 gap-2 text-xs text-base-content/70">
+              <span class="bg-base-100 border border-base-200 rounded-2xl px-3 py-2 font-bold text-left">
+                {{ candidate.status }}
+              </span>
+              <span class="bg-base-100 border border-base-200 rounded-2xl px-3 py-2 font-bold text-left">
                 {{ candidate.applicationsCount }} {{ candidate.applicationsCount > 1 ? 'offres' : 'offre' }}
-              </td>
+              </span>
+            </div>
+            <div class="flex gap-2">
+              <RouterLink :to="`/candidats/details/${candidate.id}`" @click="viewProfile(candidate.id)"
+                class="flex-1 btn btn-sm btn-accent rounded-xl text-xs font-bold">
+                Voir
+              </RouterLink>
+              <button @click="rateCandidate(candidate.id)"
+                class="flex-1 btn btn-sm btn-outline rounded-xl text-xs font-bold">
+                Noter
+              </button>
+            </div>
+          </div>
+        </template>
+      </CandidateCard>
+    </div>
 
-              <!-- Colonne : Date -->
-              <td class="py-4 px-4 whitespace-nowrap text-base-content/60 text-xs font-semibold">
-                {{ candidate.date }}
-              </td>
-
-              <!-- Colonne : Tags Compétences -->
-              <td class="py-4 px-4">
-                <div class="flex flex-wrap gap-1 max-w-[240px]">
-                  <span 
-                    v-for="skill in candidate.skills" 
-                    :key="skill"
-                    class="bg-emerald-50 text-[#006643] border border-emerald-100/80 font-bold text-[11px] px-2 py-0.5 rounded-lg whitespace-nowrap"
-                  >
-                    {{ skill }}
-                  </span>
-                  <span v-if="!candidate.skills || candidate.skills.length === 0" class="text-xs text-base-content/30 italic">
-                    Aucun tag
-                  </span>
-                </div>
-              </td>
-
-              <!-- Colonne : Boutons d'action -->
-              <td class="py-4 px-6 whitespace-nowrap">
-                <div class="flex flex-col items-center gap-1">
-                  <RouterLink :to="`/candidats/details/${candidate.id}`"
-                    @click="viewProfile(candidate.id)"
-                    class="btn btn-xs bg-[#006643] hover:bg-[#004d32] border-none text-white font-bold rounded-lg px-4"
-                  >
-                    Voir
-                  </RouterLink>
-                  <button 
-                    @click="rateCandidate(candidate.id)"
-                    class="text-[11px] font-bold text-base-content/50 hover:text-base-content transition-colors"
-                  >
-                    Noter
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <!-- État vide si aucune correspondance -->
-            <tr v-if="filteredCandidates.length === 0">
-              <td colspan="6" class="text-center py-12 text-base-content/40 italic font-medium">
-                Aucun candidat trouvé correspondant à vos critères.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- FOOTER DE PAGINATION INTERNE (Fidèle à l'indicateur 'pagination' de la maquette) -->
-      <div class="bg-base-100 border-t border-base-200 px-6 py-4 flex items-center justify-between sm:justify-end gap-2">
-        <span class="text-xs font-bold text-emerald-800/60 bg-emerald-50 px-2.5 py-1 rounded-lg sm:mr-auto">
-          pagination
-        </span>
-        <div class="join">
-          <button class="join-item btn btn-sm btn-bordered bg-white border-base-300 text-xs font-bold">‹</button>
-          <button class="join-item btn btn-sm bg-[#006643] text-white border-none text-xs font-bold">1</button>
-          <button class="join-item btn btn-sm btn-bordered bg-white border-base-300 text-xs font-bold">2</button>
-          <button class="join-item btn btn-sm btn-bordered bg-white border-base-300 text-xs font-bold">3</button>
-          <button class="join-item btn btn-sm btn-bordered bg-white border-base-300 text-xs font-bold">...</button>
-          <button class="join-item btn btn-sm btn-bordered bg-white border-base-300 text-xs font-bold">›</button>
-        </div>
-      </div>
+    <div v-else class="bg-white border border-base-300 rounded-2xl py-16 px-4 text-center max-w-xl mx-auto mt-6">
+      <p class="text-3xl mb-2">🔍</p>
+      <h3 class="font-black text-base-content tracking-tight text-lg mb-1">Aucun candidat trouvé</h3>
+      <p class="text-xs text-base-content/50 font-medium max-w-sm mx-auto leading-relaxed">
+        Aucun candidat trouvé correspondant à vos critères. Modifiez votre recherche ou sélectionnez un autre statut.
+      </p>
     </div>
 
   </div>
@@ -164,6 +78,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import CandidateCard from '../../components/CandidateCard.vue';
 
 const searchQuery = ref('');
 const statusFilter = ref('All');
@@ -208,7 +123,7 @@ const candidates = ref([
     status: 'En attente',
     applicationsCount: 1,
     date: '26/10/2024',
-    skills: ['Excel', 'Access', 'Organisation', 'Communication','Secretariat']
+    skills: ['Excel', 'Access', 'Organisation', 'Communication', 'Secretariat']
   },
   {
     id: 5,
@@ -236,9 +151,9 @@ const candidates = ref([
 const filteredCandidates = computed(() => {
   return candidates.value.filter(candidate => {
     const matchesStatus = statusFilter.value === 'All' || candidate.status === statusFilter.value;
-    
+
     const searchLower = searchQuery.value.toLowerCase();
-    const matchesSearch = 
+    const matchesSearch =
       candidate.name.toLowerCase().includes(searchLower) ||
       candidate.headline.toLowerCase().includes(searchLower) ||
       candidate.skills.some(skill => skill.toLowerCase().includes(searchLower));
