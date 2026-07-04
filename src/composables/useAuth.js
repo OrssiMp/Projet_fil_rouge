@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
 /**
  * @typedef {Object} UserExperience
@@ -39,12 +39,14 @@ import { useRouter } from 'vue-router';
 
 // État global partagé agissant comme un store léger persistant au rechargement
 /** @type {import('vue').Ref<UserProfileData|null>} */
-const currentUser = ref(JSON.parse(localStorage.getItem('mosalah_user') || 'null'));
+const currentUser = ref(
+  JSON.parse(localStorage.getItem("mosalah_user") || "null"),
+);
 
 /**
  * Hook d'authentification et de gestion de session pour l'application Mosalah.
  * Gère l'état réactif de l'utilisateur connecté ainsi que les mutations du profil.
- * 
+ *
  * @returns {{
  *   currentUser: import('vue').ComputedRef<UserProfileData|null>,
  *   isAuthenticated: import('vue').ComputedRef<boolean>,
@@ -74,7 +76,7 @@ export function useAuth() {
   /**
    * Enregistre un nouvel utilisateur dans la base de données locale.
    * Connecte automatiquement le profil après création.
-   * 
+   *
    * @param {Object} userData - Les informations d'inscription.
    * @param {string} userData.name - Nom de l'utilisateur ou de l'entreprise.
    * @param {string} userData.email - Identifiant de connexion.
@@ -89,9 +91,13 @@ export function useAuth() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 800));
-      const localUsers = JSON.parse(localStorage.getItem('mosalah_database_users') || '[]');
+      const localUsers = JSON.parse(
+        localStorage.getItem("mosalah_database_users") || "[]",
+      );
 
-      const emailExists = localUsers.some(u => u.email.toLowerCase() === userData.email.toLowerCase());
+      const emailExists = localUsers.some(
+        (u) => u.email.toLowerCase() === userData.email.toLowerCase(),
+      );
       if (emailExists) {
         throw new Error("Cette adresse email est déjà utilisée sur Mosalah.");
       }
@@ -102,30 +108,33 @@ export function useAuth() {
         email: userData.email,
         password: userData.password,
         role: userData.role,
-        createdAt: new Date().toLocaleDateString('fr-FR'),
-        avatar: '',
-        location: '',
+        createdAt: new Date().toLocaleDateString("fr-FR"),
+        avatar: "",
+        location: "",
         yearsOfExperience: 0,
         availability: true,
-        bio: '',
+        bio: "",
         skills: [],
         languages: [],
         experiences: [],
-        projects: []
+        projects: [],
       };
 
       localUsers.push(newUser);
-      localStorage.setItem('mosalah_database_users', JSON.stringify(localUsers));
+      localStorage.setItem(
+        "mosalah_database_users",
+        JSON.stringify(localUsers),
+      );
 
       const { password, ...sessionUser } = newUser;
       currentUser.value = sessionUser;
-      localStorage.setItem('mosalah_user', JSON.stringify(sessionUser));
+      localStorage.setItem("mosalah_user", JSON.stringify(sessionUser));
 
       success.value = "Votre compte a été créé avec succès !";
       redirectUser(sessionUser.role);
-
     } catch (err) {
-      error.value = err.message || "Une erreur est survenue lors de l'inscription.";
+      error.value =
+        err.message || "Une erreur est survenue lors de l'inscription.";
     } finally {
       loading.value = false;
     }
@@ -133,37 +142,49 @@ export function useAuth() {
 
   /**
    * Vérifie les identifiants fournis et initialise la session utilisateur réactive.
-   * 
+   *
    * @param {string} email - L'adresse de messagerie de l'utilisateur.
    * @param {string} password - Le mot de passe associé.
    * @returns {Promise<void>}
    */
-  const login = async (email, password) => {
+  const login = async (email, password, expectedRole = null) => {
     loading.value = true;
     error.value = null;
     success.value = null;
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 600));
-      const localUsers = JSON.parse(localStorage.getItem('mosalah_database_users') || '[]');
+      const localUsers = JSON.parse(
+        localStorage.getItem("mosalah_database_users") || "[]",
+      );
 
       const user = localUsers.find(
-        u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+        (u) =>
+          u.email.toLowerCase() === email.toLowerCase() &&
+          u.password === password,
       );
 
       if (!user) {
-        throw new Error("Identifiants incorrects. Veuillez vérifier votre email et mot de passe.");
+        throw new Error(
+          "Identifiants incorrects. Veuillez vérifier votre email et mot de passe.",
+        );
+      }
+
+      if (expectedRole && user.role !== expectedRole) {
+        throw new Error(
+          `Ce compte n'est pas enregistré en tant que ${expectedRole}.`,
+        );
       }
 
       const { password: _, ...sessionUser } = user;
       currentUser.value = sessionUser;
-      localStorage.setItem('mosalah_user', JSON.stringify(sessionUser));
+      localStorage.setItem("mosalah_user", JSON.stringify(sessionUser));
 
       success.value = "Connexion réussie.";
       redirectUser(sessionUser.role);
-
     } catch (err) {
-      error.value = err.message || "Une erreur est survenue lors de la connexion.";
+      error.value =
+        err.message || "Une erreur est survenue lors de la connexion.";
     } finally {
       loading.value = false;
     }
@@ -174,19 +195,18 @@ export function useAuth() {
    * @param {boolean} redirect - Si vrai, redirige l'utilisateur vers la page d'accueil.
    * @returns {void}
    */
-  const logout = (redirect=true) => {
+  const logout = (redirect = true) => {
     currentUser.value = null;
-    localStorage.removeItem('mosalah_user');
-    if (router && redirect) {
-      router.push({ name: 'Home' });
+    localStorage.removeItem("mosalah_user");
+    if (redirect && router) {
+      router.push({ name: "Login" });
     }
-    router.push({ name: 'Login' });
   };
 
   /**
    * Met à jour les métadonnées de profil de l'utilisateur actif (Bio, compétences, etc.).
    * Synchronise les modifications avec la base locale et l'état de session global.
-   * 
+   *
    * @param {Partial<UserProfileData>} profileFields - Un objet contenant les champs à modifier ou ajouter.
    * @returns {Promise<boolean>} Renvoie vrai si la mise à jour s'est terminée avec succès.
    */
@@ -197,19 +217,27 @@ export function useAuth() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const localUsers = JSON.parse(localStorage.getItem('mosalah_database_users') || '[]');
-      
-      const userIndex = localUsers.findIndex(u => u.id === currentUser.value.id);
-      if (userIndex === -1) throw new Error("Utilisateur introuvable dans la base locale.");
+      const localUsers = JSON.parse(
+        localStorage.getItem("mosalah_database_users") || "[]",
+      );
+
+      const userIndex = localUsers.findIndex(
+        (u) => u.id === currentUser.value.id,
+      );
+      if (userIndex === -1)
+        throw new Error("Utilisateur introuvable dans la base locale.");
 
       // Fusion des modifications dans le stockage physique de référence
       localUsers[userIndex] = { ...localUsers[userIndex], ...profileFields };
-      localStorage.setItem('mosalah_database_users', JSON.stringify(localUsers));
+      localStorage.setItem(
+        "mosalah_database_users",
+        JSON.stringify(localUsers),
+      );
 
       // Mise à jour synchrone du store réactif en cours d'utilisation
       const { password, ...updatedSession } = localUsers[userIndex];
       currentUser.value = updatedSession;
-      localStorage.setItem('mosalah_user', JSON.stringify(updatedSession));
+      localStorage.setItem("mosalah_user", JSON.stringify(updatedSession));
 
       success.value = "Profil mis à jour avec succès.";
       return true;
@@ -223,7 +251,7 @@ export function useAuth() {
 
   /**
    * Ajoute une nouvelle expérience professionnelle au parcours du candidat.
-   * 
+   *
    * @param {Omit<UserExperience, 'id'>} experience - Les détails de l'expérience sans identifiant numérique.
    * @returns {Promise<boolean>}
    */
@@ -231,16 +259,16 @@ export function useAuth() {
     const currentExperiences = currentUser.value?.experiences || [];
     const newExperience = {
       id: `exp_${Date.now()}`,
-      ...experience
+      ...experience,
     };
     return await updateProfile({
-      experiences: [newExperience, ...currentExperiences]
+      experiences: [newExperience, ...currentExperiences],
     });
   };
 
   /**
    * Ajoute une nouvelle réalisation ou un projet technique à la vitrine du candidat.
-   * 
+   *
    * @param {Omit<UserProject, 'id'>} project - Les caractéristiques du projet de développement.
    * @returns {Promise<boolean>}
    */
@@ -248,27 +276,27 @@ export function useAuth() {
     const currentProjects = currentUser.value?.projects || [];
     const newProject = {
       id: `proj_${Date.now()}`,
-      ...project
+      ...project,
     };
     return await updateProfile({
-      projects: [newProject, ...currentProjects]
+      projects: [newProject, ...currentProjects],
     });
   };
 
   /**
    * Utilitaire d'aiguillage de routage suite aux changements d'états d'accès critiques.
-   * 
+   *
    * @param {'candidat' | 'entreprise'} role - Le rôle cible.
    * @private
    */
   const redirectUser = (role) => {
     if (!router) return;
-    if (role === 'entreprise') {
-      router.push({ name: 'EntrepriseDashboard' });
-    } else if (role === 'candidat') {
-      router.push({ name: 'CandidatDashboard' });
+    if (role === "entreprise") {
+      router.push({ name: "EntrepriseDashboard" });
+    } else if (role === "candidat") {
+      router.push({ name: "CandidatDashboard" });
     } else {
-      router.push({ name: 'Home' });
+      router.push({ name: "Home" });
     }
   };
 
@@ -284,6 +312,6 @@ export function useAuth() {
     logout,
     updateProfile,
     addExperience,
-    addProject
+    addProject,
   };
 }

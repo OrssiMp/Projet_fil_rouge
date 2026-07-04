@@ -88,25 +88,19 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 
-const route = useRoute().name;
-
-const currentRouteName = computed(() => {
-  return route;
-});
+const currentRouteName = computed(() => route.name);
 
 const toggleLabel = computed(() => {
-  return currentRouteName === 'EntrepriseLandingPage' ? 'Candidats' : 'Entreprises';
+  return currentRouteName.value === 'EntrepriseLandingPage' ? 'Candidats' : 'Entreprises';
 });
 
 const toggleLink = computed(() => {
-  return currentRouteName === 'entreprise' ? '/' : '/entreprise';
+  return currentRouteName.value === 'EntrepriseLandingPage' ? '/candidats' : '/entreprises';
 });
-
-
-
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 import PublicLayout from "./layouts/PublicLayout.vue";
 import DashboardLayout from "./layouts/DashboardLayout.vue";
@@ -14,16 +14,11 @@ const layouts = {
   AuthLayout,
 };
 
-const currentLayout = computed(() => {
-  return layouts[route.meta.layout] || PublicLayout;
-});
+const currentLayout = computed(() => layouts[route.meta.layout] || PublicLayout);
 
 const layoutProps = computed(() => ({
   role: route.meta.role,
 }));
-
-
-// console.log(currentRoute);
 </script>
 
 <template>

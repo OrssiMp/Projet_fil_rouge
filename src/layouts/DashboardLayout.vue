@@ -2,19 +2,10 @@
 import EntrepriseLayout from "./EntrepriseLayout.vue";
 import CandidateLayout from "./CandidateLayout.vue";
 import { useAuth } from "../composables/useAuth";
-import {ref} from 'vue'
-// const props = defineProps({
-//     role: {
-//         type: String,
-//         required: true,
-//     },
-// });
+import { computed } from 'vue';
 
-const role =ref('candidat')
-const {isAuthenticated,currentUser}= useAuth();
-if(isAuthenticated.value){
-    role.value = currentUser.value.role;
-}
+const { isAuthenticated, currentUser } = useAuth();
+const role = computed(() => currentUser.value?.role || 'candidat');
 </script>
 
 <template>

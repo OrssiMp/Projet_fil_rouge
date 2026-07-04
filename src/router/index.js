@@ -1,117 +1,106 @@
-import { createRouter, createWebHashHistory, useRoute } from "vue-router";
-import { computed, ref } from "vue";
-import { useAuth } from "../composables/useAuth.js";
-
-const userRoleExist = ref(false);
-const currentLayout = ref("AppLayout");
-const route = useRoute();
-let currentUserRole = ref("candidat");
-let isConnected = ref(false);
+import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
-  // --- 🌍 SECTION PUBLIQUE & APPS (Layout dynamique intelligent) ---
   {
     path: "/",
     name: "Home",
     component: () => import("../pages/application/Home.vue"),
-    meta: { layout: "AppLayout" },
+    meta: { layout: "AppLayout", title: "Accueil" },
   },
   {
     path: "/about",
     name: "About",
     component: () => import("../pages/application/About.vue"),
-    meta: { layout: "AppLayout" },
+    meta: { layout: "AppLayout", title: "À propos" },
   },
   {
     path: "/offres",
     name: "JobList",
     component: () => import("../pages/JobList.vue"),
-    meta: {
-      layout: currentLayout,
-      role: "candidat",
-    },
+    meta: { layout: "AppLayout", title: "Offres d'emploi" },
   },
   {
     path: "/offres/:id",
     name: "JobDetail",
     component: () => import("../pages/jobDetail.vue"),
-    meta: {
-      layout: isConnected.value ? "AppLayout" : "DashboardLayout",
-      role: currentUserRole.value,
-    },
+    props: true,
+    meta: { layout: "AppLayout", title: "Détails de l'offre" },
   },
   {
     path: "/offres/:id/postuler",
-    name: "JobApply", // Correction du doublon de nom de route
+    name: "JobApply",
     component: () => import("../pages/candidat/JobPostule.vue"),
-    meta: {
-      layout: isConnected.value ? "AppLayout" : "DashboardLayout",
-      role: currentUserRole.value,
-    },
     props: true,
+    meta: { layout: "AppLayout", title: "Postuler à l'offre" },
   },
   {
     path: "/message",
+    name: "Message",
     component: () => import("../pages/Message.vue"),
-    meta: { 
-      layout: "DashboardLayout", 
-      role: currentUserRole.value 
+    meta: {
+      layout: "DashboardLayout",
+      requiresAuth: true,
+      title: "Messagerie",
     },
   },
   {
     path: "/entreprises/details/:id",
-    name: "CompanyDetail", // Nom unique corrigé
+    name: "CompanyDetail",
     component: () => import("../pages/entreprise/CompanyDetail.vue"),
-    meta: { layout: "DashboardLayout", role: currentUserRole.value },
     props: true,
+    meta: { layout: "AppLayout", title: "Détails entreprise" },
   },
   {
     path: "/entreprise/dashboard/offres",
     name: "EntrepriseOffres",
     component: () => import("../pages/entreprise/JobManagement.vue"),
-    meta: { layout: "DashboardLayout", role: "entreprise" },
+    meta: {
+      layout: "DashboardLayout",
+      requiresAuth: true,
+      role: "entreprise",
+      title: "Gestion des offres",
+    },
   },
-
-  // --- 🔐 SECTION AUTHENTIFICATION (Layout minimaliste) ---
   {
     path: "/register",
     name: "ChooseAccountType",
     component: () => import("../pages/ChooseAccountPage.vue"),
-    meta: { layout: "AuthLayout" },
+    meta: { layout: "AuthLayout", title: "Créer un compte" },
   },
   {
     path: "/register/entreprise",
     name: "RegisterEntreprise",
     component: () => import("../pages/entreprise/Register.vue"),
-    meta: { layout: "AuthLayout" },
+    meta: { layout: "AuthLayout", title: "Inscription recruteur" },
   },
   {
     path: "/register/candidat",
     name: "RegisterCandidat",
     component: () => import("../pages/candidat/Register.vue"),
-    meta: { layout: "AuthLayout" },
+    meta: { layout: "AuthLayout", title: "Inscription candidat" },
   },
   {
     path: "/login",
     name: "Login",
     component: () => import("../pages/Login.vue"),
-    meta: { layout: "AuthLayout" },
+    meta: { layout: "AuthLayout", title: "Connexion" },
   },
   {
     path: "/dashboard",
     name: "DashboardRedirect",
-    component: () => {
-      return currentUserRole.value === "candidat"
-        ? import("../pages/candidat/DashBoard.vue")
-        : import("../pages/entreprise/Dashboard.vue");
+    redirect: () => {
+      const user = JSON.parse(localStorage.getItem("mosalah_user") || "null");
+      if (user?.role === "entreprise") {
+        return { name: "EntrepriseDashboard" };
+      }
+      return { name: "CandidatDashboard" };
     },
     meta: {
       layout: "DashboardLayout",
-      role: currentUserRole.value,
       requiresAuth: true,
+      title: "Tableau de bord",
     },
   },
-  // --- 🎛️ SECTION DASHBOARDS (Layout d'espace de travail avec Sidebar) ---
   {
     path: "/candidat/dashboard",
     name: "CandidatDashboard",
@@ -120,19 +109,20 @@ const routes = [
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "candidat",
+      title: "Tableau de bord",
     },
   },
-
   {
     path: "/candidat/applications",
     name: "CandidatApplication",
     component: () => import("../pages/candidat/JobPostule.vue"),
+    props: true,
     meta: {
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "candidat",
+      title: "Mes candidatures",
     },
-    props: true,
   },
   {
     path: "/candidat/profile",
@@ -142,6 +132,7 @@ const routes = [
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "candidat",
+      title: "Mon profil",
     },
   },
   {
@@ -152,34 +143,32 @@ const routes = [
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "candidat",
+      title: "Paramètres",
     },
   },
   {
     path: "/candidats/details/:id",
+    name: "CandidatDetail",
     component: () => import("../pages/candidat/CandidatDetail.vue"),
+    props: true,
     meta: {
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "candidat",
+      title: "Détail candidat",
     },
   },
   {
     path: "/entreprises",
     name: "Entreprises",
     component: () => import("../pages/candidat/CompaniesCatalog.vue"),
-    meta: {
-      layout: "AppLayout",
-      role: "candidat",
-    },
+    meta: { layout: "AppLayout", title: "Entreprises" },
   },
   {
     path: "/entreprise",
     name: "EntrepriseLandingPage",
     component: () => import("../pages/entreprise/entreprise.vue"),
-
-    meta: {
-      layout: "AppLayout",
-    },
+    meta: { layout: "AppLayout", title: "Espace entreprise" },
   },
   {
     path: "/entreprise/dashboard",
@@ -189,6 +178,7 @@ const routes = [
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "entreprise",
+      title: "Tableau de bord recruteur",
     },
   },
   {
@@ -199,6 +189,7 @@ const routes = [
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "entreprise",
+      title: "Candidats",
     },
   },
   {
@@ -209,79 +200,74 @@ const routes = [
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "entreprise",
+      title: "Paramètres",
     },
   },
   {
     path: "/confidentialite",
     name: "Confidentialite",
     component: () => import("../pages/application/PrivacyPolicy.vue"),
-    meta: {
-      layout: "AppLayout",
-    },
+    meta: { layout: "AppLayout", title: "Confidentialité" },
   },
   {
     path: "/candidats",
     name: "Candidats",
     component: () => import("../pages/application/GlobalCandidatCatalog.vue"),
-    meta: {
-      layout: "AppLayout",
-    },
+    meta: { layout: "AppLayout", title: "Liste des candidats" },
   },
-  // --- 🚫 ERREUR 404 ---
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
     component: () => import("../pages/application/NotFound.vue"),
-    meta: { layout: "AuthLayout" },
+    meta: { layout: "AppLayout", title: "Page introuvable" },
   },
 ];
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+  scrollBehavior() {
+    return { top: 0 };
+  },
 });
 
-const offLineOnlyName = ["Home", "About", "EntrepriseLandingPage"];
 router.beforeEach((to, from, next) => {
-  const { currentUser, isAuthenticated } = useAuth();
+  const user = JSON.parse(localStorage.getItem("mosalah_user") || "null");
 
-  if (isAuthenticated.value) {
-    currentUserRole.value = currentUser.value.role;
-    isConnected.value = isAuthenticated.value;
-    console.log(currentUserRole.value);
+  if (to.meta.requiresAuth && !user) {
+    return next({ name: "Login" });
   }
 
-  // Layout par défaut
-  to.meta.layout = to.meta.defaultLayout || to.meta.layout || "AppLayout";
-
-  // Pages publiques qui changent selon la connexion
-  const dynamicLayouts = ["JobList", "Entreprises", "Candidats"];
-
-  if (dynamicLayouts.includes(to.name)) {
-    to.meta.layout = isAuthenticated.value ? "DashboardLayout" : "AppLayout";
-  }
-  // if (isConnected.value) {
-  //   // 1. Si l'utilisateur est connecté et essaie d'aller sur une page "Visiteur"
-  //   if (offLineOnlyName.includes(to.name) && isConnected.value) {
-  //     console.log(`Utilisateur connecté, redirection vers le tableau de bord`);
-
-  //     // On redirige vers la route générique /dashboard
-  //     return next({ name: "DashboardRedirect" });
-  //   }
-  // }
-
-  // Protection des routes
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
-    return next("/login");
+  if (to.meta.role && user?.role !== to.meta.role) {
+    return next({ name: "Home" });
   }
 
-  // Vérification du rôle
   if (
-    to.meta.role &&
-    isAuthenticated.value &&
-    currentUser.value.role !== to.meta.role
+    user &&
+    [
+      "Login",
+      "ChooseAccountType",
+      "RegisterEntreprise",
+      "RegisterCandidat",
+    ].includes(to.name)
   ) {
-    return next("/");
+    return next({
+      name:
+        user.role === "entreprise"
+          ? "EntrepriseDashboard"
+          : "CandidatDashboard",
+    });
+  }
+
+  const appName = "Mosalah";
+  document.title =
+    typeof to.meta.title === "string"
+      ? `${to.meta.title} | ${appName}`
+      : appName;
+
+  const dynamicLayouts = ["JobList", "Entreprises", "Candidats"];
+  if (dynamicLayouts.includes(to.name) && user) {
+    to.meta.layout = "DashboardLayout";
   }
 
   next();
