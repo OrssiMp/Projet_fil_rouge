@@ -1,5 +1,5 @@
 <template>
-  <div class="drawer lg:drawer-open min-h-screen bg-base-200 text-base-content font-body-md select-none">
+  <div class="drawer  min-h-screen bg-base-200 text-base-content font-body-md select-none" :class="`lg:drawer-${SideBarStatut}`">
 
     <input id="dashboard-drawer" type="checkbox" class="drawer-toggle" />
 
@@ -16,7 +16,8 @@
           <span class="text-xl font-black text-[#006643]">Mosalah</span>
         </div>
 
-        <div class="hidden lg:block font-bold text-lg text-base-content/80">
+        <div class="hidden font-bold text-lg gap-1 text-base-content/80 lg:flex">
+          <BaseButton v-if="!SideBarStatut" icon='hamburger' size="sm" variant="ghost" class="" @click="SideBarStatut = 'open'"/>
           Espace Candidat
         </div>
 
@@ -56,11 +57,17 @@
       <aside class="bg-base-100 border-r border-base-300 w-64 min-h-screen flex flex-col justify-between">
 
         <div>
-          <div class="h-16 flex items-center px-6 border-b border-base-200">
-            <router-link to="/" class="text-2xl font-black tracking-tight text-[#006643]">
-              Mosalah
-            </router-link>
-            <span class="badge badge-sm badge-accent ml-2 font-bold text-[10px]">CANDIDAT</span>
+          <div class="h-16 flex items-center justify-between px-6 border-b border-base-200">
+            <div class="flex items-center gap-2">
+              <router-link to="/" class="text-2xl font-black tracking-tight text-[#006643]">
+                Mosalah
+              </router-link>
+              <span class="badge badge-sm badge-accent font-bold text-[10px]">CANDIDAT</span>
+              <BaseButton variant="ghost" icon="close" size="sm" @click="SideBarStatut = close"></BaseButton>
+            </div>
+            <label for="dashboard-drawer" aria-label="Fermer le sidebar" class="btn btn-square btn-ghost lg:hidden">
+              <BaseIcon name="close" class="text-lg" />
+            </label>
           </div>
 
           <div class="px-4 py-3 text-[11px] uppercase tracking-[0.24em] text-base-content/50 font-semibold">
@@ -130,10 +137,11 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 
+const SideBarStatut = ref('open'); // 'open' ou 'closed' pour le mode responsive
 const router = useRouter();
 
 // 🔌 Récupération directe des states globaux de notre composable

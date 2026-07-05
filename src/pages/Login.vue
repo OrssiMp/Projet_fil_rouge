@@ -33,7 +33,7 @@
         <div class="relative">
           <BaseInput v-model="form.password" type="password" label="Mot de passe" placeholder="••••••••" icon="lock"
             required />
-          <a href="#" class="text-xs font-bold text-accent hover:underline absolute right-1 top-1">
+          <a class="text-xs font-bold text-accent hover:underline absolute right-1 top-1">
             Mot de passe oublié ?
           </a>
         </div>
@@ -41,7 +41,7 @@
         <template #actions>
           <BaseButton type="submit" :variant="userType === 'entreprise' ? 'primary' : 'accent'" icon="chevron-droite"
             :loading="loading" class="w-full shadow-md">
-            Se connecter en tant qu'{{ userType }}
+      Se connecter en tant {{userType === 'entreprise' ? 'qu\'entreprise' : 'que candidat'}}
           </BaseButton>
         </template>
       </BaseForm>

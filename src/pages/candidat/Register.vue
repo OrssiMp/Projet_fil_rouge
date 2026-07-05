@@ -27,7 +27,7 @@
           required />
 
         <template #actions>
-          <BaseButton :loading ="isLoading" type="submit" variant="accent" class="w-full mt-2 shadow-sm">
+          <BaseButton :loading ="isLoading" type="submit" variant="accent" class="w-full mt-2 shadow-sm" icon="plus">
             Créer mon compte
           </BaseButton>
         </template>

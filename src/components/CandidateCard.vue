@@ -47,16 +47,18 @@
                     autres</span>
             </div>
 
-            <div class="flex gap-2 w-full mt-2">
-                <router-link :to="`/candidats/details/${candidate.id}`" class="flex-1">
-                    <BaseButton class="w-full" variant="accent">Voir le profil</BaseButton>
-                </router-link>
+            <slot name="actions">
+                <div class="flex gap-2 w-full mt-2">
+                    <router-link :to="`/candidats/details/${candidate.id}`" class="flex-1">
+                        <BaseButton class="w-full" variant="accent">Voir le profil</BaseButton>
+                    </router-link>
 
-                <BaseButton @click="emitBookmark" variant="ghost" class="w-12 h-9 rounded-xl">
-                    <span v-if="candidate.isBookmarked" class="text-yellow-400">⭐</span>
-                    <span v-else class="text-base-content/50">☆</span>
-                </BaseButton>
-            </div>
+                    <BaseButton @click="emitBookmark" variant="ghost" class="w-12 h-9 rounded-xl">
+                        <span v-if="candidate.isBookmarked" class="text-yellow-400">⭐</span>
+                        <span v-else class="text-base-content/50">☆</span>
+                    </BaseButton>
+                </div>
+            </slot>
         </div>
     </BaseCard>
 </template>

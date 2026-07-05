@@ -1,0 +1,284 @@
+<template>
+  <div class="max-w-6xl mx-auto space-y-6 animate-fade-in-up">
+    
+    <!-- En-tête -->
+    <header class="mb-8">
+      <h1 class="text-2xl font-black text-base-content tracking-tight">Paramètres du compte</h1>
+      <p class="text-sm font-semibold text-base-content/60 mt-1">Gérez les préférences de votre entreprise, la sécurité et votre équipe.</p>
+    </header>
+
+    <div class="flex flex-col md:flex-row gap-8">
+      
+      <!-- 🧭 Menu Latéral des Paramètres -->
+      <aside class="md:w-64 shrink-0">
+        <nav class="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0 hide-scrollbar">
+          <button 
+            v-for="tab in tabs" 
+            :key="tab.id"
+            @click="activeTab = tab.id"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap text-left"
+            :class="activeTab === tab.id ? 'bg-accent/10 text-accent' : 'text-base-content/60 hover:bg-base-200/50 hover:text-base-content'"
+          >
+            <i :class="tab.icon" class="w-5 text-center"></i>
+            {{ tab.name }}
+          </button>
+        </nav>
+      </aside>
+
+      <!-- ⚙️ Contenu des Paramètres -->
+      <main class="flex-1 min-w-0">
+        
+        <!-- 1️⃣ ONGLET : GÉNÉRAL -->
+        <section v-if="activeTab === 'general'" class="space-y-6 animate-fade-in">
+          <div class="bg-base-100 p-6 sm:p-8 rounded-3xl border border-base-200 shadow-sm">
+            <h2 class="text-lg font-black text-base-content mb-6">Profil de l'entreprise</h2>
+            
+            <!-- Avatar / Logo Upload -->
+            <div class="flex items-center gap-6 mb-8">
+              <div class="relative group">
+                <div class="w-24 h-24 rounded-2xl bg-base-200 flex items-center justify-center overflow-hidden border-2 border-base-200">
+                  <img v-if="form.logo" :src="form.logo" alt="Logo" class="w-full h-full object-cover" />
+                  <i v-else class="fa-solid fa-building text-3xl text-base-content/30"></i>
+                </div>
+                <button class="absolute bottom-[-10px] right-[-10px] w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-camera text-xs"></i>
+                </button>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-base-content">Logo de l'entreprise</h3>
+                <p class="text-xs font-medium text-base-content/50 mt-1">PNG, JPG jusqu'à 5MB. Format carré recommandé.</p>
+              </div>
+            </div>
+
+            <!-- Formulaire Général -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-base-content/70 ml-1">Nom de l'entreprise</label>
+                <input v-model="form.name" type="text" class="input input-bordered w-full rounded-xl bg-base-50 focus:border-accent font-semibold" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-base-content/70 ml-1">Site Web</label>
+                <input v-model="form.website" type="url" class="input input-bordered w-full rounded-xl bg-base-50 focus:border-accent font-semibold" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-base-content/70 ml-1">Secteur d'activité</label>
+                <select v-model="form.sector" class="select select-bordered w-full rounded-xl bg-base-50 focus:border-accent font-semibold">
+                  <option>Technologie & IT</option>
+                  <option>Finance</option>
+                  <option>Télécommunications</option>
+                  <option>Construction</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-base-content/70 ml-1">Localisation</label>
+                <input v-model="form.location" type="text" class="input input-bordered w-full rounded-xl bg-base-50 focus:border-accent font-semibold" />
+              </div>
+              <div class="col-span-1 sm:col-span-2 space-y-2">
+                <label class="text-xs font-bold text-base-content/70 ml-1">Description (À propos)</label>
+                <textarea v-model="form.description" rows="4" class="textarea textarea-bordered w-full rounded-xl bg-base-50 focus:border-accent font-semibold"></textarea>
+              </div>
+            </div>
+
+            <div class="mt-8 flex justify-end">
+              <button class="btn btn-accent rounded-xl px-8">Enregistrer les modifications</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2️⃣ ONGLET : SÉCURITÉ -->
+        <section v-if="activeTab === 'security'" class="space-y-6 animate-fade-in">
+          <!-- Mot de passe -->
+          <div class="bg-base-100 p-6 sm:p-8 rounded-3xl border border-base-200 shadow-sm">
+            <h2 class="text-lg font-black text-base-content mb-6">Changer le mot de passe</h2>
+            <div class="max-w-md space-y-4">
+              <input type="password" placeholder="Mot de passe actuel" class="input input-bordered w-full rounded-xl bg-base-50 focus:border-accent" />
+              <input type="password" placeholder="Nouveau mot de passe" class="input input-bordered w-full rounded-xl bg-base-50 focus:border-accent" />
+              <input type="password" placeholder="Confirmer le nouveau mot de passe" class="input input-bordered w-full rounded-xl bg-base-50 focus:border-accent" />
+              <button class="btn btn-neutral rounded-xl w-full sm:w-auto mt-2">Mettre à jour le mot de passe</button>
+            </div>
+          </div>
+
+          <!-- Authentification Double Facteur (2FA) -->
+          <div class="bg-base-100 p-6 sm:p-8 rounded-3xl border border-base-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 class="text-lg font-black text-base-content flex items-center gap-2">
+                Authentification à deux facteurs (2FA)
+                <span class="badge badge-sm bg-emerald-100 text-emerald-700 border-none font-bold">Recommandé</span>
+              </h2>
+              <p class="text-sm font-semibold text-base-content/60 mt-1">Ajoute une couche de sécurité supplémentaire à votre compte.</p>
+            </div>
+            <input type="checkbox" class="toggle toggle-accent" checked />
+          </div>
+
+          <!-- Sessions actives -->
+          <div class="bg-base-100 p-6 sm:p-8 rounded-3xl border border-base-200 shadow-sm">
+            <h2 class="text-lg font-black text-base-content mb-6">Appareils connectés</h2>
+            <ul class="space-y-4">
+              <li v-for="session in activeSessions" :key="session.id" class="flex justify-between items-center p-4 rounded-xl bg-base-50/50 border border-base-200/50">
+                <div class="flex items-center gap-4">
+                  <i :class="session.icon" class="text-2xl text-base-content/40"></i>
+                  <div>
+                    <p class="text-sm font-black text-base-content">{{ session.device }} <span v-if="session.current" class="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded ml-2 uppercase">Actuel</span></p>
+                    <p class="text-xs font-semibold text-base-content/50">{{ session.location }} • {{ session.lastActive }}</p>
+                  </div>
+                </div>
+                <button v-if="!session.current" class="btn btn-ghost btn-sm text-error hover:bg-error/10">Déconnecter</button>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 3️⃣ ONGLET : ÉQUIPE -->
+        <section v-if="activeTab === 'team'" class="space-y-6 animate-fade-in">
+          <div class="bg-base-100 p-6 sm:p-8 rounded-3xl border border-base-200 shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h2 class="text-lg font-black text-base-content">Membres de l'équipe</h2>
+                <p class="text-sm font-semibold text-base-content/60">Gérez qui a accès au tableau de bord recruteur.</p>
+              </div>
+              <button class="btn btn-accent btn-sm rounded-xl"><i class="fa-solid fa-plus mr-1"></i> Inviter</button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="table w-full">
+                <thead>
+                  <tr class="text-[10px] uppercase font-black text-base-content/50 tracking-wider border-base-200/50">
+                    <th>Utilisateur</th>
+                    <th>Rôle</th>
+                    <th>Statut</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="member in team" :key="member.id" class="border-base-200/50">
+                    <td>
+                      <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-base-200 flex items-center justify-center font-black text-xs text-base-content/60">
+                          {{ member.initials }}
+                        </div>
+                        <div>
+                          <p class="font-bold text-sm text-base-content">{{ member.name }}</p>
+                          <p class="text-xs text-base-content/50">{{ member.email }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <select class="select select-sm select-bordered rounded-lg text-xs font-bold bg-transparent" :disabled="member.role === 'Propriétaire'">
+                        <option :selected="member.role === 'Propriétaire'">Propriétaire</option>
+                        <option :selected="member.role === 'Admin'">Admin</option>
+                        <option :selected="member.role === 'Recruteur'">Recruteur</option>
+                      </select>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm font-bold border-none" :class="member.active ? 'bg-emerald-100 text-emerald-700' : 'bg-warning/20 text-warning-content'">
+                        {{ member.active ? 'Actif' : 'En attente' }}
+                      </span>
+                    </td>
+                    <td class="text-right">
+                      <button class="btn btn-ghost btn-xs text-base-content/40 hover:text-error" :disabled="member.role === 'Propriétaire'">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4️⃣ ONGLET : API & INTÉGRATIONS (Mode Avancé) -->
+        <section v-if="activeTab === 'api'" class="space-y-6 animate-fade-in">
+          <div class="bg-base-100 p-6 sm:p-8 rounded-3xl border border-base-200 shadow-sm">
+            <h2 class="text-lg font-black text-base-content mb-2">Clés d'API</h2>
+            <p class="text-sm font-semibold text-base-content/60 mb-6">Utilisez ces clés pour connecter Mosalah à votre propre ATS ou ERP.</p>
+            
+            <div class="space-y-4">
+              <div class="p-4 rounded-xl border border-base-200 bg-base-50/50">
+                <label class="text-xs font-bold text-base-content/70 uppercase tracking-wider">Clé Publique</label>
+                <div class="flex gap-2 mt-2">
+                  <input type="text" readonly value="pk_live_mosalah_8f92j3n4b5v6" class="input input-sm input-bordered w-full rounded-lg bg-base-200 font-mono text-xs" />
+                  <button class="btn btn-sm btn-square btn-outline border-base-200 text-base-content/60 hover:bg-base-200 hover:border-base-200 hover:text-base-content"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+              
+              <div class="p-4 rounded-xl border border-warning/30 bg-warning/5 relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-warning"></div>
+                <label class="text-xs font-bold text-warning-content uppercase tracking-wider">Clé Secrète (Ne pas partager)</label>
+                <div class="flex gap-2 mt-2">
+                  <input :type="showSecretKey ? 'text' : 'password'" readonly value="sk_live_mosalah_super_secret_key_2026" class="input input-sm input-bordered w-full rounded-lg bg-base-100 border-warning/30 font-mono text-xs text-warning-content" />
+                  <button @click="showSecretKey = !showSecretKey" class="btn btn-sm btn-square btn-outline border-warning/30 text-warning-content hover:bg-warning/20 hover:border-warning/30">
+                    <i :class="showSecretKey ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-6 border-t border-base-200">
+              <h3 class="font-black text-base-content text-sm mb-4">Webhooks</h3>
+              <button class="btn btn-outline btn-sm rounded-xl font-bold border-base-200"><i class="fa-solid fa-plus text-xs mr-1"></i> Ajouter un Webhook</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ZONE DE DANGER -->
+        <section v-if="activeTab === 'general' || activeTab === 'security'" class="mt-12 p-6 sm:p-8 rounded-3xl border border-error/20 bg-error/5">
+          <h2 class="text-lg font-black text-error mb-2">Zone de danger</h2>
+          <p class="text-sm font-semibold text-error/70 mb-4">La suppression de votre compte est définitive. Toutes vos offres et données candidats seront effacées.</p>
+          <button class="btn btn-error btn-sm rounded-xl text-white">Supprimer le compte entreprise</button>
+        </section>
+
+      </main>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive } from 'vue';
+
+// 🧭 Gestion des onglets
+const activeTab = ref('general');
+const tabs = [
+  { id: 'general', name: 'Général', icon: 'fa-regular fa-building' },
+  { id: 'security', name: 'Sécurité & Accès', icon: 'fa-solid fa-shield-halved' },
+  { id: 'team', name: 'Équipe', icon: 'fa-solid fa-users' },
+  { id: 'notifications', name: 'Notifications', icon: 'fa-regular fa-bell' },
+  { id: 'api', name: 'API & Intégrations', icon: 'fa-solid fa-plug' },
+];
+
+// 📝 Données du formulaire Général
+const form = reactive({
+  name: 'TechSoft Congo',
+  website: 'https://techsoft.cg',
+  sector: 'Technologie & IT',
+  location: 'Brazzaville',
+  description: 'Nous sommes une agence de développement web spécialisée dans les solutions SaaS pour le marché africain.',
+  logo: null // URL de l'image si existante
+});
+
+// 🔐 Données Sécurité (Sessions)
+const activeSessions = ref([
+  { id: 1, device: 'MacBook Pro - Chrome', location: 'Brazzaville, Congo', lastActive: 'En ligne maintenant', current: true, icon: 'fa-solid fa-laptop' },
+  { id: 2, device: 'iPhone 13 - Safari', location: 'Pointe-Noire, Congo', lastActive: 'Il y a 2 jours', current: false, icon: 'fa-solid fa-mobile-screen' },
+]);
+
+// 👥 Données Équipe
+const team = ref([
+  { id: 1, name: 'Orssi Mp', email: 'orssi@techsoft.cg', initials: 'OM', role: 'Propriétaire', active: true },
+  { id: 2, name: 'Sarah B.', email: 'sarah@techsoft.cg', initials: 'SB', role: 'Admin', active: true },
+  { id: 3, name: 'Marc K.', email: 'marc@techsoft.cg', initials: 'MK', role: 'Recruteur', active: false },
+]);
+
+// 🔌 API
+const showSecretKey = ref(false);
+</script>
+
+<style scoped>
+/* Cache la scrollbar sur la navigation latérale mobile tout en gardant le scroll */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>

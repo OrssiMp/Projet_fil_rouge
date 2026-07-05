@@ -6,7 +6,8 @@
   </div>
 
   <!-- ÉTAT INTROUVABLE / ERREUR -->
-  <div v-else-if="!company" class="min-h-screen flex flex-col items-center justify-center bg-base-200/50 px-4 text-center">
+  <div v-else-if="!company"
+    class="min-h-screen flex flex-col items-center justify-center bg-base-200/50 px-4 text-center">
     <p class="text-5xl mb-4">🏢</p>
     <h1 class="text-2xl font-black text-base-content tracking-tight mb-2">Entreprise introuvable</h1>
     <p class="text-xs text-base-content/50 font-medium max-w-sm leading-relaxed mb-6">
@@ -19,31 +20,21 @@
 
   <!-- INTERFACE DÉTAILS DE L'ENTREPRISE -->
   <div v-else class="min-h-screen bg-base-200/50 pb-16 select-none">
-    
+
     <header class="relative bg-base-100 border-b border-base-200">
       <div class="h-48 md:h-64 w-full bg-base-200 overflow-hidden">
-        <BaseImage 
-          :src="company.coverImage" 
-          :alt="`Bannière de couverture de ${company.name}`" 
-          ratio="auto"
-          priority
-          rounded="none"
-          class="w-full h-full object-cover"
-        />
+        <BaseImage :src="company.coverImage" :alt="`Bannière de couverture de ${company.name}`" ratio="auto" priority
+          rounded="none" class="w-full h-full object-cover" />
       </div>
 
       <div class="max-w-6xl mx-auto px-4 pb-6">
-        <div class="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-16 md:-mt-20 relative z-10 text-center md:text-left">
-          
-          <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-base-100 bg-white shadow-xl overflow-hidden shrink-0 flex items-center justify-center">
-            <BaseImage 
-              v-if="company.logo"
-              :src="company.logo" 
-              :alt="`Logo officiel de ${company.name}`" 
-              ratio="1/1"
-              priority
-              rounded="full"
-            />
+        <div
+          class="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-16 md:-mt-20 relative z-10 text-center md:text-left">
+
+          <div
+            class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-base-100 bg-white shadow-xl overflow-hidden shrink-0 flex items-center justify-center">
+            <BaseImage v-if="company.logo" :src="company.logo" :alt="`Logo officiel de ${company.name}`" ratio="1/1"
+              priority rounded="full" />
             <!-- Fallback textuel si pas de logo -->
             <span v-else class="text-3xl font-black text-emerald-800 uppercase tracking-tight">
               {{ company.name.slice(0, 2) }}
@@ -55,7 +46,8 @@
               <h1 class="text-2xl md:text-4xl font-black text-base-content tracking-tight mb-2">
                 {{ company.name }}
               </h1>
-              <div class="flex flex-wrap justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold text-base-content/60">
+              <div
+                class="flex flex-wrap justify-center md:justify-start gap-2 text-xs md:text-sm font-semibold text-base-content/60">
                 <span class="flex items-center gap-1">
                   <i class="opacity-70">📍</i> {{ company.location }}
                 </span>
@@ -81,10 +73,11 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 mt-8">
+      <BaseBreadCrumbs class="mb-6" :items="breadcrumbs" />
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
         <div class="lg:col-span-8 flex flex-col gap-8">
-          
+
           <BaseCard density="spacious" data-aos="fade-up">
             <h2 class="text-xl font-black text-base-content tracking-tight mb-4">
               À propos de l'entreprise
@@ -105,26 +98,24 @@
             </div>
 
             <div v-if="company.jobs && company.jobs.length > 0" class="flex flex-col gap-3">
-              <BaseCard 
-                v-for="job in company.jobs" 
-                :key="job.id"
-                density="normal"
-                class="card-interactive border-base-200/60 hover:border-emerald-200 transition-all duration-300"
-              >
+              <BaseCard v-for="job in company.jobs" :key="job.id" density="normal"
+                class="card-interactive border-base-200/60 hover:border-emerald-200 transition-all duration-300">
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 w-full">
                   <div class="flex flex-col gap-1 text-left">
-                    <h3 class="text-lg font-extrabold text-base-content tracking-tight hover:text-emerald-700 transition-colors">
+                    <h3
+                      class="text-lg font-extrabold text-base-content tracking-tight hover:text-emerald-700 transition-colors">
                       {{ job.title }}
                     </h3>
                     <div class="flex flex-wrap items-center gap-3 text-xs text-base-content/60 font-semibold">
-                      <span class="bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md text-[11px] font-black tracking-wide uppercase">
+                      <span
+                        class="bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md text-[11px] font-black tracking-wide uppercase">
                         {{ job.type }}
                       </span>
                       <span>💰 {{ job.salary }}</span>
                       <span>⏳ Publié {{ job.postedAt }}</span>
                     </div>
                   </div>
-                  
+
                   <BaseButton :to="`/jobs/${job.id}`" variant="accent" class="sm:w-auto w-full text-xs h-10">
                     Voir l'offre
                   </BaseButton>
@@ -140,12 +131,12 @@
         </div>
 
         <div class="lg:col-span-4 flex flex-col gap-6" data-aos="fade-up" data-aos-delay="200">
-          
+
           <BaseCard density="normal" class="border-base-200/60">
             <h3 class="text-base font-black text-base-content tracking-tight mb-4 uppercase text-base-content/40">
               Informations clés
             </h3>
-            
+
             <div class="flex flex-col gap-4 text-sm font-medium">
               <div class="flex justify-between items-center py-2 border-b border-b-base-100">
                 <span class="text-base-content/50">Fondation</span>
@@ -162,7 +153,8 @@
             </div>
           </BaseCard>
 
-          <div class="bg-amber-50/60 border border-amber-200/60 rounded-2xl p-4 text-xs font-semibold text-amber-800 leading-relaxed flex gap-2.5">
+          <div
+            class="bg-amber-50/60 border border-amber-200/60 rounded-2xl p-4 text-xs font-semibold text-amber-800 leading-relaxed flex gap-2.5">
             <span>💡</span>
             <p>Mosalah certifie la légalité de cette entreprise sur le territoire national.</p>
           </div>
@@ -175,12 +167,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const loading = ref(true);
 const company = ref(null);
+
+const breadcrumbs = computed(() => [
+  { title: 'Entreprises', path: '/entreprises' },
+  { title: company.value?.name || 'Détails entreprise', path: route.fullPath },
+]);
 
 // Catalogue global simulé (Mock Database) incluant tes plateformes clés
 const companiesDatabase = [

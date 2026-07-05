@@ -1,21 +1,27 @@
 <template>
-  <section 
-    class="hero relative overflow-hidden rounded-3xl transition-all duration-300"
-    :class="[variantClass, paddingClass]"
-  >
+  <section class="hero relative overflow-visible rounded-3xl transition-all duration-300"
+    :class="[variantClass, paddingClass]">
     <div class="absolute inset-0 opacity-[0.03] pointer-events-none select-none">
-      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="currentColor"/></pattern></defs><rect width="100%" height="100%" fill="url(#dots)"/></svg>
+      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.5" fill="currentColor" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#dots)" />
+      </svg>
     </div>
 
-    <div class="hero-content w-full max-w-7xl flex-col lg:flex-row gap-12 z-10" :class="centered ? 'text-center' : 'items-start lg:items-center text-left'">
-      
+    <div class="hero-content w-full max-w-7xl flex-col lg:flex-row gap-12 z-10"
+      :class="centered ? 'text-center' : 'items-start lg:items-center text-left'">
+
       <div class="max-w-2xl" :class="centered ? 'mx-auto' : ''">
         <slot name="badge" />
-        
+
         <h1 class="text-3xl md:text-5xl font-black text-base-content tracking-tight leading-[1.1] mb-4">
           <slot name="title">{{ title }}</slot>
         </h1>
-        
+
         <p class="text-sm md:text-lg text-base-content/60 font-medium leading-relaxed mb-8">
           <slot name="subtitle">{{ subtitle }}</slot>
         </p>

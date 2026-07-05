@@ -7,14 +7,14 @@ Voici la liste des composants fondamentaux (**`Base...`**) que nous avons struct
 * **`BaseIcon.vue`**
 * **Rôle :** Le pivot visuel de l'application. Il centralise et affiche toutes tes icônes via des alias simples (`menu`, `entreprise`, `candidat`, `lock`, `chevron-bas`, `chevron-gauche`, `chevron-droite`, `validation`, `cloche`, `dashboard`, `reglage`, etc.).
 
-
 * **`BaseCard.vue`**
 * **Rôle :** Le conteneur universel basé sur daisyUI. Il gère l'élévation, les bordures, le comportement au survol (`hoverable`) et s'ajuste selon trois niveaux de densité (`compact`, `normal`, `spacious`) avec des structures de `slots` pour injecter des en-têtes ou des pieds de page.
 
+* **`CandidateCard.vue`**
+* **Rôle :** Carte réutilisable pour l'affichage des profils candidats. Elle normalise l'affichage des avatars, des statuts, des compétences et des actions (voir le profil, bookmark, noter) dans les listes publiques et recruteur.
 
 * **`BaseBadge.vue`**
 * **Rôle :** Utilisé pour l'affichage de statuts courts, de tags de contrats (CDI, CDD) ou d'états de candidatures (*Acceptée*, *En attente*, *Refusée*), en se synchronisant avec les variations de couleurs de ton thème.
-
 
 * **`BaseBreadcrumbs.vue`**
 * **Rôle :** Le fil d'ariane intelligent et 100% automatisé. Il écoute passivement `vue-router` et génère la hiérarchie des liens dynamiquement en se basant sur le tableau de tes routes (`meta.title`).
@@ -26,15 +26,6 @@ Voici la liste des composants fondamentaux (**`Base...`**) que nous avons struct
 * **BaseInput.vue**
 
 * **Rôle** : La brique de saisie universelle. Elle standardise le rendu de tes champs de texte, gère le v-model (via v-model de Vue 3 ou defineModel), l'affichage des messages d'erreur de validation et l'intégration optionnelle d'icônes à l'intérieur du champ (comme on l'a vu sur la barre de recherche).
-
-
-
-
-
-
-
-
-
 
 C'est une excellente initiative Orssi. Avoir une documentation centralisée et propre en Markdown permettra à ton équipe de savoir exactement quelles briques utiliser et comment les paramétrer sans réinventer la roue.
 
@@ -224,6 +215,7 @@ Pour que le fil d'ariane affiche un texte propre, l'objet `meta` de la route doi
 2. **Priorité aux composants de base** : Il est interdit d'écrire des balises `<button class="btn...">` ou `<input class="input...">` standard dans les pages. Utilisez exclusivement `<BaseButton>` et `<BaseInput>`.
 
 #### 5. Version "Call to Action" (Fin de page avec note explicative)
+
 Idéal pour conclure une landing page ou inciter à une conversion rapide. Utilise le saut de ligne sémantique dans le sous-titre pour la mention légale discrète.
 
 ```vue
@@ -310,8 +302,7 @@ Montre comment imbriqués les champs de formulaires sécurisés et comment gére
 
 
 
-```` 
-
+````
 
 image
 
@@ -325,9 +316,11 @@ priority pour le LCP (Largest Contentful Paint) : Si l'image est dans la Hero Se
 decoding="async" : Permet au navigateur de décoder l'image en arrière-plan sans bloquer le rendu du texte ou des scripts.
 
 ## 🖼️ 8. `BaseImage.vue`
+
 Ce composant encapsule toutes les optimisations modernes pour les images. Il gère le chargement asynchrone, prévient le saut de mise en page (CLS), applique le lazy loading natif et offre une sécurité visuelle si le lien de l'image est mort.
 
 ### Propriétés (Props)
+
 | Propriété | Type | Défaut | Valeurs acceptées | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | `src` | `String` | *(Requis)* | URL / Chemin | Source de l'image à afficher. |
@@ -338,6 +331,7 @@ Ce composant encapsule toutes les optimisations modernes pour les images. Il gè
 | `fallbackSrc`| `String` | `'/placeholder...'` | URL alternative | Image de secours si la source principale renvoie une erreur 404. |
 
 ### Exemple d'utilisation standard
+
 ```vue
 <BaseImage 
   src="/uploads/logos/company.png" 

@@ -1,6 +1,6 @@
-# **`BASE_COMPONENTS.md`**.
+# **`BASE_COMPONENTS.md`**
 
-Tu y trouveras la documentation complète et structurée pour tes composants **`BaseForm.vue`** et **`BaseImage.vue`** avec toutes leurs spécificités techniques et bonnes pratiques.
+Tu y trouveras la documentation complète et structurée pour tes composants **`BaseForm.vue`**, **`BaseImage.vue`**, et **`CandidateCard.vue`** avec toutes leurs spécificités techniques et bonnes pratiques.
 
 ---
 

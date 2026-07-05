@@ -99,7 +99,7 @@ const toggleLabel = computed(() => {
 });
 
 const toggleLink = computed(() => {
-  return currentRouteName.value === 'EntrepriseLandingPage' ? '/candidats' : '/entreprises';
+  return currentRouteName.value === 'EntrepriseLandingPage' ? '/candidats' : '/entreprise';
 });
 </script>
 
