@@ -123,6 +123,7 @@ export function useDb() {
       const newAnnonce = {
         id: generateAnnonceId(),
         ...annonceData,
+        applications: 0,
         createdAt: new Date().toLocaleDateString("fr-FR"),
       };
 
@@ -147,14 +148,11 @@ export function useDb() {
     try {
       await simulateNetwork();
       const allAnnonces = getLocal("mosalah_database_annonces");
-      const allCandidatures = getLocal("mosalah_database_candidatures");
 
-      // On enrichit chaque annonce avec son compteur de candidatures
+      // On utilise le compteur de candidatures stocké dans l'annonce
       annonces.value = allAnnonces.map((annonce) => ({
         ...annonce,
-        candidaturesCount: allCandidatures.filter(
-          (c) => c.annonceId === annonce.id,
-        ).length,
+        candidaturesCount: annonce.applications || 0,
       }));
 
       return annonces.value;
@@ -187,14 +185,9 @@ export function useDb() {
       // Récupérer les infos de l'entreprise
       const entreprise = allUsers.find((u) => u.id === annonce.entrepriseId);
 
-      // Compter les candidatures
-      const candidaturesCount = allCandidatures.filter(
-        (c) => c.annonceId === annonceId,
-      ).length;
-
       return {
         ...annonce,
-        candidaturesCount,
+        candidaturesCount: annonce.applications || 0,
         entreprise: entreprise
           ? {
               id: entreprise.id,
@@ -224,6 +217,7 @@ export function useDb() {
     try {
       await simulateNetwork();
       const currentCandidatures = getLocal("mosalah_database_candidatures");
+      const currentAnnonces = getLocal("mosalah_database_annonces");
 
       // Vérifier si le candidat a déjà postulé
       const hasAlreadyApplied = currentCandidatures.some(
@@ -244,6 +238,17 @@ export function useDb() {
 
       currentCandidatures.push(newCandidature);
       setLocal("mosalah_database_candidatures", currentCandidatures);
+
+      // Mettre à jour le compteur de candidatures dans l'annonce
+      const annonceIndex = currentAnnonces.findIndex(
+        (a) => a.id === candidatureData.annonceId,
+      );
+      if (annonceIndex !== -1) {
+        currentAnnonces[annonceIndex].applications =
+          (currentAnnonces[annonceIndex].applications || 0) + 1;
+        setLocal("mosalah_database_annonces", currentAnnonces);
+      }
+
       return newCandidature;
     } catch (err) {
       error.value = err.message || "Erreur lors de l'envoi de la candidature.";

@@ -437,6 +437,8 @@ import { ref, onMounted } from "vue";
 import { useDb } from "../../composables/useDb";
 import { useAuth } from "../../composables/useAuth";
 
+const { currentUser } = useAuth();
+const { createAnnonce ,fetchAnnonces} = useDb();
 const showPublishModal = ref(false);
 const isSubmitting = ref(false);
 const formError = ref("");
@@ -444,13 +446,12 @@ const formSuccess = ref("");
 
 // Statistiques globales du tableau de bord recruteur
 const stats = ref({
-  activeJobs: 4,
-  totalApplications: 8,
-  totalViews: 10,
-  interviews: 6,
+  activeJobs: 0,
+  totalApplications: 0,
+  totalViews: 0,
+  interviews: 0,
 });
-const { currentUser } = useAuth();
-const { createAnnonce ,fetchAnnonces} = useDb();
+
 
 // Le tableau myJobs mis à jour avec la nouvelle structure requise
 const myJobs = ref([
