@@ -134,7 +134,17 @@ const routes = [
       role: "candidat",
       title: "Mon profil",
     },
-  },
+  },{
+    path:'/candidat/job-requests',
+    component: ()=>import('../pages/candidat/JobRequest.vue'),
+    meta: {
+      layout: "DashboardLayout",
+      requiresAuth: true,
+      role: "candidat",
+      title: "Mes demandes d'emploi",
+    },
+  }
+  ,
   {
     path: "/candidat/settings",
     name: "CandidatSettings",
