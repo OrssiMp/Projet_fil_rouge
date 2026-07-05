@@ -1,46 +1,48 @@
 <template>
-  <div class="drawer  min-h-screen bg-base-200 text-base-content font-body-md select-none" :class="`lg:drawer-${SideBarStatut}`">
-
+  <div class="drawer min-h-screen bg-base-200 text-base-content font-body-md select-none lg:drawer-open">
     <input id="dashboard-drawer" type="checkbox" class="drawer-toggle" />
 
     <div class="drawer-content flex flex-col min-w-0">
-
-      <header class="navbar bg-base-100 border-b border-base-300 h-16 sticky top-0 z-40 px-4 md:px-8 justify-between">
+      <!-- Navbar Top Mobile & Desktop -->
+      <header class="navbar bg-base-100 border-b border-base-200 h-16 sticky top-0 z-40 px-4 md:px-8 justify-between shadow-sm">
         <div class="flex-none lg:hidden">
           <label for="dashboard-drawer" class="btn btn-square btn-ghost drawer-button">
-            <BaseIcon name="hamburger" class="text-xl" />
+            <i class="fa-solid fa-bars text-xl"></i>
           </label>
         </div>
 
         <div class="flex-1 lg:hidden pl-2">
-          <span class="text-xl font-black text-[#006643]">Mosalah</span>
+          <span class="text-xl font-black text-accent tracking-tight">Mosalah</span>
         </div>
 
-        <div class="hidden font-bold text-lg gap-1 text-base-content/80 lg:flex">
-          <BaseButton v-if="!SideBarStatut" icon='hamburger' size="sm" variant="ghost" class="" @click="SideBarStatut = 'open'"/>
+        <div class="hidden font-bold text-lg gap-2 text-base-content/80 lg:flex items-center">
+          <i class="fa-solid fa-briefcase text-accent/70"></i>
           Espace Candidat
         </div>
 
         <div class="flex-none gap-4">
-          <button class="btn btn-ghost btn-circle btn-sm relative">
-            <BaseIcon name="cloche" class="text-lg text-base-content/70" />
-            <span class="badge badge-xs badge-accent absolute top-1 right-1"></span>
+          <button class="btn btn-ghost btn-circle btn-sm relative hover:bg-base-200">
+            <i class="fa-regular fa-bell text-lg text-base-content/70"></i>
+            <span class="badge badge-xs bg-error border-none absolute top-0 right-0 animate-pulse"></span>
           </button>
 
           <div class="dropdown dropdown-end" v-if="currentUser">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar btn-sm border border-base-300">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar btn-sm border border-base-200 ring-2 ring-transparent hover:ring-accent/30 transition-all">
               <div class="w-8 h-8 rounded-full overflow-hidden bg-base-300 flex items-center justify-center">
-                <img v-if="currentUser.avatar" :src="currentUser.avatar" alt="Avatar"
-                  class="object-cover w-full h-full" />
-                <BaseIcon v-else name="user" class="text-base-content/60 text-xs" />
+                <img v-if="currentUser.avatar" :src="currentUser.avatar" alt="Avatar" class="object-cover w-full h-full" />
+                <span v-else class="text-xs font-bold">{{ userInitials }}</span>
               </div>
             </div>
-            <ul tabindex="0"
-              class="mt-3 z-[50] p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 border border-base-200 rounded-xl w-52">
-              <li><router-link to="/candidat/profile">Mon Profil</router-link></li>
-              <li><router-link to="/candidat/settings">Paramètres</router-link></li>
-              <div class="divider my-1"></div>
-              <li><button @click="logout" class="text-error font-semibold">Déconnexion</button></li>
+            <ul tabindex="0" class="mt-3 z-[50] p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 border border-base-200 rounded-2xl w-56">
+              <li class="menu-title px-4 py-2">
+                <span class="text-xs opacity-60">Connecté en tant que</span>
+                <span class="font-bold text-base-content">{{ currentUser.name }}</span>
+              </li>
+              <div class="divider my-0"></div>
+              <li><router-link to="/candidat/profile"><i class="fa-regular fa-user mr-2"></i> Mon Profil</router-link></li>
+              <li><router-link to="/candidat/settings"><i class="fa-solid fa-gear mr-2"></i> Paramètres</router-link></li>
+              <div class="divider my-0"></div>
+              <li><button @click="logout" class="text-error font-bold hover:bg-error/10"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Déconnexion</button></li>
             </ul>
           </div>
         </div>
@@ -51,130 +53,111 @@
       </main>
     </div>
 
+    <!-- Sidebar -->
     <div class="drawer-side z-[50]">
       <label for="dashboard-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-      <aside class="bg-base-100 border-r border-base-300 w-64 min-h-screen flex flex-col justify-between">
-
-        <div>
-          <div class="h-16 flex items-center justify-between px-6 border-b border-base-200">
+      <aside class="bg-base-100 border-r border-base-200 w-72 min-h-screen flex flex-col justify-between shadow-xl lg:shadow-none">
+        
+        <div class="overflow-y-auto pb-4 custom-scrollbar">
+          <div class="h-16 flex items-center justify-between px-6 border-b border-base-200 sticky top-0 bg-base-100 z-10">
             <div class="flex items-center gap-2">
-              <router-link to="/" class="text-2xl font-black tracking-tight text-[#006643]">
-                Mosalah
+              <router-link to="/" class="text-2xl font-black tracking-tighter text-accent">
+                Mosalah.
               </router-link>
-              <span class="badge badge-sm badge-accent font-bold text-[10px]">CANDIDAT</span>
-              <BaseButton variant="ghost" icon="close" size="sm" @click="SideBarStatut = close"></BaseButton>
+              <span class="badge badge-sm bg-accent/10 text-accent font-black border-none text-[9px] tracking-wider uppercase">Candidat</span>
             </div>
-            <label for="dashboard-drawer" aria-label="Fermer le sidebar" class="btn btn-square btn-ghost lg:hidden">
-              <BaseIcon name="close" class="text-lg" />
+            <label for="dashboard-drawer" class="btn btn-square btn-ghost btn-sm lg:hidden">
+              <i class="fa-solid fa-xmark text-lg"></i>
             </label>
           </div>
 
-          <div class="px-4 py-3 text-[11px] uppercase tracking-[0.24em] text-base-content/50 font-semibold">
-            Navigation
-          </div>
-
-          <ul class="menu p-4 gap-1.5 text-sm font-medium">
-            <li v-for="(item, index) in primaryMenu" :key="`primary-${index}`">
-              <router-link :to="item.to" v-slot="{ isActive }">
-                <div :class="[
-                  'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
-                  isActive ? 'bg-accent text-white font-bold shadow-md shadow-accent/20' : 'hover:bg-base-200'
-                ]">
-                  <BaseIcon :name="item.icon" class="text-lg shrink-0" />
-                  <span>{{ item.label }}</span>
-                </div>
+          <!-- Section 1 : Suivi -->
+          <div class="px-6 py-4 text-[10px] uppercase tracking-widest text-base-content/40 font-black mt-2">Mon Suivi</div>
+          <ul class="menu px-4 gap-1 text-sm font-semibold">
+            <li v-for="(item, index) in trackingMenu" :key="`track-${index}`">
+              <router-link :to="item.to" active-class="bg-accent/10 text-accent font-black">
+                <i :class="item.icon" class="w-5 text-center opacity-70"></i>
+                {{ item.label }}
+                <span v-if="item.badge" class="badge badge-sm bg-accent text-white border-none ml-auto">{{ item.badge }}</span>
               </router-link>
             </li>
           </ul>
 
-          <div class="px-4 py-3 text-[11px] uppercase tracking-[0.24em] text-base-content/50 font-semibold mt-4">
-            Explorer
-          </div>
+          <!-- Section 2 : Visibilité -->
+          <div class="px-6 py-4 text-[10px] uppercase tracking-widest text-base-content/40 font-black mt-2">Ma Visibilité</div>
+          <ul class="menu px-4 gap-1 text-sm font-semibold">
+            <li v-for="(item, index) in visibilityMenu" :key="`vis-${index}`">
+              <router-link :to="item.to" active-class="bg-accent/10 text-accent font-black">
+                <i :class="item.icon" class="w-5 text-center opacity-70"></i>
+                {{ item.label }}
+              </router-link>
+            </li>
+          </ul>
 
-          <ul class="menu p-4 gap-1.5 text-sm font-medium">
-            <li v-for="(item, index) in secondaryMenu" :key="`secondary-${index}`">
-              <router-link :to="item.to" v-slot="{ isActive }">
-                <div :class="[
-                  'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
-                  isActive ? 'bg-accent text-white font-bold shadow-md shadow-accent/20' : 'hover:bg-base-200'
-                ]">
-                  <BaseIcon :name="item.icon" class="text-lg shrink-0" />
-                  <span>{{ item.label }}</span>
-                </div>
+          <!-- Section 3 : Ressources -->
+          <div class="px-6 py-4 text-[10px] uppercase tracking-widest text-base-content/40 font-black mt-2">Mes Ressources</div>
+          <ul class="menu px-4 gap-1 text-sm font-semibold">
+            <li v-for="(item, index) in resourcesMenu" :key="`res-${index}`">
+              <router-link :to="item.to" active-class="bg-accent/10 text-accent font-black">
+                <i :class="item.icon" class="w-5 text-center opacity-70"></i>
+                {{ item.label }}
               </router-link>
             </li>
           </ul>
         </div>
 
-        <div class="p-4 border-t border-base-200 bg-base-200/30" v-if="currentUser">
+        <!-- User Footer -->
+        <div class="p-4 border-t border-base-200 bg-base-50 shrink-0">
           <div class="flex items-center gap-3 px-2 mb-3">
             <div class="avatar placeholder">
-              <div
-                class="bg-accent text-white rounded-xl w-9 h-9 font-bold text-sm overflow-hidden flex items-center justify-center">
-                <img v-if="currentUser.avatar" :src="currentUser.avatar" alt="Avatar"
-                  class="object-cover w-full h-full" />
+              <div class="bg-accent text-white rounded-xl w-10 h-10 font-black text-sm shadow-inner flex items-center justify-center">
+                <img v-if="currentUser?.avatar" :src="currentUser.avatar" alt="Avatar" class="object-cover w-full h-full" />
                 <span v-else>{{ userInitials }}</span>
               </div>
             </div>
             <div class="min-w-0">
-              <p class="text-xs font-bold truncate">{{ currentUser.name }}</p>
-              <p class="text-[11px] text-base-content/50 truncate">Recherche d'emploi</p>
+              <p class="text-sm font-black text-base-content truncate">{{ currentUser?.name || 'Utilisateur' }}</p>
+              <p class="text-[11px] font-semibold text-base-content/50 truncate">À la recherche d'opportunités</p>
             </div>
           </div>
-
-          <button @click="logout"
-            class="btn btn-ghost btn-sm w-full justify-start text-error hover:bg-error/10 rounded-xl gap-3 normal-case font-semibold">
-            <BaseIcon name="logout" class="text-base" />
-            <span>Déconnexion</span>
-          </button>
         </div>
 
       </aside>
     </div>
-
   </div>
 </template>
 
 <script setup>
-import { onMounted, computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuth } from '../composables/useAuth';
+import { computed } from 'vue';
 
-const SideBarStatut = ref('open'); // 'open' ou 'closed' pour le mode responsive
-const router = useRouter();
+const currentUser = { name: 'Orsi Mpiere', avatar: null }; // Mock
 
-// 🔌 Récupération directe des states globaux de notre composable
-const { currentUser, logout, isAuthenticated } = useAuth();
-
-// Sécurité au montage : redirige vers l'authentification si la session n'est pas présente
-onMounted(() => {
-  if (!isAuthenticated.value) {
-    console.warn('Utilisateur non authentifié. Redirection vers /login');
-    router.push('/login');
-  }
-});
-
-// Navigation principale du candidat
-const primaryMenu = [
-  { label: 'Tableau de bord', to: '/candidat/dashboard', icon: 'dashboard' },
-  { label: 'Mes candidatures', to: '/candidat/applications', icon: 'offre' },
-  { label: 'Messages', to: '/message', icon: 'message' },
-  { label: 'Mon profil', to: '/candidat/profile', icon: 'candidat' },
+const trackingMenu = [
+  { label: 'Mes candidatures', to: '/candidat/applications', icon: 'fa-solid fa-paper-plane' },
+  { label: 'Entretiens', to: '/candidat/interviews', icon: 'fa-regular fa-calendar-check', badge: '2' },
+  { label: 'Invitations', to: '/candidat/invitations', icon: 'fa-solid fa-envelope-open-text' },
+  { label: 'Historique', to: '/candidat/history', icon: 'fa-solid fa-clock-rotate-left' },
 ];
 
-// Liens complémentaires pour la recherche d'opportunités
-const secondaryMenu = [
-  { label: 'Toutes les offres', to: '/offres', icon: 'offre' },
-  { label: 'Toutes les entreprises', to: { name: 'Entreprises' }, icon: 'entreprise' },
-  { label: 'Paramètres', to: '/candidat/settings', icon: 'reglage' },
+const visibilityMenu = [
+  { label: 'Mes demandes d\'emploi', to: '/candidat/job-requests', icon: 'fa-solid fa-bullhorn' },
+  { label: 'Mon profil public', to: '/candidat/profile', icon: 'fa-solid fa-id-card-clip' },
 ];
 
-// Extraction et calcul des initiales à la volée depuis le store réactif
+const resourcesMenu = [
+  { label: 'Offres sauvegardées', to: '/candidat/saved', icon: 'fa-regular fa-bookmark' },
+  { label: 'Mes Documents', to: '/candidat/documents', icon: 'fa-solid fa-folder-open' },
+];
+
 const userInitials = computed(() => {
-  const userName = currentUser.value?.name;
-  if (!userName) return '??';
-  const parts = userName.trim().split(' ');
-  return parts.map((p) => p[0]).join('').toUpperCase().slice(0, 2);
+  return currentUser?.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() || '??';
 });
+const logout = () => console.log('logout');
 </script>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+</style>
