@@ -496,7 +496,8 @@
                         {{ form.title || "Titre de votre demande" }}
                       </h3>
                       <p class="text-sm font-bold text-accent mt-0.5">
-                        {{ currentUser?.name ? currentUser.name + " • " : "" }}{{ form.job || "Métier" }}
+                        {{ currentUser?.name ? currentUser.name + " • " : ""
+                        }}{{ form.job || "Métier" }}
                       </p>
                     </div>
                   </div>
@@ -692,6 +693,9 @@
 
           <button
             v-if="currentStep === 4"
+            @click="publishJobRequest"
+            :class="loading ? 'loading' : ''"
+            :disabled="loading"
             class="btn bg-accent text-white border-none shadow-lg shadow-accent/30 hover:bg-accent-focus font-black w-full sm:w-auto px-8 animate-bounce-short"
           >
             <i class="fa-solid fa-rocket mr-2"></i> Publier ma demande
@@ -705,9 +709,11 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useAuth } from "../../composables/useAuth";
+import { useDb } from "../../composables/useDb";
 
 const currentStep = ref(1);
 const { currentUser } = useAuth();
+const { createDemandeEmploi, loading, error } = useDb();
 const steps = [
   { title: "Général" },
   { title: "Parcours" },
@@ -753,6 +759,53 @@ const completionProgress = computed(() => {
   else if (form.value.skills.length > 0) score += 10;
   return score > 100 ? 100 : score;
 });
+
+const publishJobRequest = async () => {
+  if (!currentUser.value?.id) {
+    alert("Vous devez être connecté pour publier une demande.");
+    return;
+  }
+
+  if (!form.value.title || !form.value.job) {
+    alert("Veuillez remplir au moins le titre et le métier recherché.");
+    return;
+  }
+
+  try {
+    const newDemande = await createDemandeEmploi({
+      candidatId: currentUser.value.id,
+      title: form.value.title,
+      job: form.value.job,
+      sector: form.value.sector,
+      location: form.value.location,
+      mobility: form.value.mobility,
+      availability: form.value.availability,
+      presentation: form.value.presentation,
+      skills: form.value.skills,
+    });
+
+    if (newDemande) {
+      alert("Votre demande d'emploi a été publiée avec succès !");
+      // Réinitialiser le formulaire
+      form.value = {
+        title: "",
+        job: "",
+        sector: "",
+        location: "",
+        mobility: false,
+        availability: "Immédiate",
+        presentation: "",
+        skills: [{ name: "JavaScript", level: "Confirmé" }],
+      };
+      currentStep.value = 1;
+    } else {
+      alert("Une erreur est survenue lors de la publication.");
+    }
+  } catch (err) {
+    console.error("Erreur lors de la publication:", err);
+    alert("Une erreur est survenue. Veuillez réessayer.");
+  }
+};
 </script>
 
 <style scoped>
