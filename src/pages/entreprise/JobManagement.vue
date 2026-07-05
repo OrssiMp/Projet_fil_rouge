@@ -31,7 +31,7 @@
       </BaseButton>
     </div>
 
-    <!-- SECTION STATISTIQUES (STATS DES OFFRES VIA BASECARD) -->
+    <!-- SECTION STATISTIQUES -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <BaseCard density="normal" class="bg-white border border-base-200">
         <p
@@ -130,7 +130,7 @@
           >
             <!-- Détails de l'offre -->
             <div class="flex-grow text-left">
-              <div class="flex items-center gap-3 mb-2 flex-wrap">
+              <div class="flex items-center gap-3 mb-1 flex-wrap">
                 <h3 class="text-lg font-black text-base-content tracking-tight">
                   {{ job.title }}
                 </h3>
@@ -143,24 +143,53 @@
                 >
                   {{ job.status }}
                 </BaseBadge>
+
+                <!-- Badge Highlight si renseigné -->
+                <span
+                  v-if="job.highlight"
+                  class="badge badge-sm bg-purple-100 text-purple-700 border-none font-bold text-[10px] ml-2"
+                >
+                  ✨ {{ job.highlight }}
+                </span>
               </div>
 
+              <!-- Informations sur l'entreprise -->
+              <div class="text-sm font-bold text-base-content/80 mb-2">
+                {{ job.company }}
+                <span
+                  v-if="job.companyTag"
+                  class="text-xs text-base-content/50 font-medium ml-1"
+                >
+                  &bull; {{ job.companyTag }}
+                </span>
+              </div>
+
+              <!-- Tags techniques de l'annonce -->
               <div
-                class="flex flex-wrap items-center gap-4 text-xs text-base-content/60 font-semibold"
+                class="flex flex-wrap items-center gap-4 text-xs text-base-content/60 font-semibold mb-2"
               >
                 <BaseBadge
                   class="bg-base-200/60 text-base-content/80 border-transparent font-bold"
                 >
-                  {{ job.type }}
+                  {{ job.contractType }}
                 </BaseBadge>
+                <span class="flex items-center gap-1"
+                  >📁 {{ job.category }}</span
+                >
                 <span class="flex items-center gap-1"
                   >📍 {{ job.location }}</span
                 >
                 <span class="flex items-center gap-1">💰 {{ job.salary }}</span>
                 <span class="flex items-center gap-1"
-                  >⏳ Publié le {{ job.createdAt }}</span
+                  >⏳ {{ job.postedAt || `Publié le ${job.createdAt}` }}</span
                 >
               </div>
+
+              <p
+                class="text-xs text-base-content/60 max-w-3xl line-clamp-2 leading-relaxed"
+              >
+                {{ job.description }}
+              </p>
             </div>
 
             <!-- Indicateurs statistiques propres à la carte -->
@@ -226,18 +255,17 @@
       </BaseCard>
     </div>
 
-    <!-- MODAL / FORMULAIRE DE PUBLICATION (PROPULSÉ PAR BASEFORM) -->
+    <!-- MODAL / FORMULAIRE DE PUBLICATION -->
     <div
       v-if="showPublishModal"
       class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
     >
       <BaseCard
         density="spacious"
-        class="bg-white border border-base-300 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto"
+        class="bg-white border border-base-300 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
         data-aos="zoom-in"
         data-aos-duration="150"
       >
-        <!-- En-tête personnalisée du modal via Slot Header -->
         <template #header>
           <div class="flex items-center justify-between w-full mb-2">
             <h2 class="text-xl font-black text-base-content tracking-tight">
@@ -254,7 +282,7 @@
           </div>
         </template>
 
-        <!-- Corps du formulaire avec BaseForm -->
+        <!-- Corps du formulaire avec champs enrichis -->
         <BaseForm
           cols="1"
           :error="formError"
@@ -264,11 +292,31 @@
           <BaseInput
             v-model="form.title"
             label="Titre du poste *"
-            placeholder="Ex: Développeur Full-Stack JavaScript (MERN)"
+            placeholder="Ex: Analyste Financier"
             icon="dashboard"
             required
           />
 
+          <!-- Entreprise & Tag de l'entreprise -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <BaseInput
+              v-model="form.company"
+              label="Nom de l'entreprise *"
+              placeholder="Ex: Banque du Congo"
+              icon="entreprise"
+              :value="form.company"
+              required
+            />
+            <BaseInput
+              v-model="form.companyTag"
+              label="Secteur d'activité *"
+              placeholder="Ex: Finance"
+              icon="tag"
+              required
+            />
+          </div>
+
+          <!-- Type de contrat & Catégorie -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="flex flex-col">
               <label
@@ -276,7 +324,7 @@
                 >Type de contrat *</label
               >
               <select
-                v-model="form.type"
+                v-model="form.contractType"
                 required
                 class="select select-bordered w-full rounded-xl text-sm font-medium bg-white border-base-300 focus:outline-none focus:border-[#006643] h-11 min-h-0"
               >
@@ -288,20 +336,48 @@
               </select>
             </div>
 
+            <div class="flex flex-col">
+              <label
+                class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5"
+                >Catégorie *</label
+              >
+              <select
+                v-model="form.category"
+                required
+                class="select select-bordered w-full rounded-xl text-sm font-medium bg-white border-base-300 focus:outline-none focus:border-[#006643] h-11 min-h-0"
+              >
+                <option value="" disabled>Sélectionner...</option>
+                <option value="Finance">Finance</option>
+                <option value="IT & Tech">IT & Tech</option>
+                <option value="Design">Design</option>
+                <option value="Marketing">Marketing</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Lieu & Salaire -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <BaseInput
               v-model="form.location"
               label="Lieu de travail *"
-              placeholder="Ex: Brazzaville, Centre-ville"
-              icon="entreprise"
+              placeholder="Ex: Brazzaville"
+              icon="localisation"
               required
+            />
+            <BaseInput
+              v-model="form.salary"
+              label="Rémunération / Salaire"
+              placeholder="Ex: 2 100 000 FCFA"
+              icon="validation"
             />
           </div>
 
+          <!-- Champ d'accroche (Highlight) -->
           <BaseInput
-            v-model="form.salary"
-            label="Rémunération / Salaire"
-            placeholder="Ex: 350.000 FCFA ou 'À débattre'"
-            icon="validation"
+            v-model="form.highlight"
+            label="Mise en avant (Optionnel)"
+            placeholder="Ex: Accès prioritaire aux candidats qualifiés"
+            icon="star"
           />
 
           <div class="flex flex-col">
@@ -311,7 +387,7 @@
             >
             <textarea
               v-model="form.description"
-              rows="4"
+              rows="3"
               required
               placeholder="Décrivez les missions du poste, l'environnement de travail et le profil recherché..."
               class="textarea textarea-bordered w-full rounded-xl text-sm font-medium bg-white border-base-300 focus:outline-none focus:border-[#006643] leading-relaxed p-3"
@@ -328,7 +404,6 @@
             </p>
           </div>
 
-          <!-- Actions inférieures via le Slot Actions de BaseForm -->
           <template #actions>
             <div class="flex items-center justify-end gap-2 w-full mt-2">
               <BaseButton
@@ -359,6 +434,8 @@
 
 <script setup>
 import { ref } from "vue";
+import { useDb } from "../../composables/useDb";
+import { useAuth } from "../../composables/useAuth";
 
 const showPublishModal = ref(false);
 const isSubmitting = ref(false);
@@ -367,33 +444,48 @@ const formSuccess = ref("");
 
 // Statistiques globales du tableau de bord recruteur
 const stats = ref({
-  activeJobs: 3,
-  totalApplications: 48,
-  totalViews: 1024,
+  activeJobs: 4,
+  totalApplications: 8,
+  totalViews: 10,
   interviews: 6,
 });
+const { currentUser } = useAuth();
+const { fetchAnnonces, getAnnonceById } = useDb();
 
-// Liste réactive des annonces publiées par l'entreprise
+
+const announces = ref([]);
+// Le tableau myJobs mis à jour avec la nouvelle structure requise
 const myJobs = ref([
   {
     id: 1,
-    title: "Développeur Full-Stack JavaScript (MERN)",
-    type: "CDI",
-    location: "Brazzaville, Centre-ville",
-    salary: "À débattre",
-    createdAt: "22/06/2026",
+    title: "Analyste Financier",
+    company: "Banque du Congo",
+    companyTag: "Finance",
+    contractType: "CDI",
+    category: "Finance",
+    location: "Brazzaville",
+    salary: "2 100 000 FCFA",
+    description:
+      "Expert en modélisation financière ? Rejoignez notre département d’investissement pour des projets stratégiques.",
+    highlight: "Accès prioritaire aux candidats qualifiés",
+    postedAt: "Il y a 4 jours",
+    createdAt: "01/07/2026",
     status: "Actif",
-    views: 412,
-    applications: 0,
+    views: 1240,
+    applications: 24,
   }
 ]);
 
-// Initialisation propre de la structure du formulaire
+// Initialisation de la structure du formulaire alignée sur les nouvelles propriétés
 const initialForm = {
   title: "",
-  type: "",
+  company: currentUser.value?.name || "",
+  companyTag: "",
+  contractType: "",
+  category: "",
   location: "",
   salary: "",
+  highlight: "",
   description: "",
 };
 
@@ -406,16 +498,18 @@ const closeModal = () => {
   form.value = { ...initialForm };
 };
 
-// Soumission et validation du formulaire via BaseForm
+// Soumission du formulaire
 const handlePublishSubmit = () => {
   formError.value = "";
   formSuccess.value = "";
 
   if (
     !form.value.title ||
-    !form.value.type ||
+    !form.value.contractType ||
     !form.value.location ||
-    !form.value.description
+    !form.value.description ||
+    !form.value.company ||
+    !form.value.category
   ) {
     formError.value =
       "Veuillez remplir correctement tous les champs obligatoires (*).";
@@ -424,22 +518,43 @@ const handlePublishSubmit = () => {
 
   isSubmitting.value = true;
 
-  // Simulation d'une latence d'API réseau pour déclencher l'état :loading du BaseButton
+  // Simulation d'une requête API
   setTimeout(() => {
     const currentDate = new Date().toLocaleDateString("fr-FR");
 
     myJobs.value.unshift({
       id: Date.now(),
       title: form.value.title,
-      type: form.value.type,
+      company: form.value.company,
+      companyTag: form.value.companyTag,
+      contractType: form.value.contractType,
+      category: form.value.category,
       location: form.value.location,
       salary: form.value.salary || "À débattre",
+      description: form.value.description,
+      highlight: form.value.highlight,
+      postedAt: "À l'instant",
       createdAt: currentDate,
       status: "Actif",
       views: 0,
       applications: 0,
     });
-
+    createAnnonce({
+      title: form.value.title,
+      company: form.value.company,
+      companyTag: form.value.companyTag,
+      contractType: form.value.contractType,
+      category: form.value.category,
+      location: form.value.location,
+      salary: form.value.salary || "À débattre",
+      description: form.value.description,
+      highlight: form.value.highlight,
+      postedAt: "À l'instant",
+      status: "Actif",
+      views: 0,
+      applications: 0,
+    });
+    myJobs.value.unshift()
     stats.value.activeJobs += 1;
     isSubmitting.value = false;
 
