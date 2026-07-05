@@ -46,6 +46,37 @@ export function useDb() {
   const simulateNetwork = () =>
     new Promise((resolve) => setTimeout(resolve, 500));
 
+  // Générateur d'ID simple et prédictible pour les tests
+  let annonceCounter = parseInt(
+    localStorage.getItem("mosalah_annonce_counter") || "1000",
+  );
+  const generateAnnonceId = () => {
+    annonceCounter++;
+    localStorage.setItem("mosalah_annonce_counter", annonceCounter.toString());
+    return `ann_${annonceCounter}`;
+  };
+
+  let candidatureCounter = parseInt(
+    localStorage.getItem("mosalah_candidature_counter") || "1000",
+  );
+  const generateCandidatureId = () => {
+    candidatureCounter++;
+    localStorage.setItem(
+      "mosalah_candidature_counter",
+      candidatureCounter.toString(),
+    );
+    return `cand_${candidatureCounter}`;
+  };
+
+  let demandeCounter = parseInt(
+    localStorage.getItem("mosalah_demande_counter") || "1000",
+  );
+  const generateDemandeId = () => {
+    demandeCounter++;
+    localStorage.setItem("mosalah_demande_counter", demandeCounter.toString());
+    return `dem_${demandeCounter}`;
+  };
+
   // --- 1. GESTION DES UTILISATEURS ---
 
   /**
@@ -90,7 +121,7 @@ export function useDb() {
       await simulateNetwork();
       const currentAnnonces = getLocal("mosalah_database_annonces");
       const newAnnonce = {
-        id: `ann_${Date.now()}`,
+        id: generateAnnonceId(),
         ...annonceData,
         createdAt: new Date().toLocaleDateString("fr-FR"),
       };
@@ -206,7 +237,7 @@ export function useDb() {
       }
 
       const newCandidature = {
-        id: `cand_${Date.now()}`,
+        id: generateCandidatureId(),
         ...candidatureData,
         createdAt: new Date().toLocaleDateString("fr-FR"),
       };
@@ -262,7 +293,7 @@ export function useDb() {
       await simulateNetwork();
       const currentDemandes = getLocal("mosalah_database_demandes");
       const newDemande = {
-        id: `dem_${Date.now()}`,
+        id: generateDemandeId(),
         ...demandeData,
         createdAt: new Date().toLocaleDateString("fr-FR"),
       };

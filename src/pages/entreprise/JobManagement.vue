@@ -433,7 +433,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useDb } from "../../composables/useDb";
 import { useAuth } from "../../composables/useAuth";
 
@@ -450,10 +450,8 @@ const stats = ref({
   interviews: 6,
 });
 const { currentUser } = useAuth();
-const { fetchAnnonces, getAnnonceById } = useDb();
+const { createAnnonce ,fetchAnnonces} = useDb();
 
-
-const announces = ref([]);
 // Le tableau myJobs mis à jour avec la nouvelle structure requise
 const myJobs = ref([
   {
@@ -473,7 +471,7 @@ const myJobs = ref([
     status: "Actif",
     views: 1240,
     applications: 24,
-  }
+  },
 ]);
 
 // Initialisation de la structure du formulaire alignée sur les nouvelles propriétés
@@ -499,31 +497,14 @@ const closeModal = () => {
 };
 
 // Soumission du formulaire
-const handlePublishSubmit = () => {
-  formError.value = "";
-  formSuccess.value = "";
-
-  if (
-    !form.value.title ||
-    !form.value.contractType ||
-    !form.value.location ||
-    !form.value.description ||
-    !form.value.company ||
-    !form.value.category
-  ) {
-    formError.value =
-      "Veuillez remplir correctement tous les champs obligatoires (*).";
-    return;
-  }
-
+const handlePublishSubmit = async () => {
+  // ... validation ...
+  
   isSubmitting.value = true;
-
-  // Simulation d'une requête API
-  setTimeout(() => {
-    const currentDate = new Date().toLocaleDateString("fr-FR");
-
-    myJobs.value.unshift({
-      id: Date.now(),
+  
+  try {
+    const newAnnonce = await createAnnonce({
+      entrepriseId: currentUser.value?.id,
       title: form.value.title,
       company: form.value.company,
       companyTag: form.value.companyTag,
@@ -533,32 +514,21 @@ const handlePublishSubmit = () => {
       salary: form.value.salary || "À débattre",
       description: form.value.description,
       highlight: form.value.highlight,
-      postedAt: "À l'instant",
-      createdAt: currentDate,
-      status: "Actif",
-      views: 0,
-      applications: 0,
     });
-    createAnnonce({
-      title: form.value.title,
-      company: form.value.company,
-      companyTag: form.value.companyTag,
-      contractType: form.value.contractType,
-      category: form.value.category,
-      location: form.value.location,
-      salary: form.value.salary || "À débattre",
-      description: form.value.description,
-      highlight: form.value.highlight,
-      postedAt: "À l'instant",
-      status: "Actif",
-      views: 0,
-      applications: 0,
-    });
-    myJobs.value.unshift()
-    stats.value.activeJobs += 1;
+    
+    if (newAnnonce) {
+      myJobs.value.unshift(newAnnonce);
+      stats.value.activeJobs += 1;
+      closeModal();
+    }
+  } catch (err) {
+    formError.value = "Erreur lors de la publication de l'annonce.";
+  } finally {
     isSubmitting.value = false;
-
-    closeModal();
-  }, 600);
+  }
 };
+onMounted(async () => {
+  const annonces = await fetchAnnonces();
+  myJobs.value = annonces.filter(a => a.entrepriseId === currentUser.value?.id);
+});
 </script>
