@@ -26,17 +26,17 @@
             <span class="badge badge-xs bg-error border-none absolute top-0 right-0 animate-pulse"></span>
           </button>
 
-          <div class="dropdown dropdown-end" v-if="currentUser">
+          <div class="dropdown dropdown-end" v-if="user">
             <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar btn-sm border border-base-200 ring-2 ring-transparent hover:ring-accent/30 transition-all">
               <div class="w-8 h-8 rounded-full overflow-hidden bg-base-300 flex items-center justify-center">
-                <img v-if="currentUser.avatar" :src="currentUser.avatar" alt="Avatar" class="object-cover w-full h-full" />
+                <img v-if="user.avatar" :src="user.avatar" alt="Avatar" class="object-cover w-full h-full" />
                 <span v-else class="text-xs font-bold">{{ userInitials }}</span>
               </div>
             </div>
             <ul tabindex="0" class="mt-3 z-[50] p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 border border-base-200 rounded-2xl w-56">
               <li class="menu-title px-4 py-2">
                 <span class="text-xs opacity-60">Connecté en tant que</span>
-                <span class="font-bold text-base-content">{{ currentUser.name }}</span>
+                <span class="font-bold text-base-content">{{ user.name }}</span>
               </li>
               <div class="divider my-0"></div>
               <li><router-link to="/candidat/profile"><i class="fa-regular fa-user mr-2"></i> Mon Profil</router-link></li>
@@ -112,12 +112,12 @@
           <div class="flex items-center gap-3 px-2 mb-3">
             <div class="avatar placeholder">
               <div class="bg-accent text-white rounded-xl w-10 h-10 font-black text-sm shadow-inner flex items-center justify-center">
-                <img v-if="currentUser?.avatar" :src="currentUser.avatar" alt="Avatar" class="object-cover w-full h-full" />
+                <img v-if="user?.avatar" :src="user.avatar" alt="Avatar" class="object-cover w-full h-full" />
                 <span v-else>{{ userInitials }}</span>
               </div>
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-black text-base-content truncate">{{ currentUser?.name || 'Utilisateur' }}</p>
+              <p class="text-sm font-black text-base-content truncate">{{ user?.name || 'Utilisateur' }}</p>
               <p class="text-[11px] font-semibold text-base-content/50 truncate">À la recherche d'opportunités</p>
             </div>
           </div>
@@ -130,13 +130,15 @@
 
 <script setup>
 import { computed } from 'vue';
-
-const currentUser = { name: 'Orsi Mpiere', avatar: null }; // Mock
+import { useAuth } from '../composables/useAuth';
+const { isAuthenticated, currentUser } = useAuth();
+const user = currentUser.value || { name: 'Orsi Mpiere', avatar: null }; // Mock
 
 const trackingMenu = [
   { label: 'Mes candidatures', to: '/candidat/applications', icon: 'fa-solid fa-paper-plane' },
   { label: 'Entretiens', to: '/candidat/interviews', icon: 'fa-regular fa-calendar-check', badge: '2' },
   { label: 'Invitations', to: '/candidat/invitations', icon: 'fa-solid fa-envelope-open-text' },
+  { label: 'Messages', to: 'message', icon: 'fa-solid fa-message' },
   { label: 'Historique', to: '/candidat/history', icon: 'fa-solid fa-clock-rotate-left' },
 ];
 
@@ -148,10 +150,15 @@ const visibilityMenu = [
 const resourcesMenu = [
   { label: 'Offres sauvegardées', to: '/candidat/saved', icon: 'fa-regular fa-bookmark' },
   { label: 'Mes Documents', to: '/candidat/documents', icon: 'fa-solid fa-folder-open' },
+  { label: 'Paramètre', to: '/candidat/settings', icon: 'fa-solid fa-gear' }
 ];
 
+
+
+
+
 const userInitials = computed(() => {
-  return currentUser?.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() || '??';
+  return user?.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() || '??';
 });
 const logout = () => console.log('logout');
 </script>
