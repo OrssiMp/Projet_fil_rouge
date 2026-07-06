@@ -295,8 +295,13 @@ const trackingMenu = [
 
 const visibilityMenu = [
   {
-    label: "Mes demandes d'emploi",
+    label: "Créer une demande d'emploi",
     to: "/candidat/job-requests",
+    icon: "fa-solid fa-bullhorn",
+  },
+  {
+    label: "Les offres d'emploi",
+    to: "/offres",
     icon: "fa-solid fa-bullhorn",
   },
   {

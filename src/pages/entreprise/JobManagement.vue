@@ -515,6 +515,7 @@ const handlePublishSubmit = async () => {
       salary: form.value.salary || "À débattre",
       description: form.value.description,
       highlight: form.value.highlight,
+      
     });
     
     if (newAnnonce) {
