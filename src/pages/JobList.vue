@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-base-200/40 pb-16 select-none flex flex-col">
+  <div class="min-h-screen bg-base-200/40 pb-16 flex flex-col">
     <header class="bg-white border-b border-base-200 py-10 px-4">
       <div class="max-w-7xl mx-auto">
         <h1 class="text-3xl font-black text-base-content tracking-tight mb-6">
@@ -10,34 +10,31 @@
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-3 bg-white">
-          <div
-            class="md:col-span-5 flex items-center bg-base-100 rounded-xl px-3 border border-base-300"
-          >
+          <div class="md:col-span-5 flex items-center bg-base-100 rounded-xl px-3 border border-base-300">
             <span class="opacity-40 text-sm">🔍</span>
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Poste ou compétence"
+              placeholder="Poste, entreprise ou compétence"
               class="w-full bg-transparent p-3 text-sm font-medium text-base-content placeholder-base-content/40 focus:outline-none"
             />
           </div>
 
-          <div
-            class="md:col-span-5 flex items-center bg-base-100 rounded-xl px-3 border border-base-300"
-          >
+          <div class="md:col-span-5 flex items-center bg-base-100 rounded-xl px-3 border border-base-300">
             <span class="opacity-40 text-sm">📍</span>
             <input
               v-model="locationQuery"
               type="text"
-              placeholder="Localisation"
+              placeholder="Localisation (ex: Brazzaville)"
               class="w-full bg-transparent p-3 text-sm font-medium text-base-content placeholder-base-content/40 focus:outline-none"
             />
           </div>
 
           <button
+            @click="resetFilters"
             class="md:col-span-2 btn btn-md bg-emerald-500 hover:bg-emerald-600 border-none text-white font-bold rounded-xl h-full"
           >
-            Rechercher
+            Réinitialiser
           </button>
         </div>
       </div>
@@ -45,30 +42,27 @@
 
     <main class="max-w-7xl w-full mx-auto px-4 mt-8 flex-grow">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <aside class="lg:col-span-3 flex flex-col gap-5 text-left">
+        <!-- Barre latérale des filtres -->
+        <aside class="lg:col-span-3 flex flex-col gap-5 text-left bg-white p-5 rounded-2xl border border-base-200">
           <h2 class="text-lg font-black text-base-content tracking-tight mb-1">
             Filtres
           </h2>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-base-content/70"
-              >Type de contrat</label
-            >
+            <label class="text-xs font-semibold text-base-content/70">Type de contrat</label>
             <select
               v-model="filters.type"
               class="select select-bordered w-full rounded-xl bg-white text-sm font-medium border-base-300 focus:outline-none"
             >
               <option value="all">Tous les types</option>
               <option value="CDI">CDI</option>
-              <option value="CDD">CDD (6 mois)</option>
+              <option value="CDD">CDD</option>
               <option value="Stage">Stage</option>
             </select>
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-base-content/70"
-              >Secteur d'activité</label
-            >
+            <label class="text-xs font-semibold text-base-content/70">Secteur d'activité</label>
             <select
               v-model="filters.sector"
               class="select select-bordered w-full rounded-xl bg-white text-sm font-medium border-base-300 focus:outline-none"
@@ -81,9 +75,7 @@
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-base-content/70"
-              >Localisation</label
-            >
+            <label class="text-xs font-semibold text-base-content/70">Région</label>
             <select
               v-model="filters.region"
               class="select select-bordered w-full rounded-xl bg-white text-sm font-medium border-base-300 focus:outline-none"
@@ -94,161 +86,47 @@
               <option value="Remote">100% Remote</option>
             </select>
           </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-base-content/70"
-              >Date de publication</label
-            >
-            <select
-              v-model="filters.date"
-              class="select select-bordered w-full rounded-xl bg-white text-sm font-medium border-base-300 focus:outline-none"
-            >
-              <option value="all">Toute date</option>
-              <option value="recent">Moins d'une semaine</option>
-            </select>
-          </div>
         </aside>
 
+        <!-- Liste des offres -->
         <section class="lg:col-span-9 flex flex-col gap-4">
-          <div
-            class="text-xs font-bold text-base-content/60 text-left px-1 mb-1"
-          >
-            {{ filteredJobs.length }} offres trouvées
+          <div class="text-xs font-bold text-base-content/60 text-left px-1 mb-1">
+            {{ filteredJobs.length }} {{ filteredJobs.length > 1 ? 'offres trouvées' : 'offre trouvée' }}
           </div>
 
-          <div v-if="filteredJobs.length > 0" class="flex flex-col gap-4">
-            <BaseCard
+          <div v-if="loading" class="flex justify-center items-center py-12">
+            <span class="loading loading-spinner loading-lg text-emerald-500"></span>
+          </div>
+
+          <div
+            v-else-if="filteredJobs.length > 0"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          >
+            <JobCard
               v-for="job in filteredJobs"
               :key="job.id"
-              density="normal"
-              class="border-base-200 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.01)] hover:shadow-md transition-all duration-200"
-            >
-              <div
-                class="flex flex-col sm:flex-row justify-between items-start gap-4 w-full text-left"
-              >
-                <div class="flex items-start gap-4">
-                  <div
-                    class="w-12 h-12 rounded-xl bg-base-200/60 flex items-center justify-center border border-base-200 shrink-0"
-                  >
-                    <span v-if="job.sector === 'Tech'" class="text-xl">🏢</span>
-                    <span v-else-if="job.sector === 'Data'" class="text-xl"
-                      >🔷</span
-                    >
-                    <span v-else class="text-xl">📢</span>
-                  </div>
-
-                  <div class="flex flex-col gap-1">
-                    <div class="flex flex-wrap items-center gap-3">
-                      <h3
-                        class="text-lg font-black text-base-content tracking-tight"
-                      >
-                        {{ job.title }}
-                      </h3>
-                      <span
-                        v-if="job.hasApplied"
-                        class="badge border border-emerald-500 bg-emerald-50 text-emerald-700 font-bold text-[10px] px-2 py-2 uppercase flex items-center gap-0.5"
-                      >
-                        ✓ Postulé
-                      </span>
-                    </div>
-
-                    <p class="text-xs font-bold text-base-content/50 -mt-0.5">
-                      {{ job.company }}
-                    </p>
-
-                    <div class="flex flex-wrap gap-2 mt-1.5 text-xs font-bold">
-                      <span
-                        class="bg-base-200/80 text-base-content/70 px-2.5 py-1 rounded-md border border-base-300/30"
-                      >
-                        📍 {{ job.location }}
-                      </span>
-                      <span
-                        class="bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md border border-emerald-100"
-                      >
-                        💼 {{ job.type }}
-                      </span>
-                    </div>
-
-                    <p
-                      class="text-xs md:text-sm text-base-content/70 font-medium leading-relaxed mt-2 max-w-2xl"
-                    >
-                      {{ job.shortDescription }}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  class="flex flex-col justify-between items-end h-full self-stretch justify-self-end shrink-0 pt-1"
-                >
-                  <span
-                    class="text-[11px] font-semibold text-base-content/40 whitespace-nowrap mb-6 sm:mb-0"
-                  >
-                    Il y a {{ job.postedAt }}
-                  </span>
-
-                  <router-link
-                    :to="
-                      job.hasApplied
-                        ? `/offres/${job.id}/candidature`
-                        : `/offres/${job.id}`
-                    "
-                  >
-                    <BaseButton
-                      :variant="job.hasApplied ? 'ghost' : 'accent'"
-                      class="w-full sm:w-auto text-xs h-10 px-4 border border-base-300 font-bold shadow-sm"
-                    >
-                      {{
-                        job.hasApplied ? "Voir ma candidature" : "Voir l'offre"
-                      }}
-                    </BaseButton>
-                  </router-link>
-                </div>
-              </div>
-            </BaseCard>
+              :job="job"
+              :id="job.id"
+            />
           </div>
 
-          <BaseCard
+          <div
             v-else
-            class="text-center py-12 text-base-content/50 font-medium bg-white"
+            class="text-center py-12 text-base-content/50 font-medium bg-white rounded-2xl border border-base-200"
           >
             Aucun poste ne correspond à vos critères de recherche actuels.
-          </BaseCard>
+          </div>
 
+          <!-- Pagination (Statique) -->
           <div
-            v-if="filteredJobs.length > 0"
+            v-if="filteredJobs.length > 0 && !loading"
             class="flex justify-center items-center gap-1 mt-8"
           >
-            <button
-              class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-2 rounded-lg"
-            >
-              ‹
-            </button>
-            <button
-              class="btn btn-sm bg-emerald-500 hover:bg-emerald-600 border-none text-white font-bold px-3 rounded-lg"
-            >
-              1
-            </button>
-            <button
-              class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-3 rounded-lg"
-            >
-              2
-            </button>
-            <button
-              class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-3 rounded-lg"
-            >
-              3
-            </button>
+            <button class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-2 rounded-lg">‹</button>
+            <button class="btn btn-sm bg-emerald-500 hover:bg-emerald-600 border-none text-white font-bold px-3 rounded-lg">1</button>
+            <button class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-3 rounded-lg">2</button>
             <span class="text-xs px-1 text-base-content/40">...</span>
-            <button
-              class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-3 rounded-lg"
-            >
-              8
-            </button>
-            <button
-              class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-2 rounded-lg"
-            >
-              ›
-            </button>
+            <button class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-2 rounded-lg">›</button>
           </div>
         </section>
       </div>
@@ -260,9 +138,13 @@
 import { ref, reactive, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useAuth } from "../composables/useAuth";
+import { useDb } from "../composables/useDb";
+import JobCard from "../components/JobCard.vue";
 
 const route = useRoute();
 const { currentUser } = useAuth();
+const { fetchAnnonces, annonces, fetchUsers, users, loading } = useDb();
+
 const searchQuery = ref(route.query.q || "");
 const locationQuery = ref("");
 
@@ -270,136 +152,126 @@ const filters = reactive({
   type: "all",
   sector: "all",
   region: "all",
-  date: "all",
 });
 
-// Charger les annonces depuis localStorage
-const allAnnonces = ref([]);
-const allUsers = ref([]);
-const allCandidatures = ref([]);
-
-onMounted(() => {
-  allAnnonces.value = JSON.parse(
-    localStorage.getItem("mosalah_database_annonces") || "[]",
-  );
-  allUsers.value = JSON.parse(
-    localStorage.getItem("mosalah_database_users") || "[]",
-  );
-  allCandidatures.value = JSON.parse(
-    localStorage.getItem("mosalah_database_candidatures") || "[]",
-  );
+onMounted(async () => {
+  // Chargement propre des données via ton composable de base de données
+  await fetchUsers();
+  await fetchAnnonces();
 });
 
-// Données mockées alignées fidèlement sur l'image envoyée
+// Données statiques locales alignées sur les filtres réels
 const mockJobs = ref([
   {
-    id: 1,
+    id: "mock_1",
     title: "Développeur Fullstack React/Node.js",
     company: "TechNova Solutions",
-    location: "Paris (Hybride)",
+    location: "Brazzaville (Hybride)",
     region: "Brazzaville",
     type: "CDI",
     sector: "Tech",
     postedAt: "2 jours",
-    hasApplied: true,
-    shortDescription:
-      "Nous recherchons un développeur Fullstack expérimenté pour rejoindre notre équipe produit. Vous travaillerez sur des applications web à fort trafic, en utilisant les dernières technologies de l'écosystème...",
+    salary: "À débattre",
+    description: "Nous recherchons un développeur Fullstack expérimenté pour rejoindre notre équipe produit...",
+    shortDescription: "Nous recherchons un développeur Fullstack expérimenté...",
+    hasApplied: false,
   },
   {
-    id: 2,
+    id: "mock_2",
     title: "Data Analyst Senior",
     company: "FinData Partners",
-    location: "Lyon",
+    location: "Pointe-Noire",
     region: "Pointe-Noire",
     type: "CDI",
     sector: "Data",
     postedAt: "4 jours",
+    salary: "À débattre",
+    description: "En tant que Data Analyst Senior, vous accompagnerez nos clients dans la compréhension de leurs données financières...",
+    shortDescription: "En tant que Data Analyst Senior, vous accompagnerez nos clients...",
     hasApplied: false,
-    shortDescription:
-      "En tant que Data Analyst Senior, vous accompagnerez nos clients dans la compréhension de leurs données financières. Maîtrise de SQL, Python et des outils de BI (Tableau, PowerBI) indispensable.",
   },
   {
-    id: 3,
+    id: "mock_3",
     title: "Chef de Projet Marketing Digital",
     company: "Agence Creative Pulse",
     location: "100% Remote",
     region: "Remote",
-    type: "CDD (6 mois)",
+    type: "CDD",
     sector: "Marketing",
     postedAt: "1 semaine",
+    salary: "À débattre",
+    description: "Pilotez nos campagnes digitales pour des clients internationaux. Vous coordonnerez les équipes de création...",
+    shortDescription: "Pilotez nos campagnes digitales pour des clients internationaux...",
     hasApplied: false,
-    shortDescription:
-      "Pilotez nos campagnes digitales pour des clients internationaux. Vous coordonnerez les équipes de création et de média pour assurer le succès et le ROI des opérations.",
   },
 ]);
 
-// Mapper les annonces de la database au format attendu
+// Traitement des annonces dynamiques issues de la BDD locale
 const dbJobs = computed(() => {
-  return allAnnonces.value.map((annonce) => {
-    const entreprise = allUsers.value.find(
-      (u) => u.id === annonce.entrepriseId,
-    );
+  return annonces.value.map((annonce) => {
+    const entreprise = users.value.find((u) => u.id === annonce.entrepriseId);
+    
+    // Récupération sécurisée du statut de candidature
+    const allCandidatures = JSON.parse(localStorage.getItem("mosalah_database_candidatures") || "[]");
     const hasApplied = currentUser.value
-      ? allCandidatures.value.some(
-          (c) =>
-            c.annonceId === annonce.id && c.candidatId === currentUser.value.id,
-        )
+      ? allCandidatures.some((c) => c.annonceId === annonce.id && c.candidatId === currentUser.value.id)
       : false;
 
     return {
       id: annonce.id,
       title: annonce.title,
-      company: annonce.company || entreprise?.name || "Entreprise inconnue",
-      location: annonce.location || "Non spécifié",
-      region: annonce.location || "Non spécifié",
-      type: annonce.contractType || "Non spécifié",
-      sector: annonce.category || "Autre",
-      postedAt: annonce.createdAt || "Date inconnue",
+      company: entreprise?.name || "Entreprise Locale",
+      location: annonce.location || "Brazzaville",
+      region: annonce.location || "Brazzaville", 
+      type: annonce.type || "CDI",
+      sector: annonce.sector || "Tech", 
+      postedAt: annonce.createdAt || "Récemment",
+      salary: annonce.salary || "À débattre",
+      description: annonce.description || "",
+      shortDescription: annonce.description ? (annonce.description.substring(0, 150) + "...") : "Aucune description.",
       hasApplied,
-      shortDescription:
-        annonce.description?.substring(0, 200) + "..." ||
-        "Aucune description disponible",
     };
   });
 });
 
-// Fusionner les données mockées et les données de la database
+// Regroupement global (Données de test + Données dynamiques de useDb)
 const jobs = computed(() => {
   return [...mockJobs.value, ...dbJobs.value];
 });
 
-// Moteur de recherche et de filtres croisés
-// Keep searchQuery in sync with the route `q` param so the hero can prefill it.
+// Synchro des requêtes via la route URL
 watch(
   () => route.query.q,
-  (q) => {
-    searchQuery.value = q || "";
-  },
+  (newQuery) => {
+    searchQuery.value = newQuery || "";
+  }
 );
 
+// Moteur de recherche à filtres croisés en temps réel
 const filteredJobs = computed(() => {
   return jobs.value.filter((job) => {
     const matchesSearch =
       job.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchQuery.value.toLowerCase());
+      job.company.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      job.description.toLowerCase().includes(searchQuery.value.toLowerCase());
 
-    const matchesLocation = job.location
-      .toLowerCase()
-      .includes(locationQuery.value.toLowerCase());
-    const matchesType =
-      filters.type === "all" || job.type.includes(filters.type);
-    const matchesSector =
-      filters.sector === "all" || job.sector === filters.sector;
-    const matchesRegion =
-      filters.region === "all" || job.region === filters.region;
+    const matchesLocationInput =
+      job.location.toLowerCase().includes(locationQuery.value.toLowerCase()) ||
+      job.region.toLowerCase().includes(locationQuery.value.toLowerCase());
 
-    return (
-      matchesSearch &&
-      matchesLocation &&
-      matchesType &&
-      matchesSector &&
-      matchesRegion
-    );
+    const matchesType = filters.type === "all" || job.type === filters.type;
+    const matchesSector = filters.sector === "all" || job.sector === filters.sector;
+    const matchesRegion = filters.region === "all" || job.region === filters.region;
+
+    return matchesSearch && matchesLocationInput && matchesType && matchesSector && matchesRegion;
   });
 });
+
+const resetFilters = () => {
+  searchQuery.value = "";
+  locationQuery.value = "";
+  filters.type = "all";
+  filters.sector = "all";
+  filters.region = "all";
+};
 </script>
