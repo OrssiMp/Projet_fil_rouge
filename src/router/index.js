@@ -134,17 +134,17 @@ const routes = [
       role: "candidat",
       title: "Mon profil",
     },
-  },{
-    path:'/candidat/job-requests',
-    component: ()=>import('../pages/candidat/JobRequest.vue'),
+  },
+  {
+    path: "/candidat/job-requests",
+    component: () => import("../pages/candidat/JobRequest.vue"),
     meta: {
       layout: "DashboardLayout",
       requiresAuth: true,
       role: "candidat",
       title: "Mes demandes d'emploi",
     },
-  }
-  ,
+  },
   {
     path: "/candidat/settings",
     name: "CandidatSettings",
@@ -211,6 +211,18 @@ const routes = [
       requiresAuth: true,
       role: "entreprise",
       title: "Candidats",
+    },
+  },
+  {
+    path: "/entreprise/candidats/:id",
+    name: "CandidatProfile",
+    component: () => import("../pages/entreprise/CandidatProfile.vue"),
+    props: true,
+    meta: {
+      layout: "DashboardLayout",
+      requiresAuth: true,
+      role: "entreprise",
+      title: "Profil candidat",
     },
   },
   {
