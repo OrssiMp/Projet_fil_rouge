@@ -126,6 +126,7 @@ export function useDb() {
         id: generateAnnonceId(),
         ...annonceData,
         applications: 0,
+        views: 0, // ← ajouté
         createdAt: new Date().toLocaleDateString("fr-FR"),
       };
 
@@ -193,11 +194,20 @@ export function useDb() {
       const allCandidatures = getLocal("mosalah_database_candidatures");
       const allUsers = getLocal("mosalah_database_users");
 
+      const incrementAnnonceViews = (annonceId) => {
+        const allAnnonces = getLocal("mosalah_database_annonces");
+        const idx = allAnnonces.findIndex((a) => a.id === annonceId);
+        if (idx !== -1) {
+          allAnnonces[idx].views = (allAnnonces[idx].views || 0) + 1;
+          setLocal("mosalah_database_annonces", allAnnonces);
+        }
+      };
       const annonce = allAnnonces.find((a) => a.id === annonceId);
       if (!annonce) {
         error.value = "Annonce non trouvée.";
         return null;
       }
+      incrementAnnonceViews(annonceId);
 
       // Récupérer les infos de l'entreprise
       const entreprise = allUsers.find((u) => u.id === annonce.entrepriseId);
@@ -316,7 +326,38 @@ export function useDb() {
       loading.value = false;
     }
   };
+  /**
+   * Récupère toutes les candidatures faites pour les annonces d'une entreprise spécifique (Pour l'entreprise).
+   * @param {string} entrepriseId
+   */
+  const fetchCandidaturesForEntreprise = async (entrepriseId) => {
+    loading.value = true;
+    try {
+      await simulateNetwork();
+      const allAnnonces = getLocal("mosalah_database_annonces");
+      const allCandidatures = getLocal("mosalah_database_candidatures");
+      const allUsers = getLocal("mosalah_database_users");
 
+      const myAnnonceIds = allAnnonces
+        .filter((a) => a.entrepriseId === entrepriseId)
+        .map((a) => a.id);
+
+      const filtered = allCandidatures
+        .filter((c) => myAnnonceIds.includes(c.annonceId))
+        .map((c) => {
+          const candidatInfos = allUsers.find((u) => u.id === c.candidatId);
+          return { ...c, candidatProfile: candidatInfos || null };
+        });
+
+      candidatures.value = filtered;
+      return filtered;
+    } catch (err) {
+      error.value = "Impossible de récupérer les candidatures.";
+      return [];
+    } finally {
+      loading.value = false;
+    }
+  };
   // --- 4. GESTION DES DEMANDES D'EMPLOI (Candidats) ---
 
   /**
@@ -438,6 +479,7 @@ export function useDb() {
     applyToAnnonce,
     updateCandidatureStatus,
     fetchCandidaturesForAnnonce,
+    fetchCandidaturesForEntreprise,
 
     // Méthodes Demandes d'emploi (Candidat)
     createDemandeEmploi,

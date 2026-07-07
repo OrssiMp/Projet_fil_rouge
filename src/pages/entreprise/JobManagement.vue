@@ -51,6 +51,7 @@
         </div>
       </BaseCard>
 
+      <!-- Candidatures Reçues -->
       <BaseCard density="normal" class="bg-white border border-base-200">
         <p
           class="text-[10px] font-black text-base-content/40 uppercase tracking-wider"
@@ -64,11 +65,15 @@
           <BaseBadge
             class="bg-blue-50 text-blue-700 border-blue-200 font-bold text-[10px]"
           >
-            +12 cette semaine
+            {{
+              applicationsThisWeek > 0
+                ? `+${applicationsThisWeek} cette semaine`
+                : "Aucune cette semaine"
+            }}
           </BaseBadge>
         </div>
       </BaseCard>
-
+      <!-- Consultations Totales -->
       <BaseCard density="normal" class="bg-white border border-base-200">
         <p
           class="text-[10px] font-black text-base-content/40 uppercase tracking-wider"
@@ -82,11 +87,14 @@
           <BaseBadge
             class="bg-amber-50 text-amber-700 border-amber-200 font-bold text-[10px]"
           >
-            Conv. 4.8%
+            {{
+              conversionRate !== null
+                ? `Conv. ${conversionRate}%`
+                : "Pas encore de vues"
+            }}
           </BaseBadge>
         </div>
       </BaseCard>
-
       <BaseCard density="normal" class="bg-white border border-base-200">
         <p
           class="text-[10px] font-black text-base-content/40 uppercase tracking-wider"
@@ -105,6 +113,22 @@
         </div>
       </BaseCard>
     </div>
+    <!-- Candidatures en Étude (remplace "Entretiens Planifiés") -->
+    <BaseCard density="normal" class="bg-white border border-base-200">
+      <p
+        class="text-[10px] font-black text-base-content/40 uppercase tracking-wider"
+      >
+        Candidatures en Étude
+      </p>
+      <div class="flex items-baseline justify-between mt-2">
+        <p class="text-3xl font-black text-purple-700">{{ stats.enEtude }}</p>
+        <BaseBadge
+          class="bg-purple-50 text-purple-700 border-purple-200 font-bold text-[10px]"
+        >
+          À traiter
+        </BaseBadge>
+      </div>
+    </BaseCard>
 
     <!-- LISTE DES OFFRES PUBLIÉES -->
     <div class="flex flex-col gap-4">
@@ -117,7 +141,15 @@
         >
       </div>
 
-      <div v-if="myJobs.length > 0" class="flex flex-col gap-3">
+      <div v-if="isLoadingJobs" class="flex flex-col gap-3">
+        <div
+          v-for="n in 2"
+          :key="n"
+          class="skeleton w-full h-28 rounded-2xl"
+        ></div>
+      </div>
+      <div v-else-if="myJobs.length > 0" class="flex flex-col gap-3">
+        <!-- ... boucle BaseCard existante inchangée ... -->
         <BaseCard
           v-for="job in myJobs"
           :key="job.id"
@@ -238,23 +270,6 @@
           </div>
         </BaseCard>
       </div>
-
-      <!-- ÉTAT VIDE STANDARDISÉ -->
-      <BaseCard
-        v-else
-        class="text-center py-16 bg-white border border-base-200"
-      >
-        <div class="max-w-xs mx-auto flex flex-col items-center">
-          <BaseIcon name="lock" class="text-3xl text-base-content/30 mb-2" />
-          <h3 class="font-black text-base-content tracking-tight text-md mb-1">
-            Aucune annonce publiée
-          </h3>
-          <p class="text-xs text-base-content/40 font-medium">
-            Vous n'avez pas encore créé d'offre d'emploi. Commencez dès
-            maintenant à chercher votre futur collaborateur.
-          </p>
-        </div>
-      </BaseCard>
     </div>
 
     <!-- MODAL / FORMULAIRE DE PUBLICATION -->
@@ -435,48 +450,75 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useDb } from "../../composables/useDb";
 import { useAuth } from "../../composables/useAuth";
 
 const { currentUser } = useAuth();
-const { createAnnonce, fetchAnnonces } = useDb();
+const { createAnnonce, fetchAnnonces, fetchCandidaturesForEntreprise } =
+  useDb();
+
 const showPublishModal = ref(false);
 const isSubmitting = ref(false);
+const isLoadingJobs = ref(true);
 const formError = ref("");
 const formSuccess = ref("");
 
-// Statistiques globales du tableau de bord recruteur
-const stats = ref({
-  activeJobs: 0,
-  totalApplications: 0,
-  totalViews: 0,
-  interviews: 0,
+const myJobs = ref([]);
+const myCandidatures = ref([]);
+
+// --- Statistiques calculées depuis les vraies données de useDb ---
+const stats = computed(() => {
+  const activeJobs = myJobs.value.length; // pas de fonctionnalité "clôturer une offre" pour l'instant
+  const totalApplications = myJobs.value.reduce(
+    (acc, j) => acc + (j.applications || 0),
+    0,
+  );
+  const totalViews = myJobs.value.reduce((acc, j) => acc + (j.views || 0), 0);
+  const enEtude = myCandidatures.value.filter(
+    (c) => (c.status || "en_etude") === "en_etude",
+  ).length;
+
+  return { activeJobs, totalApplications, totalViews, enEtude };
 });
 
-// Le tableau myJobs mis à jour avec la nouvelle structure requise
-const myJobs = ref([
-  {
-    id: 1,
-    title: "Analyste Financier",
-    company: "Banque du Congo",
-    companyTag: "Finance",
-    contractType: "CDI",
-    category: "Finance",
-    location: "Brazzaville",
-    salary: "2 100 000 FCFA",
-    description:
-      "Expert en modélisation financière ? Rejoignez notre département d’investissement pour des projets stratégiques.",
-    highlight: "Accès prioritaire aux candidats qualifiés",
-    postedAt: "Il y a 4 jours",
-    createdAt: "01/07/2026",
-    status: "Actif",
-    views: 1240,
-    applications: 24,
-  },
-]);
+const conversionRate = computed(() => {
+  if (!stats.value.totalViews) return null;
+  return (
+    (stats.value.totalApplications / stats.value.totalViews) *
+    100
+  ).toFixed(1);
+});
 
-// Initialisation de la structure du formulaire alignée sur les nouvelles propriétés
+const applicationsThisWeek = computed(() => {
+  const now = Date.now();
+  return myCandidatures.value.filter((c) => {
+    const [day, month, year] = (c.createdAt || "").split("/").map(Number);
+    if (!day) return false;
+    const date = new Date(year, month - 1, day).getTime();
+    return now - date <= 7 * 24 * 60 * 60 * 1000;
+  }).length;
+});
+
+// Formate une date fr-FR ("DD/MM/YYYY") en texte relatif ("Publié il y a 3 jours")
+const formatRelativeDate = (frDateStr) => {
+  if (!frDateStr) return "Date inconnue";
+  const [day, month, year] = frDateStr.split("/").map(Number);
+  if (!day) return frDateStr;
+  const date = new Date(year, month - 1, day);
+  const diffDays = Math.floor(
+    (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  if (diffDays <= 0) return "Publié aujourd'hui";
+  if (diffDays === 1) return "Publié hier";
+  if (diffDays < 7) return `Publié il y a ${diffDays} jours`;
+  const diffWeeks = Math.floor(diffDays / 7);
+  if (diffWeeks < 4)
+    return `Publié il y a ${diffWeeks} semaine${diffWeeks > 1 ? "s" : ""}`;
+  return `Publié le ${frDateStr}`;
+};
+
 const initialForm = {
   title: "",
   company: currentUser.value?.name || "",
@@ -498,11 +540,30 @@ const closeModal = () => {
   form.value = { ...initialForm };
 };
 
-// Soumission du formulaire
-const handlePublishSubmit = async () => {
-  // ... validation ...
+const loadDashboardData = async () => {
+  isLoadingJobs.value = true;
 
+  const allAnnonces = await fetchAnnonces();
+  myJobs.value = (allAnnonces || [])
+    .filter((a) => a.entrepriseId === currentUser.value?.id)
+    .map((a) => ({
+      ...a,
+      status: a.status || "Actif", // pas de fonctionnalité "clôturer l'offre" pour l'instant
+      views: a.views || 0,
+      postedAt: formatRelativeDate(a.createdAt),
+    }));
+
+  myCandidatures.value =
+    (await fetchCandidaturesForEntreprise(currentUser.value?.id)) || [];
+
+  isLoadingJobs.value = false;
+};
+
+onMounted(loadDashboardData);
+
+const handlePublishSubmit = async () => {
   isSubmitting.value = true;
+  formError.value = "";
 
   try {
     const newAnnonce = await createAnnonce({
@@ -519,9 +580,15 @@ const handlePublishSubmit = async () => {
     });
 
     if (newAnnonce) {
-      myJobs.value.unshift(newAnnonce);
-      stats.value.activeJobs += 1;
+      myJobs.value.unshift({
+        ...newAnnonce,
+        status: "Actif",
+        views: 0,
+        postedAt: "Publié aujourd'hui",
+      });
       closeModal();
+    } else {
+      formError.value = "Erreur lors de la publication de l'annonce.";
     }
   } catch (err) {
     formError.value = "Erreur lors de la publication de l'annonce.";
@@ -529,17 +596,4 @@ const handlePublishSubmit = async () => {
     isSubmitting.value = false;
   }
 };
-onMounted(async () => {
-  const annonces = await fetchAnnonces();
-  stats.value.activeJobs = annonces.filter(
-    (a) => a.entrepriseId === currentUser.value?.id,
-  ).length;
-  stats.value.totalApplications = annonces.reduce(
-    (acc, a) => acc + a.applications,
-    0,
-  );
-  myJobs.value = annonces.filter(
-    (a) => a.entrepriseId === currentUser.value?.id,
-  );
-});
 </script>

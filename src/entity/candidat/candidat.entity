@@ -1,0 +1,394 @@
+/**
+ * ============================================================
+ * Candidate 
+ * ============================================================
+ * Représente le profil professionnel complet d'un candidat.
+ *
+ * Cette structure provient de :
+ * - Paramètres > Mon Profil & CV
+ * - CV numérique candidat
+ * - Profil visible par les recruteurs
+ * ============================================================
+ */
+
+/**
+ * @typedef {Object} CandidateProfileEntity
+ *
+ * ------------------------------------------------------------
+ * Informations personnelles
+ * ------------------------------------------------------------
+ *
+ * @property {string} id
+ * Identifiant unique du candidat.
+ *
+ * @property {string} name
+ * Nom complet du candidat.
+ *
+ * @property {string} avatar
+ * Photo de profil.
+ *
+ * @property {string} dob
+ * Date de naissance.
+ *
+ * @property {string} gender
+ * Sexe du candidat.
+ *
+ * Valeurs possibles :
+ * - Homme
+ * - Femme
+ * - Non binaire
+ * - Je préfère ne pas dire
+ *
+ * @property {string} nationality
+ * Nationalité.
+ *
+ * @property {string} maritalStatus
+ * Situation matrimoniale.
+ *
+ * Exemples :
+ * - Célibataire
+ * - Marié(e)
+ *
+ *
+ * ------------------------------------------------------------
+ * Coordonnées
+ * ------------------------------------------------------------
+ *
+ * @property {string} email
+ * Adresse email.
+ *
+ * @property {string} phone
+ * Numéro de téléphone.
+ *
+ * @property {string} address
+ * Adresse complète.
+ *
+ * @property {string} location
+ * Ville et pays.
+ *
+ *
+ * ------------------------------------------------------------
+ * Profil professionnel
+ * ------------------------------------------------------------
+ *
+ * @property {string} title
+ * Poste recherché ou titre professionnel.
+ *
+ * Exemple :
+ * "Développeur Backend Laravel"
+ *
+ * @property {string} currentStatus
+ * Situation professionnelle actuelle.
+ *
+ * Exemples :
+ * - Étudiant
+ * - Employé
+ * - Indépendant
+ * - Freelance
+ * - Stage
+ *
+ * @property {string} yearsExperience
+ * Nombre d'années d'expérience.
+ *
+ * Exemples :
+ * - 0-1 an
+ * - 2-5 ans
+ * - 5-10 ans
+ * - 10+ ans
+ *
+ * @property {string} availability
+ * Disponibilité du candidat.
+ *
+ * Exemple :
+ * "Disponible immédiatement"
+ *
+ * @property {string} profileSearch
+ * Objectif professionnel du candidat.
+ *
+ * Exemple :
+ * "Je recherche un poste de développeur backend Laravel."
+ *
+ * @property {string} bio
+ * Résumé professionnel.
+ *
+ *
+ * ------------------------------------------------------------
+ * Préférences d'emploi
+ * ------------------------------------------------------------
+ *
+ * @property {string[]} contractTypes
+ * Types de contrats recherchés.
+ *
+ * Exemple :
+ * [
+ *  "CDI",
+ *  "Freelance"
+ * ]
+ *
+ * @property {number|string} salaryMin
+ * Salaire minimum souhaité.
+ *
+ * @property {number|string} salaryMax
+ * Salaire maximum souhaité.
+ *
+ * @property {string} salaryCurrency
+ * Devise salariale.
+ *
+ * Exemple :
+ * XAF
+ * USD
+ * EUR
+ *
+ * @property {string} mobility
+ * Accepte une mobilité géographique.
+ *
+ * @property {string} telework
+ * Préférence télétravail.
+ *
+ * Valeurs :
+ * - Oui
+ * - Non
+ * - Hybride
+ *
+ *
+ * ------------------------------------------------------------
+ * Compétences
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateSkill[]} skills
+ * Compétences techniques.
+ *
+ * @property {string[]} softSkills
+ * Compétences comportementales.
+ *
+ *
+ * ------------------------------------------------------------
+ * Expériences professionnelles
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateExperience[]} experiences
+ * Parcours professionnel.
+ *
+ *
+ * ------------------------------------------------------------
+ * Formation
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateFormation[]} formations
+ * Diplômes et formations suivies.
+ *
+ *
+ * ------------------------------------------------------------
+ * Langues
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateLanguage[]} languages
+ * Langues maîtrisées.
+ *
+ *
+ * ------------------------------------------------------------
+ * Certifications
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateCertification[]} certifications
+ * Certifications professionnelles.
+ *
+ *
+ * ------------------------------------------------------------
+ * Projets
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateProject[]} projects
+ * Projets et réalisations.
+ *
+ *
+ * ------------------------------------------------------------
+ * Réseaux professionnels
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateNetworks} networks
+ * Liens professionnels.
+ *
+ *
+ * ------------------------------------------------------------
+ * Documents CV
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateDocuments} documents
+ * Documents associés au candidat.
+ *
+ */
+
+
+/**
+ * ============================================================
+ * Skill Entity
+ * ============================================================
+ *
+ * @typedef {Object} CandidateSkill
+ *
+ * @property {string} name
+ * Nom de la compétence.
+ *
+ * @property {string} level
+ * Niveau de maîtrise.
+ *
+ * Valeurs :
+ * 1 à 5
+ *
+ * @property {string} years
+ * Années d'utilisation.
+ *
+ * @property {string} lastUsed
+ * Dernière utilisation.
+ */
+
+
+/**
+ * ============================================================
+ * Experience Entity
+ * ============================================================
+ *
+ * @typedef {Object} CandidateExperience
+ *
+ * @property {string} role
+ * Poste occupé.
+ *
+ * @property {string} company
+ * Entreprise.
+ *
+ * @property {string} period
+ * Période.
+ *
+ * @property {string} description
+ * Description des missions.
+ */
+
+
+/**
+ * ============================================================
+ * Formation Entity
+ * ============================================================
+ *
+ * @typedef {Object} CandidateFormation
+ *
+ * @property {string} school
+ * Établissement.
+ *
+ * @property {string} degree
+ * Diplôme.
+ *
+ * @property {string} field
+ * Filière.
+ *
+ * @property {string} mention
+ * Mention obtenue.
+ *
+ * @property {string} start
+ * Date de début.
+ *
+ * @property {string} end
+ * Date de fin.
+ */
+
+
+/**
+ * ============================================================
+ * Language Entity
+ * ============================================================
+ *
+ * @typedef {Object} CandidateLanguage
+ *
+ * @property {string} name
+ * Langue.
+ *
+ * @property {string} level
+ * Niveau CECRL.
+ *
+ * Exemple :
+ * A1, A2, B1, B2, C1, C2
+ */
+
+
+/**
+ * ============================================================
+ * Certification Entity
+ * ============================================================
+ *
+ * @typedef {Object} CandidateCertification
+ *
+ * @property {string} name
+ * Nom de la certification.
+ *
+ * @property {string} issuer
+ * Organisme délivreur.
+ *
+ * @property {string} date
+ * Date d'obtention.
+ *
+ * @property {string} expiry
+ * Date d'expiration.
+ */
+
+
+/**
+ * ============================================================
+ * Project Entity
+ * ============================================================
+ *
+ * @typedef {Object} CandidateProject
+ *
+ * @property {string} title
+ * Nom du projet.
+ *
+ * @property {string} tech
+ * Technologies utilisées.
+ *
+ * @property {string} description
+ * Description.
+ *
+ * @property {string} link
+ * URL du projet.
+ *
+ * @property {string} date
+ * Date du projet.
+ */
+
+
+/**
+ * ============================================================
+ * Networks Entity
+ * ============================================================
+ *
+ * @typedef {Object} CandidateNetworks
+ *
+ * @property {string} linkedin
+ * Profil LinkedIn.
+ *
+ * @property {string} github
+ * Profil GitHub.
+ *
+ * @property {string} portfolio
+ * Portfolio.
+ *
+ * @property {Object[]} additional
+ * Réseaux supplémentaires.
+ */
+
+
+/**
+ * ============================================================
+ * Documents Entity
+ * ============================================================
+ *
+ * @typedef {Object} CandidateDocuments
+ *
+ * @property {string} cv
+ * CV du candidat.
+ *
+ * @property {string} coverLetter
+ * Lettre de motivation.
+ *
+ * @property {string} portfolio
+ * Portfolio document.
+ */
