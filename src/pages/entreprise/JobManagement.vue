@@ -229,9 +229,11 @@
               >
                 Modifier
               </BaseButton>
-              <BaseButton variant="accent" size="sm">
-                Candidatures ({{ job.applications }})
-              </BaseButton>
+              <RouterLink :to="`/entreprise/dashboard/offres/${job.id}`">
+                <BaseButton variant="accent" size="sm">
+                  Candidatures ({{ job.applications }})
+                </BaseButton>
+              </RouterLink>
             </div>
           </div>
         </BaseCard>

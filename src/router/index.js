@@ -66,6 +66,18 @@ const routes = [
     },
   },
   {
+    path: "/entreprise/dashboard/offres/:id",
+    name: "AnnonceDetail",
+    component: () => import("../pages/entreprise/AnnonceDetail.vue"),
+    props: true,
+    meta: {
+      layout: "DashboardLayout",
+      requiresAuth: true,
+      role: "entreprise",
+      title: "Détails de l'annonce",
+    },
+  },
+  {
     path: "/register",
     name: "ChooseAccountType",
     component: () => import("../pages/ChooseAccountPage.vue"),
