@@ -1,0 +1,73 @@
+/**
+ * ============================================================
+ * Job Card Entity
+ * ============================================================
+ * Représente les informations minimales nécessaires
+ * pour afficher une offre dans une liste ou une grille.
+ *
+ * Cette structure est utilisée par :
+ * - JobCard.vue
+ * - Liste des offres
+ * - Résultats de recherche
+ * - Recommandations
+ * ============================================================
+ */
+
+/**
+ * @typedef {Object} JobCardEntity
+ *
+ * @property {string} id
+ * Identifiant unique de l'offre.
+ *
+ * @property {string} title
+ * Intitulé du poste.
+ *
+ * @property {string} category
+ * Catégorie ou domaine de l'offre.
+ *
+ * @property {string} contractType
+ * Type de contrat.
+ *
+ * Exemples :
+ * - CDI
+ * - CDD
+ * - Stage
+ * - Freelance
+ * - Alternance
+ *
+ * @property {string} company
+ * Nom de l'entreprise.
+ *
+ * @property {string} companyTag
+ * Petit slogan ou secteur d'activité.
+ *
+ * Exemple :
+ * "Solutions numériques"
+ *
+ * @property {string} location
+ * Ville ou localisation du poste.
+ *
+ * @property {string} salary
+ * Salaire affiché.
+ *
+ * Exemple :
+ * "400 000 FCFA"
+ * "À discuter"
+ *
+ * @property {string} postedAt
+ * Date de publication.
+ *
+ * Exemple :
+ * "Publié il y a 2 jours"
+ *
+ * @property {string} description
+ * Courte description affichée dans la carte.
+ *
+ * @property {string|null} highlight
+ * Petit badge marketing.
+ *
+ * Exemple :
+ * "Recrutement urgent"
+ * "Télétravail possible"
+ * "Nouveau"
+ */

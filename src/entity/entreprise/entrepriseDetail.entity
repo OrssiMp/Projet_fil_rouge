@@ -1,0 +1,58 @@
+/**
+ * ============================================================
+ * Landing Recruiter Feature Entity
+ * ============================================================
+ * Représente une fonctionnalité mise en avant
+ * sur la page d'accueil destinée aux recruteurs.
+ *
+ * Cette structure est utilisée par :
+ * - Landing page
+ * - Section "Pensée pour les recruteurs"
+ * - Pages de présentation
+ * ============================================================
+ */
+
+/**
+ * @typedef {Object} LandingRecruiterFeatureEntity
+ *
+ * ------------------------------------------------------------
+ * Contenu
+ * ------------------------------------------------------------
+ *
+ * @property {string} title
+ * Titre de la fonctionnalité.
+ *
+ * Exemple :
+ * "Interface simple et rapide"
+ *
+ * @property {string} description
+ * Description de la fonctionnalité.
+ *
+ * Explique le bénéfice apporté
+ * aux recruteurs.
+ *
+ *
+ * ------------------------------------------------------------
+ * Illustration
+ * ------------------------------------------------------------
+ *
+ * @property {string} image
+ * Image ou capture d'écran illustrant
+ * la fonctionnalité.
+ *
+ * Peut être :
+ * - une URL
+ * - un chemin local
+ * - un asset importé.
+ *
+ *
+ * ------------------------------------------------------------
+ * Affichage
+ * ------------------------------------------------------------
+ *
+ * @property {"left"|"right"} imagePosition
+ * Position de l'illustration par rapport au texte.
+ *
+ * left  → image à gauche
+ * right → image à droite
+ */

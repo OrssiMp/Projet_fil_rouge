@@ -1,0 +1,129 @@
+/**
+ * ============================================================
+ * Company Entity
+ * ============================================================
+ * Représente les informations d'une entreprise
+ * enregistrée sur la plateforme Mosalah.
+ *
+ * Cette structure est utilisée par :
+ * - Inscription d'une entreprise
+ * - Modification du profil entreprise
+ * - Page publique de l'entreprise
+ * - Publication des offres d'emploi
+ * ============================================================
+ */
+
+/**
+ * @typedef {Object} CompanyEntity
+ *
+ * ------------------------------------------------------------
+ * Identité
+ * ------------------------------------------------------------
+ *
+ * @property {string} logo
+ * Logo de l'entreprise.
+ *
+ * Peut être une URL ou le chemin du fichier.
+ *
+ * @property {string} name
+ * Nom officiel de l'entreprise.
+ *
+ * @property {string} sector
+ * Secteur d'activité.
+ *
+ * Exemple :
+ * - Informatique
+ * - Banque
+ * - Télécommunications
+ * - Santé
+ *
+ * @property {string} structure
+ * Forme juridique de l'entreprise.
+ *
+ * Exemples :
+ * - SARL
+ * - SA
+ * - SAS
+ * - EURL
+ * - ONG
+ * - Association
+ *
+ *
+ * ------------------------------------------------------------
+ * Présentation
+ * ------------------------------------------------------------
+ *
+ * @property {string} description
+ * Description de l'entreprise.
+ *
+ * Présente son activité,
+ * ses valeurs,
+ * ses objectifs
+ * et son domaine d'expertise.
+ *
+ *
+ * ------------------------------------------------------------
+ * Coordonnées
+ * ------------------------------------------------------------
+ *
+ * @property {string} email
+ * Adresse électronique professionnelle.
+ *
+ * @property {string} telephone
+ * Numéro de téléphone principal.
+ *
+ * @property {string} address
+ * Adresse physique.
+ *
+ * @property {string} city
+ * Ville.
+ *
+ * @property {string} country
+ * Pays.
+ *
+ * @property {string} postalCode
+ * Code postal.
+ *
+ *
+ * ------------------------------------------------------------
+ * Présence en ligne
+ * ------------------------------------------------------------
+ *
+ * @property {string} website
+ * Site internet officiel.
+ *
+ * Optionnel.
+ *
+ * @property {string} linkedin
+ * Page LinkedIn de l'entreprise.
+ *
+ * Optionnel.
+ *
+ *
+ * ------------------------------------------------------------
+ * Informations administratives
+ * ------------------------------------------------------------
+ *
+ * @property {string} creationDate
+ * Date officielle de création de l'entreprise.
+ *
+ * @property {string} niu
+ * Numéro d'Identification Unique (NIU).
+ *
+ * Optionnel.
+ *
+ * @property {string} rccm
+ * Numéro RCCM.
+ *
+ * Optionnel.
+ *
+ * @property {string} businessRegister
+ * Registre de commerce ou document officiel
+ * équivalent justifiant l'existence légale
+ * de l'entreprise.
+ *
+ * Peut contenir :
+ * - une URL
+ * - un nom de fichier
+ * - un identifiant de document.
+ */

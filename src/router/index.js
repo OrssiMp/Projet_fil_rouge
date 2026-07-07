@@ -1,5 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import { useAuth } from "../composables/useAuth";
 
+const { isAuthenticated , currentUser } = useAuth();
 const routes = [
   {
     path: "/",
@@ -142,7 +144,7 @@ const routes = [
   },
   {
     path: "/candidat/profile",
-    name: "CandidatProfile",
+    name: "CandidatViewProfile",
     component: () => import("../pages/candidat/Profil.vue"),
     meta: {
       layout: "DashboardLayout",
@@ -180,7 +182,7 @@ const routes = [
     meta: {
       layout: "DashboardLayout",
       requiresAuth: true,
-      role: "candidat",
+      role: "entreprise",
       title: "Détail candidat",
     },
   },
@@ -278,7 +280,12 @@ const routes = [
     path: "/:pathMatch(.*)*",
     name: "NotFound",
     component: () => import("../pages/application/NotFound.vue"),
-    meta: { layout: "AppLayout", title: "Page introuvable" },
+    meta: {
+      layout: isAuthenticated.value ? "DashboardLayout" : "AppLayout",
+      title: "Page introuvable",
+      requiresAuth: false,
+      role: currentUser.value?.role,
+    },
   },
 ];
 

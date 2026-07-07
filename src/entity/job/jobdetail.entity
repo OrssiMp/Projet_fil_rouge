@@ -1,0 +1,104 @@
+/**
+ * ============================================================
+ * Job Details Entity
+ * ============================================================
+ * Représente toutes les informations d'une offre.
+ *
+ * Cette structure est utilisée uniquement
+ * dans la page de consultation complète d'une annonce.
+ * ============================================================
+ */
+
+/**
+ * @typedef {Object} JobDetailsEntity
+ *
+ * ------------------------------------------------------------
+ * Informations générales
+ * ------------------------------------------------------------
+ *
+ * @property {string} id
+ * Identifiant unique.
+ *
+ * @property {string} title
+ * Titre du poste.
+ *
+ * @property {string} company
+ * Nom de l'entreprise.
+ *
+ * @property {string} companyDescription
+ * Présentation de l'entreprise.
+ *
+ * @property {string} location
+ * Lieu de travail.
+ *
+ * @property {string} contractType
+ * Type de contrat.
+ *
+ * @property {string} salary
+ * Salaire proposé.
+ *
+ * @property {string} postedAt
+ * Date de publication.
+ *
+ *
+ * ------------------------------------------------------------
+ * Description
+ * ------------------------------------------------------------
+ *
+ * @property {string[]} description
+ * Description détaillée du poste.
+ *
+ * Chaque élément représente un paragraphe.
+ *
+ *
+ * ------------------------------------------------------------
+ * Missions
+ * ------------------------------------------------------------
+ *
+ * @property {string[]} responsibilities
+ * Liste des responsabilités du poste.
+ *
+ *
+ * ------------------------------------------------------------
+ * Compétences
+ * ------------------------------------------------------------
+ *
+ * @property {JobSkill[]} skills
+ * Compétences demandées.
+ *
+ * @property {string} skillsDescription
+ * Informations complémentaires concernant
+ * les compétences attendues.
+ *
+ *
+ * ------------------------------------------------------------
+ * Profil recherché
+ * ------------------------------------------------------------
+ *
+ * @property {string[]} profile
+ * Liste des qualités,
+ * diplômes,
+ * expériences,
+ * certifications attendues.
+ *
+ */
+
+
+/**
+ * ============================================================
+ * Compétence
+ * ============================================================
+ *
+ * @typedef {Object} JobSkill
+ *
+ * @property {string} name
+ * Nom de la compétence.
+ *
+ * Exemple :
+ * - Vue.js
+ * - Laravel
+ * - Git
+ *
+ * @property {boolean} highlight
+ * Indique si la compétence doit être mise en avant.
+ */

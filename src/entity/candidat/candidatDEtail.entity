@@ -1,0 +1,263 @@
+/**
+ * ============================================================
+ * Candidate Details Entity
+ * ============================================================
+ * Représente le profil complet d'un candidat.
+ *
+ * Cette structure est utilisée par :
+ * - Page détail candidat
+ * - Recherche de talents
+ * - CV numérique
+ * - Recommandations aux recruteurs
+ * ============================================================
+ */
+
+/**
+ * @typedef {Object} CandidateDetailsEntity
+ *
+ * ------------------------------------------------------------
+ * Identité
+ * ------------------------------------------------------------
+ *
+ * @property {string} id
+ * Identifiant unique du candidat.
+ *
+ * @property {string} avatar
+ * Photo de profil.
+ *
+ * Peut être une URL ou un chemin local.
+ *
+ * @property {string} firstName
+ * Prénom.
+ *
+ * @property {string} lastName
+ * Nom.
+ *
+ * @property {string} fullName
+ * Nom complet.
+ *
+ * @property {"Homme"|"Femme"|"Autre"} gender
+ * Sexe du candidat.
+ *
+ * @property {number} age
+ * Âge.
+ *
+ * @property {string} nationality
+ * Nationalité.
+ *
+ *
+ * ------------------------------------------------------------
+ * Situation professionnelle
+ * ------------------------------------------------------------
+ *
+ * @property {string} title
+ * Titre professionnel.
+ *
+ * Exemple :
+ * "Développeur Full Stack"
+ *
+ * @property {string} experienceYears
+ * Nombre d'années d'expérience.
+ *
+ * Exemple :
+ * "3 ans"
+ *
+ * @property {string} availability
+ * Disponibilité.
+ *
+ * Exemples :
+ * - Disponible immédiatement
+ * - Sous préavis
+ * - Disponible dans 1 mois
+ *
+ * @property {boolean} remote
+ * Accepte le télétravail.
+ *
+ * @property {boolean} relocation
+ * Accepte une mobilité géographique.
+ *
+ *
+ * ------------------------------------------------------------
+ * Coordonnées
+ * ------------------------------------------------------------
+ *
+ * @property {string} email
+ * Adresse email.
+ *
+ * @property {string} phone
+ * Numéro de téléphone.
+ *
+ * @property {string} location
+ * Ville et pays.
+ *
+ * @property {string} address
+ * Adresse complète.
+ *
+ *
+ * ------------------------------------------------------------
+ * Présentation
+ * ------------------------------------------------------------
+ *
+ * @property {string} bio
+ * Résumé professionnel.
+ *
+ *
+ * ------------------------------------------------------------
+ * Formation
+ * ------------------------------------------------------------
+ *
+ * @property {string} education
+ * Dernier diplôme obtenu.
+ *
+ * Exemple :
+ * "Licence en Informatique"
+ *
+ * @property {string} school
+ * Établissement.
+ *
+ *
+ * ------------------------------------------------------------
+ * Compétences
+ * ------------------------------------------------------------
+ *
+ * @property {string[]} skills
+ * Liste des compétences.
+ *
+ *
+ * ------------------------------------------------------------
+ * Langues
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateLanguage[]} languages
+ * Langues parlées.
+ *
+ *
+ * ------------------------------------------------------------
+ * Expériences professionnelles
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateExperience[]} experiences
+ * Parcours professionnel.
+ *
+ *
+ * ------------------------------------------------------------
+ * Projets
+ * ------------------------------------------------------------
+ *
+ * @property {CandidateProject[]} projects
+ * Projets réalisés.
+ *
+ *
+ * ------------------------------------------------------------
+ * Réseaux professionnels
+ * ------------------------------------------------------------
+ *
+ * @property {string} linkedin
+ * Profil LinkedIn.
+ *
+ * Optionnel.
+ *
+ * @property {string} github
+ * Profil GitHub.
+ *
+ * Optionnel.
+ *
+ * @property {string} portfolio
+ * Portfolio personnel.
+ *
+ * Optionnel.
+ *
+ *
+ * ------------------------------------------------------------
+ * Documents
+ * ------------------------------------------------------------
+ *
+ * @property {string} cv
+ * CV du candidat.
+ *
+ * @property {string} coverLetter
+ * Lettre de motivation.
+ *
+ * Optionnel.
+ *
+ *
+ * ------------------------------------------------------------
+ * Métadonnées
+ * ------------------------------------------------------------
+ *
+ * @property {string} createdAt
+ * Date de création du profil.
+ *
+ * @property {string} updatedAt
+ * Dernière mise à jour.
+ *
+ * @property {boolean} verified
+ * Indique si le profil a été vérifié.
+ */
+
+
+/**
+ * ============================================================
+ * Candidate Experience
+ * ============================================================
+ *
+ * @typedef {Object} CandidateExperience
+ *
+ * @property {string} period
+ * Période.
+ *
+ * @property {string} role
+ * Poste occupé.
+ *
+ * @property {string} company
+ * Entreprise.
+ *
+ * @property {string} location
+ * Lieu.
+ *
+ * @property {string} description
+ * Description des missions.
+ */
+
+
+/**
+ * ============================================================
+ * Candidate Project
+ * ============================================================
+ *
+ * @typedef {Object} CandidateProject
+ *
+ * @property {string} name
+ * Nom du projet.
+ *
+ * @property {string} tech
+ * Technologies utilisées.
+ *
+ * @property {string} description
+ * Description du projet.
+ *
+ * @property {string} link
+ * Lien vers le projet.
+ */
+
+
+/**
+ * ============================================================
+ * Candidate Language
+ * ============================================================
+ *
+ * @typedef {Object} CandidateLanguage
+ *
+ * @property {string} name
+ * Langue.
+ *
+ * @property {string} level
+ * Niveau.
+ *
+ * Exemples :
+ * - Débutant
+ * - Intermédiaire
+ * - Courant
+ * - Bilingue
+ * - Langue maternelle
+ */

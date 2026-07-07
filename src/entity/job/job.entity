@@ -1,0 +1,117 @@
+/**
+ * ============================================================
+ * Job Offer Entity
+ * ============================================================
+ * Représente les informations attendues pour la création
+ * ou la modification d'une offre d'emploi.
+ *
+ * Cette structure est utilisée par :
+ * - Formulaire de création d'offre
+ * - Formulaire de modification d'offre
+ * - Base de données
+ * ============================================================
+ */
+
+/**
+ * @typedef {Object} JobOfferEntity
+ *
+ * ------------------------------------------------------------
+ * Informations générales
+ * ------------------------------------------------------------
+ *
+ * @property {string} title
+ * Intitulé du poste.
+ *
+ * Exemple :
+ * "Développeur Frontend Vue.js"
+ *
+ * @property {string} company
+ * Nom de l'entreprise.
+ *
+ * Exemple :
+ * "Mosalah Technologies"
+ *
+ * @property {string} location
+ * Lieu de travail.
+ *
+ * Exemple :
+ * "Brazzaville, Congo"
+ *
+ * @property {string} contractType
+ * Type de contrat proposé.
+ *
+ * Valeurs possibles :
+ * - CDI
+ * - CDD
+ * - Stage
+ * - Freelance
+ * - Alternance
+ * - Temps partiel
+ * - Temps plein
+ *
+ * @property {string} salary
+ * Salaire proposé.
+ *
+ * Exemple :
+ * "450 000 FCFA"
+ * "À discuter"
+ * "Selon expérience"
+ *
+ * @property {string} createdAt
+ * Date de publication de l'offre.
+ *
+ * Cette valeur est générée automatiquement par useDb
+ * lors de la création de l'annonce.
+ *
+ *
+ * ------------------------------------------------------------
+ * Description du poste
+ * ------------------------------------------------------------
+ *
+ * @property {string} description
+ * Description détaillée du poste.
+ *
+ * Cette section présente les missions,
+ * le contexte de travail et les objectifs du poste.
+ *
+ *
+ * ------------------------------------------------------------
+ * Responsabilités
+ * ------------------------------------------------------------
+ *
+ * @property {string[]} responsibilities
+ * Liste des principales missions du poste.
+ *
+ * Exemple :
+ * - Développer des interfaces utilisateur
+ * - Collaborer avec l'équipe backend
+ * - Participer aux revues de code
+ *
+ *
+ * ------------------------------------------------------------
+ * Compétences requises
+ * ------------------------------------------------------------
+ *
+ * @property {string[]} skills
+ * Liste des compétences techniques
+ * ou fonctionnelles attendues.
+ *
+ * Exemple :
+ * - Vue.js
+ * - JavaScript
+ * - Git
+ * - HTML/CSS
+ *
+ *
+ * ------------------------------------------------------------
+ * Profil recherché
+ * ------------------------------------------------------------
+ *
+ * @property {string} profile
+ * Description du profil idéal.
+ *
+ * Cette section décrit les qualités,
+ * les expériences,
+ * les diplômes
+ * et les compétences comportementales attendues.
+ */
