@@ -1,0 +1,199 @@
+<template>
+  <div class="relative">
+    <button 
+      @click="togglePopover" 
+      class="btn btn-ghost btn-circle relative"
+      aria-label="Voir les notifications"
+    >
+      <div class="indicator">
+        <span v-if="unreadCount > 0" class="indicator-item badge badge-sm badge-error font-bold text-white">
+          {{ unreadCount }}
+        </span>
+        <span class="text-xl">🔔</span>
+      </div>
+    </button>
+
+    <div 
+      v-if="isOpen" 
+      class="fixed inset-0 z-50 bg-base-200/60 backdrop-blur-md flex justify-end transition-all duration-300 animate-fade-in"
+    >
+      <div class="w-full lg:max-w-xl h-full bg-white shadow-2xl flex flex-col border-l border-base-200">
+        
+        <header class="p-6 border-b border-base-100 flex items-center justify-between bg-base-50">
+          <div>
+            <h2 class="text-xl font-black text-base-content tracking-tight flex items-center gap-2">
+              Notifications 
+              <span v-if="unreadCount > 0" class="badge badge-emerald-500 text-white font-bold">
+                {{ unreadCount }} nouvelles
+              </span>
+            </h2>
+            <p class="text-xs text-base-content/60 font-medium mt-0.5">
+              Suivi de vos candidatures et alertes emploi
+            </p>
+          </div>
+          
+          <button @click="closePopover" class="btn btn-sm btn-circle btn-ghost text-base-content/70">
+            ✕
+          </button>
+        </header>
+
+        <div v-if="notifications.length > 0" class="px-6 py-2 bg-base-50/50 border-b border-base-100 flex justify-between items-center">
+          <button @click="markAllAsRead" class="text-xs font-bold text-emerald-600 hover:underline">
+            Tout marquer comme lu
+          </button>
+          <button @click="clearAll" class="text-xs font-bold text-base-content/40 hover:text-error transition-colors">
+            Tout effacer
+          </button>
+        </div>
+
+        <main class="flex-grow overflow-y-auto p-6 space-y-4">
+          
+          <div v-if="loading" class="flex justify-center items-center h-48">
+            <span class="loading loading-spinner loading-md text-emerald-500"></span>
+          </div>
+
+          <div v-else-if="notifications.length > 0" class="space-y-3">
+            <div 
+              v-for="notif in notifications" 
+              :key="notif.id"
+              :class="[
+                'p-4 rounded-xl border transition-all duration-200 flex gap-4 items-start relative overflow-hidden',
+                notif.read 
+                  ? 'bg-white border-base-200 opacity-75' 
+                  : 'bg-emerald-50/40 border-emerald-100 shadow-sm'
+              ]"
+            >
+              <div v-if="!notif.read" class="absolute top-0 left-0 h-full w-1 bg-emerald-500"></div>
+
+              <div class="p-2 rounded-lg bg-base-100 border border-base-200 text-lg shadow-sm shrink-0">
+                <span v-if="notif.type === 'status_change'">💼</span>
+                <span v-else-if="notif.type === 'message'">💬</span>
+                <span v-else>📢</span>
+              </div>
+
+              <div class="flex-grow text-left">
+                <div class="flex justify-between items-start gap-2 mb-1">
+                  <h3 class="text-sm font-bold text-base-content">
+                    {{ notif.title }}
+                  </h3>
+                  <span class="text-[10px] font-semibold text-base-content/40 whitespace-nowrap">
+                    {{ notif.time }}
+                  </span>
+                </div>
+                <p class="text-xs font-medium text-base-content/70 leading-relaxed">
+                  {{ notif.message }}
+                </p>
+
+                <div class="mt-3 flex gap-2" v-if="notif.actionLabel">
+                  <button class="btn btn-xs bg-emerald-500 hover:bg-emerald-600 border-none text-white font-bold rounded-md">
+                    {{ notif.actionLabel }}
+                  </button>
+                  <button 
+                    v-if="!notif.read" 
+                    @click="markAsRead(notif.id)" 
+                    class="btn btn-xs btn-ghost text-base-content/50 font-semibold"
+                  >
+                    Marquer comme lu
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div 
+            v-else 
+            class="h-full flex flex-col items-center justify-center text-center py-12 px-4"
+          >
+            <div class="text-4xl mb-3 opacity-40">✨</div>
+            <h3 class="text-sm font-bold text-base-content">Vous êtes à jour !</h3>
+            <p class="text-xs text-base-content/50 font-medium max-w-xs mt-1">
+              Aucune nouvelle notification pour le moment. Vos alertes concernant Mosalah s'afficheront ici.
+            </p>
+          </div>
+
+        </main>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from "vue";
+
+// État du Popover
+const isOpen = ref(false);
+const loading = ref(false);
+
+// Mock data des notifications d'un candidat
+const notifications = ref([
+  {
+    id: 1,
+    type: "status_change",
+    title: "Candidature consultée !",
+    message: "L'entreprise TechNova Solutions a ouvert votre candidature pour le poste de Développeur Fullstack.",
+    time: "Il y a 10 min",
+    actionLabel: "Voir l'offre",
+    read: false
+  },
+  {
+    id: 2,
+    type: "message",
+    title: "Nouveau message de FinData Partners",
+    message: "Bonjour Orssi, votre profil a retenu notre attention. Seriez-vous disponible pour un entretien ce jeudi ?",
+    time: "Il y a 2 h",
+    actionLabel: "Répondre",
+    read: false
+  },
+  {
+    id: 3,
+    type: "general",
+    title: "Nouvelle annonce à Brazzaville",
+    message: "Une nouvelle offre correspondant à vos compétences (Vue.js, TailwindCSS) vient d'être publiée.",
+    time: "Hier",
+    actionLabel: "Découvrir",
+    read: true
+  }
+]);
+
+// Getters réactifs
+const unreadCount = computed(() => notifications.value.filter(n => !n.read).length);
+
+// Méthodes d'interaction
+const togglePopover = () => {
+  isOpen.value = !isOpen.value;
+  // Bloquer le scroll du body quand le popover plein écran est ouvert
+  if (isOpen.value) {
+    document.body.classList.add('overflow-hidden');
+  } else {
+    document.body.classList.remove('overflow-hidden');
+  }
+};
+
+const closePopover = () => {
+  isOpen.value = false;
+  document.body.classList.remove('overflow-hidden');
+};
+
+const markAsRead = (id) => {
+  const notif = notifications.value.find(n => n.id === id);
+  if (notif) notif.read = true;
+};
+
+const markAllAsRead = () => {
+  notifications.value.forEach(n => n.read = true);
+};
+
+const clearAll = () => {
+  notifications.value = [];
+};
+</script>
+
+<style scoped>
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+</style>

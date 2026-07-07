@@ -1,28 +1,40 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-8 select-none">
-
     <BaseBreadCrumbs class="mb-6" :items="breadcrumbs" />
 
     <BaseCard density="spacious" class="mb-8">
-      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+      <div
+        class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6"
+      >
         <div class="flex items-start gap-4">
           <div
-            class="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent text-2xl shrink-0">
+            class="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent text-2xl shrink-0"
+          >
             <BaseIcon name="offre" />
           </div>
 
           <div>
-            <h1 class="text-xl md:text-3xl font-black text-base-content tracking-tight">
+            <h1
+              class="text-xl md:text-3xl font-black text-base-content tracking-tight"
+            >
               {{ job.title }}
             </h1>
 
-            <div class="flex flex-wrap gap-x-4 gap-y-2 mt-3 text-xs md:text-sm text-base-content/70 font-semibold">
+            <div
+              class="flex flex-wrap gap-x-4 gap-y-2 mt-3 text-xs md:text-sm text-base-content/70 font-semibold"
+            >
               <div class="flex items-center gap-1.5 text-base-content">
-                <BaseIcon name="entreprise" class="text-base-content/40 text-xs" />
+                <BaseIcon
+                  name="entreprise"
+                  class="text-base-content/40 text-xs"
+                />
                 {{ job.company }}
               </div>
               <div class="flex items-center gap-1.5">
-                <BaseIcon name="location" class="text-base-content/40 text-xs" />
+                <BaseIcon
+                  name="location"
+                  class="text-base-content/40 text-xs"
+                />
                 {{ job.location }}
               </div>
               <div class="flex items-center gap-1.5">
@@ -42,50 +54,87 @@
             Sauvegarder
           </BaseButton>
 
-          <BaseButton variant="accent" icon="chevron-droite" class="lg:w-50 sm:w-auto" @click="postule()">
-            Postuler maintenant
+          <BaseButton
+            :variant="hasApplied ? 'neutral' : 'accent'"
+            :icon="hasApplied ? 'validation' : 'chevron-droite'"
+            :disabled="hasApplied || loading"
+            class="lg:w-50 sm:w-auto"
+            @click="postule()"
+          >
+            {{
+              hasApplied
+                ? "Déjà postulé"
+                : loading
+                  ? "Envoi..."
+                  : "Postuler maintenant"
+            }}
           </BaseButton>
         </div>
       </div>
     </BaseCard>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
       <div class="lg:col-span-8 space-y-6">
-
         <BaseCard density="spacious">
-          <div class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3">
+          <div
+            class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3"
+          >
             <BaseIcon name="candidat" class="text-accent text-base" />
-            <h2 class="text-lg font-black text-base-content tracking-tight">Description du poste</h2>
+            <h2 class="text-lg font-black text-base-content tracking-tight">
+              Description du poste
+            </h2>
           </div>
-          <div class="space-y-4 text-sm md:text-base text-base-content/80 leading-relaxed">
+          <div
+            class="space-y-4 text-sm md:text-base text-base-content/80 leading-relaxed"
+          >
             <p v-for="(p, idx) in job.description" :key="idx">{{ p }}</p>
           </div>
         </BaseCard>
 
         <BaseCard density="spacious">
-          <div class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3">
+          <div
+            class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3"
+          >
             <BaseIcon name="validation" class="text-accent text-base" />
-            <h2 class="text-lg font-black text-base-content tracking-tight">Responsabilités</h2>
+            <h2 class="text-lg font-black text-base-content tracking-tight">
+              Responsabilités
+            </h2>
           </div>
           <ul class="space-y-4 font-medium">
-            <li v-for="(item, index) in job.responsibilities" :key="index"
-              class="flex items-start gap-3 text-sm md:text-base text-base-content/80">
-              <BaseIcon name="validation" class="text-accent mt-1 text-xs shrink-0" />
+            <li
+              v-for="(item, index) in job.responsibilities"
+              :key="index"
+              class="flex items-start gap-3 text-sm md:text-base text-base-content/80"
+            >
+              <BaseIcon
+                name="validation"
+                class="text-accent mt-1 text-xs shrink-0"
+              />
               <span>{{ item }}</span>
             </li>
           </ul>
         </BaseCard>
 
         <BaseCard density="spacious">
-          <div class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3">
+          <div
+            class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3"
+          >
             <BaseIcon name="dashboard" class="text-accent text-base" />
-            <h2 class="text-lg font-black text-base-content tracking-tight">Compétences requises</h2>
+            <h2 class="text-lg font-black text-base-content tracking-tight">
+              Compétences requises
+            </h2>
           </div>
           <div class="flex flex-wrap gap-2 mb-4">
-            <BaseBadge v-for="(skill, index) in job.skills" :key="index"
+            <BaseBadge
+              v-for="(skill, index) in job.skills"
+              :key="index"
               class="font-bold text-xs tracking-wide rounded-xl px-4 py-3.5 border"
-              :class="skill.highlight ? 'bg-accent text-white border-accent shadow-sm' : 'bg-transparent border-base-300 text-base-content/70'">
+              :class="
+                skill.highlight
+                  ? 'bg-accent text-white border-accent shadow-sm'
+                  : 'bg-transparent border-base-300 text-base-content/70'
+              "
+            >
               {{ skill.name }}
             </BaseBadge>
           </div>
@@ -95,11 +144,17 @@
         </BaseCard>
 
         <BaseCard density="spacious">
-          <div class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3">
+          <div
+            class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3"
+          >
             <BaseIcon name="candidat" class="text-accent text-base" />
-            <h2 class="text-lg font-black text-base-content tracking-tight">Profil recherché</h2>
+            <h2 class="text-lg font-black text-base-content tracking-tight">
+              Profil recherché
+            </h2>
           </div>
-          <ul class="list-disc pl-5 space-y-3 text-sm md:text-base text-base-content/80 leading-relaxed font-medium">
+          <ul
+            class="list-disc pl-5 space-y-3 text-sm md:text-base text-base-content/80 leading-relaxed font-medium"
+          >
             <li v-for="(item, index) in job.profile" :key="index">
               {{ item }}
             </li>
@@ -108,18 +163,32 @@
       </div>
 
       <aside class="lg:col-span-4 space-y-6">
-
         <BaseCard density="normal">
-          <h3 class="text-xs font-black uppercase tracking-wider mb-5 text-base-content/40">Aperçu du poste</h3>
+          <h3
+            class="text-xs font-black uppercase tracking-wider mb-5 text-base-content/40"
+          >
+            Aperçu du poste
+          </h3>
           <div class="space-y-4">
-            <div v-for="(info, idx) in jobOverview" :key="idx" class="flex items-center gap-3">
+            <div
+              v-for="(info, idx) in jobOverview"
+              :key="idx"
+              class="flex items-center gap-3"
+            >
               <div
-                class="w-10 h-10 rounded-xl bg-base-200/60 flex items-center justify-center text-base-content/60 text-sm">
+                class="w-10 h-10 rounded-xl bg-base-200/60 flex items-center justify-center text-base-content/60 text-sm"
+              >
                 <BaseIcon :name="info.icon" />
               </div>
               <div>
-                <p class="text-[10px] font-bold text-base-content/40 uppercase tracking-wide">{{ info.label }}</p>
-                <p class="text-sm font-black text-base-content/80 mt-0.5">{{ info.value }}</p>
+                <p
+                  class="text-[10px] font-bold text-base-content/40 uppercase tracking-wide"
+                >
+                  {{ info.label }}
+                </p>
+                <p class="text-sm font-black text-base-content/80 mt-0.5">
+                  {{ info.value }}
+                </p>
               </div>
             </div>
           </div>
@@ -127,15 +196,26 @@
 
         <BaseCard density="normal">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center text-accent text-lg">
+            <div
+              class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center text-accent text-lg"
+            >
               <BaseIcon name="entreprise" />
             </div>
-            <h3 class="text-lg font-black text-base-content tracking-tight truncate">{{ job.company }}</h3>
+            <h3
+              class="text-lg font-black text-base-content tracking-tight truncate"
+            >
+              {{ job.company }}
+            </h3>
           </div>
-          <p class="text-xs md:text-sm text-base-content/70 leading-relaxed mb-4 font-medium">
+          <p
+            class="text-xs md:text-sm text-base-content/70 leading-relaxed mb-4 font-medium"
+          >
             {{ job.companyDescription }}
           </p>
-          <RouterLink to="#" class="text-xs font-bold text-accent hover:underline flex items-center gap-1">
+          <RouterLink
+            to="#"
+            class="text-xs font-bold text-accent hover:underline flex items-center gap-1"
+          >
             Voir le profil de l’entreprise
             <BaseIcon name="chevron-droite" class="text-[10px]" />
           </RouterLink>
@@ -146,23 +226,48 @@
     <BaseHero centered variant="soft" class="mt-12">
       <template #title>Prêt à postuler ?</template>
       <template #subtitle>
-        Rejoignez cette opportunité et contribuez à développer des solutions numériques d’avenir au sein d’une équipe
-        passionnée chez {{ job.company }}.
+        Rejoignez cette opportunité et contribuez à développer des solutions
+        numériques d’avenir au sein d’une équipe passionnée chez
+        {{ job.company }}.
       </template>
       <template #actions>
-        <BaseButton variant="accent" icon="chevron-droite" class="px-12" @click="postule()">
-          Postuler maintenant
+        <BaseButton
+          :variant="hasApplied ? 'neutral' : 'accent'"
+          :icon="hasApplied ? 'validation' : 'chevron-droite'"
+          :disabled="hasApplied || loading"
+          class="px-12"
+          @click="postule()"
+        >
+          {{
+            hasApplied
+              ? "Déjà postulé"
+              : loading
+                ? "Envoi..."
+                : "Postuler maintenant"
+          }}
         </BaseButton>
       </template>
     </BaseHero>
   </div>
 </template>
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useAuth } from "../composables/useAuth";
+import { useDb } from "../composables/useDb";
 
 const route = useRoute();
 const router = useRouter();
+const { currentUser } = useAuth();
+const {
+  applyToAnnonce,
+  loading,
+  error,
+  fetchAnnonces,
+  annonces,
+  fetchUsers,
+  users,
+} = useDb();
 
 const jobs = [
   {
@@ -216,7 +321,8 @@ const jobs = [
       { name: "Access", highlight: true },
       { name: "Word", highlight: false },
     ],
-    skillsDescription: "Solide niveau avec les outils bureautiques et logiciels de gestion requis.",
+    skillsDescription:
+      "Solide niveau avec les outils bureautiques et logiciels de gestion requis.",
     profile: [
       "1 à 3 ans d’expérience minimum",
       "Bonne maîtrise des outils bureautiques",
@@ -226,29 +332,102 @@ const jobs = [
       "IMMOcool Agency est une agence de services immobiliers connectant propriétaires et locataires partout en République du Congo.",
   },
 ];
-const jobId = computed(() => Number(route.params.id));
+const jobId = computed(() => route.params.id);
+
+// Charger les annonces depuis la database
+onMounted(async () => {
+  await fetchUsers();
+  await fetchAnnonces();
+});
+
+// Obtenir l'annonce depuis la database ou les données mockées
+const dbJob = computed(() => {
+  const annonce = annonces.value.find((a) => a.id === jobId.value);
+  if (!annonce) return null;
+
+  const entreprise = users.value.find((u) => u.id === annonce.entrepriseId);
+  return {
+    id: annonce.id,
+    title: annonce.title,
+    company: annonce.company || entreprise?.name || "Entreprise inconnue",
+    location: annonce.location || "Non spécifié",
+    contractType: annonce.contractType || "Non spécifié",
+    postedAt: annonce.createdAt || "Date inconnue",
+    salary: annonce.salary || "À débattre",
+    description: annonce.description
+      ? [annonce.description]
+      : ["Aucune description disponible"],
+    responsibilities: annonce.responsibilities || [],
+    skills: annonce.skills || [],
+    skillsDescription: annonce.skillsDescription || "",
+    profile: annonce.profile || [],
+    companyDescription: annonce.companyDescription || "",
+  };
+});
 
 const breadcrumbs = computed(() => [
-  { title: 'Offres', path: '/offres' },
-  { title: job.value.title || 'Détails de l\'offre', path: `/offres/${jobId.value}` },
+  { title: "Offres", path: "/offres" },
+  {
+    title: job.value.title || "Détails de l'offre",
+    path: `/offres/${jobId.value}`,
+  },
 ]);
 
 const job = computed(() => {
-  return jobs.find((item) => item.id === jobId.value) || jobs[0];
+  // Priorité aux données de la database
+  if (dbJob.value) return dbJob.value;
+  // Fallback sur les données mockées
+  return jobs.find((item) => item.id === Number(jobId.value)) || jobs[0];
 });
 
+// Vérifier si l'utilisateur a déjà postulé
+const hasApplied = computed(() => {
+  if (!currentUser.value || !jobId.value) return false;
+  const allCandidatures = JSON.parse(
+    localStorage.getItem("mosalah_database_candidatures") || "[]",
+  );
+  return allCandidatures.some(
+    (c) => c.annonceId === jobId.value && c.candidatId === currentUser.value.id,
+  );
+});
 
-function postule() {
-  // On vérifie si la valeur est bien un nombre valide avant de naviguer
-  const idNumerique = parseInt(jobId.value);
-
-  if (isNaN(idNumerique)) {
-    console.warn(jobId.value.toString())
-    console.error("Impossible de naviguer : jobId n'est pas un nombre valide.", jobId.value);
-    return; // On bloque la redirection pour éviter l'erreur de route
+async function postule() {
+  if (!currentUser.value) {
+    router.push("/login");
+    return;
   }
 
-  router.push(`/offres/${idNumerique}/postuler`);
+  if (hasApplied.value) {
+    alert("Vous avez déjà postulé à cette offre.");
+    router.push("/candidat/applications");
+    return;
+  }
+
+  const annonce = annonces.value.find((a) => a.id === jobId.value);
+  if (!annonce) {
+    alert("Annonce non trouvée.");
+    return;
+  }
+
+  const candidatureData = {
+    annonceId: annonce.id,
+    candidatId: currentUser.value.id,
+    job: annonce.title,
+    company: annonce.company,
+    location: annonce.location,
+    contractType: annonce.contractType,
+    salary: annonce.salary,
+    status: "sent",
+  };
+
+  const result = await applyToAnnonce(candidatureData);
+
+  if (result) {
+    alert("Candidature envoyée avec succès !");
+    router.push("/candidat/applications");
+  } else {
+    alert(error.value || "Erreur lors de l'envoi de la candidature.");
+  }
 }
 
 const jobOverview = computed(() => {

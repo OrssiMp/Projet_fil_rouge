@@ -10,7 +10,9 @@
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-3 bg-white">
-          <div class="md:col-span-5 flex items-center bg-base-100 rounded-xl px-3 border border-base-300">
+          <div
+            class="md:col-span-5 flex items-center bg-base-100 rounded-xl px-3 border border-base-300"
+          >
             <span class="opacity-40 text-sm">🔍</span>
             <input
               v-model="searchQuery"
@@ -20,7 +22,9 @@
             />
           </div>
 
-          <div class="md:col-span-5 flex items-center bg-base-100 rounded-xl px-3 border border-base-300">
+          <div
+            class="md:col-span-5 flex items-center bg-base-100 rounded-xl px-3 border border-base-300"
+          >
             <span class="opacity-40 text-sm">📍</span>
             <input
               v-model="locationQuery"
@@ -43,13 +47,17 @@
     <main class="max-w-7xl w-full mx-auto px-4 mt-8 flex-grow">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <!-- Barre latérale des filtres -->
-        <aside class="lg:col-span-3 flex flex-col gap-5 text-left bg-white p-5 rounded-2xl border border-base-200">
+        <aside
+          class="lg:col-span-3 flex flex-col gap-5 text-left bg-white p-5 rounded-2xl border border-base-200"
+        >
           <h2 class="text-lg font-black text-base-content tracking-tight mb-1">
             Filtres
           </h2>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-base-content/70">Type de contrat</label>
+            <label class="text-xs font-semibold text-base-content/70"
+              >Type de contrat</label
+            >
             <select
               v-model="filters.type"
               class="select select-bordered w-full rounded-xl bg-white text-sm font-medium border-base-300 focus:outline-none"
@@ -62,7 +70,9 @@
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-base-content/70">Secteur d'activité</label>
+            <label class="text-xs font-semibold text-base-content/70"
+              >Secteur d'activité</label
+            >
             <select
               v-model="filters.sector"
               class="select select-bordered w-full rounded-xl bg-white text-sm font-medium border-base-300 focus:outline-none"
@@ -75,7 +85,9 @@
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-base-content/70">Région</label>
+            <label class="text-xs font-semibold text-base-content/70"
+              >Région</label
+            >
             <select
               v-model="filters.region"
               class="select select-bordered w-full rounded-xl bg-white text-sm font-medium border-base-300 focus:outline-none"
@@ -90,17 +102,22 @@
 
         <!-- Liste des offres -->
         <section class="lg:col-span-9 flex flex-col gap-4">
-          <div class="text-xs font-bold text-base-content/60 text-left px-1 mb-1">
-            {{ filteredJobs.length }} {{ filteredJobs.length > 1 ? 'offres trouvées' : 'offre trouvée' }}
+          <div
+            class="text-xs font-bold text-base-content/60 text-left px-1 mb-1"
+          >
+            {{ filteredJobs.length }}
+            {{ filteredJobs.length > 1 ? "offres trouvées" : "offre trouvée" }}
           </div>
 
           <div v-if="loading" class="flex justify-center items-center py-12">
-            <span class="loading loading-spinner loading-lg text-emerald-500"></span>
+            <span
+              class="loading loading-spinner loading-lg text-emerald-500"
+            ></span>
           </div>
 
           <div
             v-else-if="filteredJobs.length > 0"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
           >
             <JobCard
               v-for="job in filteredJobs"
@@ -122,11 +139,27 @@
             v-if="filteredJobs.length > 0 && !loading"
             class="flex justify-center items-center gap-1 mt-8"
           >
-            <button class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-2 rounded-lg">‹</button>
-            <button class="btn btn-sm bg-emerald-500 hover:bg-emerald-600 border-none text-white font-bold px-3 rounded-lg">1</button>
-            <button class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-3 rounded-lg">2</button>
+            <button
+              class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-2 rounded-lg"
+            >
+              ‹
+            </button>
+            <button
+              class="btn btn-sm bg-emerald-500 hover:bg-emerald-600 border-none text-white font-bold px-3 rounded-lg"
+            >
+              1
+            </button>
+            <button
+              class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-3 rounded-lg"
+            >
+              2
+            </button>
             <span class="text-xs px-1 text-base-content/40">...</span>
-            <button class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-2 rounded-lg">›</button>
+            <button
+              class="btn btn-sm bg-white border border-base-300 hover:bg-base-100 text-base-content px-2 rounded-lg"
+            >
+              ›
+            </button>
           </div>
         </section>
       </div>
@@ -172,8 +205,10 @@ const mockJobs = ref([
     sector: "Tech",
     postedAt: "2 jours",
     salary: "À débattre",
-    description: "Nous recherchons un développeur Fullstack expérimenté pour rejoindre notre équipe produit...",
-    shortDescription: "Nous recherchons un développeur Fullstack expérimenté...",
+    description:
+      "Nous recherchons un développeur Fullstack expérimenté pour rejoindre notre équipe produit...",
+    shortDescription:
+      "Nous recherchons un développeur Fullstack expérimenté...",
     hasApplied: false,
   },
   {
@@ -186,8 +221,10 @@ const mockJobs = ref([
     sector: "Data",
     postedAt: "4 jours",
     salary: "À débattre",
-    description: "En tant que Data Analyst Senior, vous accompagnerez nos clients dans la compréhension de leurs données financières...",
-    shortDescription: "En tant que Data Analyst Senior, vous accompagnerez nos clients...",
+    description:
+      "En tant que Data Analyst Senior, vous accompagnerez nos clients dans la compréhension de leurs données financières...",
+    shortDescription:
+      "En tant que Data Analyst Senior, vous accompagnerez nos clients...",
     hasApplied: false,
   },
   {
@@ -200,8 +237,10 @@ const mockJobs = ref([
     sector: "Marketing",
     postedAt: "1 semaine",
     salary: "À débattre",
-    description: "Pilotez nos campagnes digitales pour des clients internationaux. Vous coordonnerez les équipes de création...",
-    shortDescription: "Pilotez nos campagnes digitales pour des clients internationaux...",
+    description:
+      "Pilotez nos campagnes digitales pour des clients internationaux. Vous coordonnerez les équipes de création...",
+    shortDescription:
+      "Pilotez nos campagnes digitales pour des clients internationaux...",
     hasApplied: false,
   },
 ]);
@@ -210,11 +249,16 @@ const mockJobs = ref([
 const dbJobs = computed(() => {
   return annonces.value.map((annonce) => {
     const entreprise = users.value.find((u) => u.id === annonce.entrepriseId);
-    
+
     // Récupération sécurisée du statut de candidature
-    const allCandidatures = JSON.parse(localStorage.getItem("mosalah_database_candidatures") || "[]");
+    const allCandidatures = JSON.parse(
+      localStorage.getItem("mosalah_database_candidatures") || "[]",
+    );
     const hasApplied = currentUser.value
-      ? allCandidatures.some((c) => c.annonceId === annonce.id && c.candidatId === currentUser.value.id)
+      ? allCandidatures.some(
+          (c) =>
+            c.annonceId === annonce.id && c.candidatId === currentUser.value.id,
+        )
       : false;
 
     return {
@@ -222,13 +266,15 @@ const dbJobs = computed(() => {
       title: annonce.title,
       company: entreprise?.name || "Entreprise Locale",
       location: annonce.location || "Brazzaville",
-      region: annonce.location || "Brazzaville", 
+      region: annonce.location || "Brazzaville",
       type: annonce.type || "CDI",
-      sector: annonce.sector || "Tech", 
+      sector: annonce.sector || "Tech",
       postedAt: annonce.createdAt || "Récemment",
       salary: annonce.salary || "À débattre",
       description: annonce.description || "",
-      shortDescription: annonce.description ? (annonce.description.substring(0, 150) + "...") : "Aucune description.",
+      shortDescription: annonce.description
+        ? annonce.description.substring(0, 150) + "..."
+        : "Aucune description.",
       hasApplied,
     };
   });
@@ -244,7 +290,7 @@ watch(
   () => route.query.q,
   (newQuery) => {
     searchQuery.value = newQuery || "";
-  }
+  },
 );
 
 // Moteur de recherche à filtres croisés en temps réel
@@ -260,10 +306,18 @@ const filteredJobs = computed(() => {
       job.region.toLowerCase().includes(locationQuery.value.toLowerCase());
 
     const matchesType = filters.type === "all" || job.type === filters.type;
-    const matchesSector = filters.sector === "all" || job.sector === filters.sector;
-    const matchesRegion = filters.region === "all" || job.region === filters.region;
+    const matchesSector =
+      filters.sector === "all" || job.sector === filters.sector;
+    const matchesRegion =
+      filters.region === "all" || job.region === filters.region;
 
-    return matchesSearch && matchesLocationInput && matchesType && matchesSector && matchesRegion;
+    return (
+      matchesSearch &&
+      matchesLocationInput &&
+      matchesType &&
+      matchesSector &&
+      matchesRegion
+    );
   });
 });
 

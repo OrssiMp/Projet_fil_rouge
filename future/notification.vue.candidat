@@ -1,0 +1,158 @@
+<template>
+  <div class="min-h-screen bg-base-200/40 pb-16 flex flex-col">
+    <header class="bg-white border-b border-base-200 pt-10 pb-6 px-4">
+      <div class="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-black text-base-content tracking-tight mb-2">
+            Vos Notifications
+          </h1>
+          <p class="text-sm text-base-content/60 font-medium">
+            Suivez l'évolution de vos candidatures et les opportunités récentes.
+          </p>
+        </div>
+        <button class="btn btn-sm btn-ghost text-emerald-600 hover:bg-emerald-50 font-bold self-start sm:self-center rounded-xl">
+          Tout marquer comme lu
+        </button>
+      </div>
+    </header>
+
+    <div class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-base-200 py-3 px-4">
+      <div class="max-w-4xl mx-auto flex gap-2 overflow-x-auto no-scrollbar">
+        <button class="btn btn-sm rounded-xl font-bold bg-emerald-500 hover:bg-emerald-600 border-none text-white px-4">
+          Toutes (4)
+        </button>
+        <button class="btn btn-sm rounded-xl font-medium bg-base-100 border-base-300 hover:bg-base-200 text-base-content px-4">
+          Non lues (2)
+        </button>
+        <button class="btn btn-sm rounded-xl font-medium bg-base-100 border-base-300 hover:bg-base-200 text-base-content px-4">
+          Candidatures
+        </button>
+        <button class="btn btn-sm rounded-xl font-medium bg-base-100 border-base-300 hover:bg-base-200 text-base-content px-4">
+          Alertes Emploi
+        </button>
+      </div>
+    </div>
+
+    <main class="max-w-4xl w-full mx-auto px-4 mt-8 flex-grow">
+      <div class="flex flex-col gap-3">
+        
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border-l-4 border-emerald-500 shadow-sm border-y border-r border-base-200 flex items-start gap-4 transition-all hover:border-base-300">
+          <div class="avatar placeholder">
+            <div class="bg-emerald-100 text-emerald-700 rounded-xl w-12 h-12 font-bold text-xl">
+              💼
+            </div>
+          </div>
+          <div class="flex-grow text-left">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Candidature</span>
+              <span class="text-xs font-medium text-base-content/50">Il y a 10 min</span>
+            </div>
+            <h3 class="text-sm font-bold text-base-content mb-1">
+              Bonne nouvelle ! <span class="text-emerald-600">TechNova Solutions</span> souhaite planifier un entretien avec vous.
+            </h3>
+            <p class="text-xs text-base-content/70 mb-3">
+              Votre profil pour le poste de <strong>Développeur Fullstack React/Node.js</strong> a retenu toute leur attention.
+            </p>
+            <div class="flex flex-wrap items-center gap-2">
+              <button class="btn btn-xs bg-emerald-500 hover:bg-emerald-600 border-none text-white font-bold rounded-lg px-3">
+                Voir l'invitation
+              </button>
+              <button class="btn btn-xs btn-ghost text-base-content/50 font-semibold rounded-lg">
+                Marquer comme lu
+              </button>
+            </div>
+          </div>
+          <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full mt-2 shrink-0"></div>
+        </div>
+
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border-l-4 border-blue-500 shadow-sm border-y border-r border-base-200 flex items-start gap-4 transition-all hover:border-base-300">
+          <div class="avatar placeholder">
+            <div class="bg-blue-100 text-blue-700 rounded-xl w-12 h-12 font-bold text-xl">
+              💬
+            </div>
+          </div>
+          <div class="flex-grow text-left">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Message</span>
+              <span class="text-xs font-medium text-base-content/50">Il y a 2 heures</span>
+            </div>
+            <h3 class="text-sm font-bold text-base-content mb-1">
+              Nouveau message de <span class="text-blue-600">FinData Partners</span>
+            </h3>
+            <p class="text-xs italic text-base-content/70 bg-base-100 p-2.5 rounded-xl border border-base-200 mb-3">
+              "Bonjour Orssi, merci pour votre intérêt. Pouvez-vous nous transmettre votre portfolio à jour s'il vous plaît ?"
+            </p>
+            <div class="flex flex-wrap items-center gap-2">
+              <button class="btn btn-xs bg-blue-500 hover:bg-blue-600 border-none text-white font-bold rounded-lg px-3">
+                Répondre
+              </button>
+            </div>
+          </div>
+          <div class="w-2.5 h-2.5 bg-blue-500 rounded-full mt-2 shrink-0"></div>
+        </div>
+
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-base-200 flex items-start gap-4 opacity-85 transition-all hover:border-base-300">
+          <div class="avatar placeholder">
+            <div class="bg-purple-100 text-purple-700 rounded-xl w-12 h-12 font-bold text-xl">
+              ✨
+            </div>
+          </div>
+          <div class="flex-grow text-left">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Alerte Emploi</span>
+              <span class="text-xs font-medium text-base-content/50">Hier</span>
+            </div>
+            <h3 class="text-sm font-bold text-base-content mb-1">
+              Nouvelle offre correspondant à vos compétences à <span class="text-base-content/80 font-extrabold">Brazzaville</span>
+            </h3>
+            <p class="text-xs text-base-content/70 mb-3">
+              L'entreprise <strong>Agence Creative Pulse</strong> a publié une offre de : <em>Chef de Projet Marketing Digital (CDD)</em>.
+            </p>
+            <div class="flex flex-wrap items-center gap-2">
+              <button class="btn btn-xs bg-base-200 hover:bg-base-300 border-none text-base-content font-bold rounded-lg px-3">
+                Voir l'offre
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-base-200 flex items-start gap-4 opacity-85 transition-all hover:border-base-300">
+          <div class="avatar placeholder">
+            <div class="bg-base-200 text-base-content/60 rounded-xl w-12 h-12 font-bold text-xl">
+              📁
+            </div>
+          </div>
+          <div class="flex-grow text-left">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-xs font-bold text-base-content/50 uppercase tracking-wider">Candidature</span>
+              <span class="text-xs font-medium text-base-content/50">Il y a 3 jours</span>
+            </div>
+            <h3 class="text-sm font-bold text-base-content mb-1">
+              Mise à jour concernant votre candidature chez <span class="font-bold">Global Tech</span>
+            </h3>
+            <p class="text-xs text-base-content/70 mb-0">
+              L'entreprise a clôturé le recrutement pour le poste de <em>Développeur Mobile</em>. Votre profil n'a pas été retenu pour cette fois-ci.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div v-if="false" class="text-center py-16 text-base-content/40 font-medium bg-white rounded-2xl border border-base-200 mt-4">
+        <span class="text-4xl block mb-3">🔔</span>
+        Vous n'avez aucune notification pour le moment.
+      </div>
+    </main>
+  </div>
+</template>
+
+<style scoped>
+/* Masque la barre de défilement horizontale des filtres sur mobile tout en gardant le scroll actif */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>

@@ -17,14 +17,18 @@ const routes = [
     path: "/offres",
     name: "JobList",
     component: () => import("../pages/JobList.vue"),
-    meta: { layout: "AppLayout", title: "Offres d'emploi" },
+    meta: { layout: "AppLayout", title: "Offres d'emploi", role: "candidat" },
   },
   {
     path: "/offres/:id",
     name: "JobDetail",
     component: () => import("../pages/jobDetail.vue"),
     props: true,
-    meta: { layout: "AppLayout", title: "Détails de l'offre" },
+    meta: {
+      layout: "AppLayout",
+      title: "Détails de l'offre",
+      role: "candidat",
+    },
   },
   {
     path: "/offres/:id/postuler",

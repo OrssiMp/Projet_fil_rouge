@@ -438,7 +438,7 @@ import { useDb } from "../../composables/useDb";
 import { useAuth } from "../../composables/useAuth";
 
 const { currentUser } = useAuth();
-const { createAnnonce ,fetchAnnonces} = useDb();
+const { createAnnonce, fetchAnnonces } = useDb();
 const showPublishModal = ref(false);
 const isSubmitting = ref(false);
 const formError = ref("");
@@ -451,7 +451,6 @@ const stats = ref({
   totalViews: 0,
   interviews: 0,
 });
-
 
 // Le tableau myJobs mis à jour avec la nouvelle structure requise
 const myJobs = ref([
@@ -500,9 +499,9 @@ const closeModal = () => {
 // Soumission du formulaire
 const handlePublishSubmit = async () => {
   // ... validation ...
-  
+
   isSubmitting.value = true;
-  
+
   try {
     const newAnnonce = await createAnnonce({
       entrepriseId: currentUser.value?.id,
@@ -516,7 +515,7 @@ const handlePublishSubmit = async () => {
       description: form.value.description,
       highlight: form.value.highlight,
     });
-    
+
     if (newAnnonce) {
       myJobs.value.unshift(newAnnonce);
       stats.value.activeJobs += 1;
@@ -530,6 +529,15 @@ const handlePublishSubmit = async () => {
 };
 onMounted(async () => {
   const annonces = await fetchAnnonces();
-  myJobs.value = annonces.filter(a => a.entrepriseId === currentUser.value?.id);
+  stats.value.activeJobs = annonces.filter(
+    (a) => a.entrepriseId === currentUser.value?.id,
+  ).length;
+  stats.value.totalApplications = annonces.reduce(
+    (acc, a) => acc + a.applications,
+    0,
+  );
+  myJobs.value = annonces.filter(
+    (a) => a.entrepriseId === currentUser.value?.id,
+  );
 });
 </script>
