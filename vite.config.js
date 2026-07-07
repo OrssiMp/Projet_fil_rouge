@@ -9,4 +9,9 @@ export default defineConfig({
     tailwindcss()
   ],
   base: '/Projet_fil_rouge/', 
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
+  }
 })

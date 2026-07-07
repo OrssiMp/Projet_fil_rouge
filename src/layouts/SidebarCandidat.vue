@@ -32,14 +32,16 @@
         </div>
 
         <div class="flex-none gap-4">
-          <button
-            class="btn btn-ghost btn-circle btn-sm relative hover:bg-base-200"
-          >
-            <i class="fa-regular fa-bell text-lg text-base-content/70"></i>
-            <span
-              class="badge badge-xs bg-error border-none absolute top-0 right-0 animate-pulse"
-            ></span>
-          </button>
+          <router-link to="/notifications">
+            <button
+              class="btn btn-ghost btn-circle btn-sm relative hover:bg-base-200"
+            >
+              <i class="fa-regular fa-bell text-lg text-base-content/70"></i>
+              <span
+                class="badge badge-xs bg-error border-none absolute top-0 right-0 animate-pulse"
+              ></span>
+            </button>
+          </router-link>
 
           <div class="dropdown dropdown-end" v-if="user">
             <div
@@ -284,6 +286,10 @@ const trackingMenu = [
     label: "Invitations",
     to: "/candidat/invitations",
     icon: "fa-solid fa-envelope-open-text",
+  },{
+    label: "Notifications",
+    to: "/notifications",
+    icon: "fa-regular fa-bell",
   },
   { label: "Messages", to: "message", icon: "fa-solid fa-message" },
   {

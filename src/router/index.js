@@ -291,7 +291,7 @@ const routes = [
     name: "NotFound",
     component: () => import("../pages/application/NotFound.vue"),
     meta: {
-      layout: isAuthenticated.value ? "DashboardLayout" : "AppLayout",
+      layout: isAuthenticated.value ? "AuthLayout" : "AppLayout",
       title: "Page introuvable",
       requiresAuth: false,
       role: currentUser.value?.role,
