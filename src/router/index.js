@@ -201,7 +201,7 @@ const routes = [
   {
     path: "/entreprise/dashboard",
     name: "EntrepriseDashboard",
-    component: () => import("../pages/entreprise/Dashboard.vue"),
+    component: () => import("../pages/entreprise/JobManagement.vue"),
     meta: {
       layout: "DashboardLayout",
       requiresAuth: true,
@@ -274,6 +274,16 @@ const routes = [
       layout: "DashboardLayout",
       requiresAuth: true,
       title: "Notifications",
+    },
+  },{
+    path: "/entreprise/create-annonce",
+    name: "CreateAnnonce",
+    component: () => import("../pages/entreprise/CreateAnnonce.vue"),
+    meta: {
+      layout: "DashboardLayout",
+      requiresAuth: true,
+      role: "entreprise",
+      title: "Créer une annonce",
     },
   },
   {

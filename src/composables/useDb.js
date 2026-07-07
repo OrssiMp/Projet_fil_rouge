@@ -109,6 +109,66 @@ export function useDb() {
   const getCandidates = () => fetchUsers("candidat");
   const getEntreprises = () => fetchUsers("entreprise");
 
+  /**
+   * Récupère un utilisateur par son ID.
+   * @param {string} userId
+   * @returns {Promise<Object|null>}
+   */
+  const getUserById = async (userId) => {
+    loading.value = true;
+    try {
+      await simulateNetwork();
+      const allUsers = getLocal("mosalah_database_users");
+      const user = allUsers.find((u) => u.id === userId);
+      if (user) {
+        const { password, ...safeUser } = user;
+        return safeUser;
+      }
+      return null;
+    } catch (err) {
+      error.value = "Erreur lors de la récupération de l'utilisateur.";
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
+   * Met à jour le profil d'un utilisateur.
+   * @param {string} userId
+   * @param {Object} profileData
+   * @returns {Promise<boolean>}
+   */
+  const updateUserProfile = async (userId, profileData) => {
+    loading.value = true;
+    try {
+      await simulateNetwork();
+      const allUsers = getLocal("mosalah_database_users");
+      const index = allUsers.findIndex((u) => u.id === userId);
+
+      if (index === -1) {
+        throw new Error("Utilisateur non trouvé.");
+      }
+
+      allUsers[index] = { ...allUsers[index], ...profileData };
+      setLocal("mosalah_database_users", allUsers);
+
+      // Mettre à jour l'état réactif si l'utilisateur est dans la liste
+      const stateIndex = users.value.findIndex((u) => u.id === userId);
+      if (stateIndex !== -1) {
+        const { password, ...safeUser } = allUsers[index];
+        users.value[stateIndex] = safeUser;
+      }
+
+      return true;
+    } catch (err) {
+      error.value = err.message || "Erreur lors de la mise à jour du profil.";
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   // --- 2. GESTION DES ANNONCES (Entreprises) ---
 
   /**
@@ -469,6 +529,8 @@ export function useDb() {
     fetchUsers,
     getCandidates,
     getEntreprises,
+    getUserById,
+    updateUserProfile,
 
     // Méthodes Annonces (Entreprise)
     createAnnonce,

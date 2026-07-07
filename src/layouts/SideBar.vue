@@ -299,7 +299,7 @@ const recruitmentMenu = [
   {
     label: "Créer une offre",
     icon: "creer-offre",
-    to: "/entreprise/dashboard/offres/create",
+    to: "/entreprise/create-annonce",
   },
   { label: "Tous les candidats", icon: "candidats", to: "/candidats" },
   {
