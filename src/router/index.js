@@ -265,6 +265,16 @@ const routes = [
     meta: { layout: "AppLayout", title: "Liste des candidats" },
   },
   {
+    path: "/notifications",
+    name: "Notifications",
+    component: () => import("../pages/Notifications.vue"),
+    meta: {
+      layout: "DashboardLayout",
+      requiresAuth: true,
+      title: "Notifications",
+    },
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
     component: () => import("../pages/application/NotFound.vue"),

@@ -19,7 +19,7 @@ import SideBar from "./layouts/SideBar.vue";
 // 🚨 1. Import de AOS et de ses styles CSS
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { mockAuth } from "./utils/mockAuth.js";
+
 import SidebarCandidat from "./layouts/SidebarCandidat.vue";
 import PublicLayout from "./layouts/PublicLayout.vue";
 import EntrepriseLayout from "./layouts/EntrepriseLayout.vue";

@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-
+import { useNotifications } from "./useNotifications";
 /**
  * @typedef {Object} Annonce
  * @property {string} id - Identifiant unique de l'annonce.
@@ -115,6 +115,8 @@ export function useDb() {
    * Crée une nouvelle annonce d'emploi (Côté entreprise).
    * @param {Omit<Annonce, 'id' | 'createdAt'>} annonceData
    */
+
+  // ...
   const createAnnonce = async (annonceData) => {
     loading.value = true;
     try {
@@ -130,6 +132,21 @@ export function useDb() {
       currentAnnonces.unshift(newAnnonce);
       setLocal("mosalah_database_annonces", currentAnnonces);
       annonces.value = currentAnnonces;
+
+      // --- Notification : nouvelle offre pour tous les candidats ---
+      const { createBulkNotifications } = useNotifications();
+      const allUsers = getLocal("mosalah_database_users");
+      const candidatIds = allUsers
+        .filter((u) => u.role === "candidat")
+        .map((u) => u.id);
+
+      createBulkNotifications(candidatIds, {
+        type: "new_offer",
+        title: "Nouvelle offre disponible",
+        message: `Une nouvelle offre "${newAnnonce.title}" vient d'être publiée.`,
+        link: `/offres/${newAnnonce.id}`,
+      });
+
       return newAnnonce;
     } catch (err) {
       error.value = "Impossible de créer l'annonce.";
@@ -219,7 +236,6 @@ export function useDb() {
       const currentCandidatures = getLocal("mosalah_database_candidatures");
       const currentAnnonces = getLocal("mosalah_database_annonces");
 
-      // Vérifier si le candidat a déjà postulé
       const hasAlreadyApplied = currentCandidatures.some(
         (c) =>
           c.annonceId === candidatureData.annonceId &&
@@ -233,13 +249,13 @@ export function useDb() {
       const newCandidature = {
         id: generateCandidatureId(),
         ...candidatureData,
+        status: "en_etude", // 'en_etude' | 'acceptee' | 'refusee'
         createdAt: new Date().toLocaleDateString("fr-FR"),
       };
 
       currentCandidatures.push(newCandidature);
       setLocal("mosalah_database_candidatures", currentCandidatures);
 
-      // Mettre à jour le compteur de candidatures dans l'annonce
       const annonceIndex = currentAnnonces.findIndex(
         (a) => a.id === candidatureData.annonceId,
       );
@@ -247,6 +263,21 @@ export function useDb() {
         currentAnnonces[annonceIndex].applications =
           (currentAnnonces[annonceIndex].applications || 0) + 1;
         setLocal("mosalah_database_annonces", currentAnnonces);
+
+        // --- Notification : nouvelle candidature pour l'entreprise ---
+        const { createNotification } = useNotifications();
+        const allUsers = getLocal("mosalah_database_users");
+        const candidat = allUsers.find(
+          (u) => u.id === candidatureData.candidatId,
+        );
+
+        createNotification({
+          userId: currentAnnonces[annonceIndex].entrepriseId,
+          type: "new_candidature",
+          title: "Nouvelle candidature reçue",
+          message: `${candidat?.name || "Un candidat"} a postulé à l'offre "${currentAnnonces[annonceIndex].title}".`,
+          link: `/entreprise/dashboard/offres/${candidatureData.annonceId}`,
+        });
       }
 
       return newCandidature;
@@ -338,6 +369,52 @@ export function useDb() {
     }
   };
 
+  /**
+   * Met à jour le statut d'une candidature (accepté, en étude, refusé) et notifie le candidat.
+   * @param {string} candidatureId
+   * @param {'en_etude' | 'acceptee' | 'refusee'} newStatus
+   */
+  const updateCandidatureStatus = async (candidatureId, newStatus) => {
+    loading.value = true;
+    try {
+      await simulateNetwork();
+      const allCandidatures = getLocal("mosalah_database_candidatures");
+      const allAnnonces = getLocal("mosalah_database_annonces");
+
+      const idx = allCandidatures.findIndex((c) => c.id === candidatureId);
+      if (idx === -1) throw new Error("Candidature introuvable.");
+
+      allCandidatures[idx].status = newStatus;
+      setLocal("mosalah_database_candidatures", allCandidatures);
+
+      const annonce = allAnnonces.find(
+        (a) => a.id === allCandidatures[idx].annonceId,
+      );
+
+      const statusLabels = {
+        en_etude: "est en cours d'étude",
+        acceptee: "a été acceptée 🎉",
+        refusee: "n'a malheureusement pas été retenue",
+      };
+
+      const { createNotification } = useNotifications();
+      createNotification({
+        userId: allCandidatures[idx].candidatId,
+        type: "candidature_status",
+        title: "Mise à jour de votre candidature",
+        message: `Votre candidature pour "${annonce?.title || "une offre"}" ${statusLabels[newStatus]}.`,
+        link: `/candidat/applications`,
+      });
+
+      return true;
+    } catch (err) {
+      error.value = err.message || "Impossible de mettre à jour le statut.";
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     // États réactifs
     loading,
@@ -359,6 +436,7 @@ export function useDb() {
 
     // Méthodes Candidatures (Mixte)
     applyToAnnonce,
+    updateCandidatureStatus,
     fetchCandidaturesForAnnonce,
 
     // Méthodes Demandes d'emploi (Candidat)
