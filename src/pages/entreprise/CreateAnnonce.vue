@@ -1,22 +1,25 @@
 <template>
-  <div class="min-h-screen bg-base-200/40 py-10 px-4 sm:px-6 lg:px-8 select-none">
-    
+  <div
+    class="min-h-screen bg-base-200/40 py-10 px-4 sm:px-6 lg:px-8 select-none"
+  >
     <div class="max-w-3xl mx-auto" data-aos="fade-up" data-aos-duration="400">
-      
       <!-- En-tête de la page & Bouton retour -->
       <div class="mb-6 flex items-center justify-between">
         <div>
-          <button 
-            @click="goBack" 
+          <button
+            @click="goBack"
             class="btn btn-sm btn-ghost text-base-content/60 hover:text-base-content hover:bg-base-200/50 -ml-2 mb-2"
           >
             ← Retour
           </button>
-          <h1 class="text-2xl md:text-3xl font-black text-base-content tracking-tight">
+          <h1
+            class="text-2xl md:text-3xl font-black text-base-content tracking-tight"
+          >
             Nouvelle offre d'emploi
           </h1>
           <p class="text-sm text-base-content/60 font-medium mt-1">
-            Publiez votre annonce sur Mosalah pour attirer les meilleurs talents.
+            Publiez votre annonce sur Mosalah pour attirer les meilleurs
+            talents.
           </p>
         </div>
       </div>
@@ -36,10 +39,12 @@
         >
           <!-- 1. Informations principales -->
           <div class="mb-6 space-y-4">
-            <h3 class="text-sm font-bold text-base-content border-b border-base-100 pb-2 mb-4">
+            <h3
+              class="text-sm font-bold text-base-content border-b border-base-100 pb-2 mb-4"
+            >
               Informations générales
             </h3>
-            
+
             <BaseInput
               v-model="form.title"
               label="Titre du poste *"
@@ -69,14 +74,18 @@
 
           <!-- 2. Contrat & Localisation -->
           <div class="mb-6 space-y-4">
-            <h3 class="text-sm font-bold text-base-content border-b border-base-100 pb-2 mb-4 mt-2">
+            <h3
+              class="text-sm font-bold text-base-content border-b border-base-100 pb-2 mb-4 mt-2"
+            >
               Détails du poste
             </h3>
-            
+
             <!-- Type de contrat & Catégorie -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="flex flex-col">
-                <label class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5">
+                <label
+                  class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5"
+                >
                   Type de contrat *
                 </label>
                 <select
@@ -93,7 +102,9 @@
               </div>
 
               <div class="flex flex-col">
-                <label class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5">
+                <label
+                  class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5"
+                >
                   Catégorie *
                 </label>
                 <select
@@ -130,10 +141,12 @@
 
           <!-- 3. Contenu de l'annonce -->
           <div class="space-y-4">
-            <h3 class="text-sm font-bold text-base-content border-b border-base-100 pb-2 mb-4 mt-2">
+            <h3
+              class="text-sm font-bold text-base-content border-b border-base-100 pb-2 mb-4 mt-2"
+            >
               Contenu de l'annonce
             </h3>
-            
+
             <!-- Champ d'accroche (Highlight) -->
             <BaseInput
               v-model="form.highlight"
@@ -144,7 +157,9 @@
 
             <!-- Description -->
             <div class="flex flex-col">
-              <label class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5">
+              <label
+                class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5"
+              >
                 Description complète de l'offre *
               </label>
               <textarea
@@ -158,16 +173,22 @@
           </div>
 
           <!-- Bannière d'information Mosalah -->
-          <div class="bg-amber-50/60 border border-amber-200/60 rounded-xl p-4 text-xs font-semibold text-amber-800 leading-relaxed flex gap-3 mt-6">
+          <div
+            class="bg-amber-50/60 border border-amber-200/60 rounded-xl p-4 text-xs font-semibold text-amber-800 leading-relaxed flex gap-3 mt-6"
+          >
             <span class="text-lg">💡</span>
             <p class="mt-0.5">
-              Mosalah certifie la légalité et valide la conformité des offres d'emploi sur le territoire national. Toute annonce jugée frauduleuse sera immédiatement retirée.
+              Mosalah certifie la légalité et valide la conformité des offres
+              d'emploi sur le territoire national. Toute annonce jugée
+              frauduleuse sera immédiatement retirée.
             </p>
           </div>
 
           <!-- Actions de soumission -->
           <template #actions>
-            <div class="flex items-center justify-end gap-3 w-full mt-6 pt-6 border-t border-base-100">
+            <div
+              class="flex items-center justify-end gap-3 w-full mt-6 pt-6 border-t border-base-100"
+            >
               <BaseButton
                 type="button"
                 variant="ghost"
@@ -189,7 +210,6 @@
               </BaseButton>
             </div>
           </template>
-          
         </BaseForm>
       </BaseCard>
     </div>
@@ -197,57 +217,73 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useAuth } from "../../composables/useAuth";
+import { useDb } from "../../composables/useDb";
 
 const router = useRouter();
+const { currentUser } = useAuth();
+const { createAnnonce } = useDb();
 
-// État du formulaire
 const isSubmitting = ref(false);
-const formError = ref('');
-const formSuccess = ref('');
+const formError = ref("");
+const formSuccess = ref("");
 
-// Données du formulaire
 const form = reactive({
-  title: '',
-  company: '',
-  companyTag: '',
-  contractType: '',
-  category: '',
-  location: 'Brazzaville', // Pré-rempli par défaut
-  salary: '',
-  highlight: '',
-  description: ''
+  title: "",
+  company: "",
+  companyTag: "",
+  contractType: "",
+  category: "",
+  location: "Brazzaville",
+  salary: "",
+  highlight: "",
+  description: "",
 });
 
-// Méthodes
+onMounted(() => {
+  form.company = currentUser.value?.name || "";
+});
+
 const goBack = () => {
-  // Retour à la page précédente (ex: Dashboard RH)
   router.back();
 };
 
 const handlePublishSubmit = async () => {
-  formError.value = '';
-  formSuccess.value = '';
+  formError.value = "";
+  formSuccess.value = "";
+
+  if (!currentUser.value) {
+    formError.value =
+      "Vous devez être connecté en tant qu'entreprise pour publier une offre.";
+    return;
+  }
+
   isSubmitting.value = true;
 
   try {
-    // Simulation d'un appel API (ex: Supabase / Firebase)
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Logique de succès
+    const newAnnonce = await createAnnonce({
+      entrepriseId: currentUser.value.id,
+      title: form.title,
+      company: form.company,
+      companyTag: form.companyTag,
+      contractType: form.contractType,
+      category: form.category,
+      location: form.location,
+      salary: form.salary || "À débattre",
+      highlight: form.highlight,
+      description: form.description,
+    });
+
+    if (!newAnnonce) throw new Error("Impossible de publier l'annonce.");
+
     formSuccess.value = "Votre offre d'emploi a été publiée avec succès !";
-    
-    // Redirection après succès
-    setTimeout(() => {
-      // router.push({ name: 'JobsList' });
-      goBack();
-    }, 2000);
-    
-  } catch (error) {
-    formError.value = "Une erreur est survenue lors de la publication. Veuillez réessayer.";
-    console.error(error);
+    setTimeout(() => router.push({ name: "EntrepriseOffres" }), 1500);
+  } catch (err) {
+    formError.value =
+      err.message ||
+      "Une erreur est survenue lors de la publication. Veuillez réessayer.";
   } finally {
     isSubmitting.value = false;
   }

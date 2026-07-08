@@ -469,7 +469,123 @@ export function useDb() {
       loading.value = false;
     }
   };
+  /**
+   * Récupère toutes les demandes d'emploi publiées par un candidat spécifique.
+   * @param {number} candidatId
+   * @returns {Promise<Array>}
+   */
+  const fetchDemandesByCandidat = async (candidatId) => {
+    loading.value = true;
+    try {
+      await simulateNetwork();
+      const allDemandes = getLocal("mosalah_database_demandes");
+      return allDemandes.filter((d) => d.candidatId === candidatId);
+    } catch (err) {
+      error.value = "Erreur lors du chargement des demandes.";
+      return [];
+    } finally {
+      loading.value = false;
+    }
+  };
 
+  /**
+   * Récupère toutes les candidatures d'un candidat, enrichies des infos de l'annonce et de l'entreprise.
+   * @param {number} candidatId
+   */
+  const fetchCandidaturesForCandidat = async (candidatId) => {
+    loading.value = true;
+    try {
+      await simulateNetwork();
+      const allCandidatures = getLocal("mosalah_database_candidatures");
+      const allAnnonces = getLocal("mosalah_database_annonces");
+      const allUsers = getLocal("mosalah_database_users");
+
+      const filtered = allCandidatures
+        .filter((c) => c.candidatId === candidatId)
+        .map((c) => {
+          const annonce = allAnnonces.find((a) => a.id === c.annonceId);
+          const entreprise = annonce
+            ? allUsers.find((u) => u.id === annonce.entrepriseId)
+            : null;
+          return {
+            ...c,
+            job: annonce?.title || "Poste inconnu",
+            company: entreprise?.name || "Entreprise inconnue",
+            location: annonce?.location || "Non spécifié",
+            contractType: annonce?.contractType || "Non spécifié",
+            category: annonce?.category || null,
+            salary: annonce?.salary || "À débattre",
+          };
+        });
+
+      candidatures.value = filtered;
+      return filtered;
+    } catch (err) {
+      error.value = "Impossible de récupérer vos candidatures.";
+      return [];
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
+   * Retire (supprime) une candidature du candidat et décrémente le compteur de l'annonce.
+   * @param {string} candidatureId
+   */
+  const withdrawCandidature = async (candidatureId) => {
+    loading.value = true;
+    try {
+      await simulateNetwork();
+      const allCandidatures = getLocal("mosalah_database_candidatures");
+      const target = allCandidatures.find((c) => c.id === candidatureId);
+      if (!target) throw new Error("Candidature introuvable.");
+
+      setLocal(
+        "mosalah_database_candidatures",
+        allCandidatures.filter((c) => c.id !== candidatureId),
+      );
+
+      const allAnnonces = getLocal("mosalah_database_annonces");
+      const annonceIndex = allAnnonces.findIndex(
+        (a) => a.id === target.annonceId,
+      );
+      if (annonceIndex !== -1) {
+        allAnnonces[annonceIndex].applications = Math.max(
+          0,
+          (allAnnonces[annonceIndex].applications || 1) - 1,
+        );
+        setLocal("mosalah_database_annonces", allAnnonces);
+      }
+      return true;
+    } catch (err) {
+      error.value = err.message || "Impossible de retirer la candidature.";
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  /**
+   * Supprime une demande d'emploi publiée par un candidat.
+   * @param {string} demandeId
+   */
+  const deleteDemandeEmploi = async (demandeId) => {
+    loading.value = true;
+    try {
+      await simulateNetwork();
+      const allDemandes = getLocal("mosalah_database_demandes");
+      setLocal(
+        "mosalah_database_demandes",
+        allDemandes.filter((d) => d.id !== demandeId),
+      );
+      return true;
+    } catch (err) {
+      error.value = "Impossible de supprimer la demande.";
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
   /**
    * Met à jour le statut d'une candidature (accepté, en étude, refusé) et notifie le candidat.
    * @param {string} candidatureId
@@ -542,9 +658,13 @@ export function useDb() {
     updateCandidatureStatus,
     fetchCandidaturesForAnnonce,
     fetchCandidaturesForEntreprise,
-
+    fetchDemandesByCandidat,
     // Méthodes Demandes d'emploi (Candidat)
     createDemandeEmploi,
     fetchDemandesEmploi,
+    deleteDemandeEmploi,
+    // Méthodes Candidatures (Candidat)
+    fetchCandidaturesForCandidat,
+    withdrawCandidature,
   };
 }

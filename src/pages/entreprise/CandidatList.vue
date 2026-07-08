@@ -101,9 +101,9 @@
                 </span>
                 
                 <!-- Bouton Voir le profil complet (Optionnel, à lier à ta route) -->
-                <button class="btn btn-sm btn-ghost border-base-300 text-base-content font-bold">
-                  Voir le profil
-                </button>
+<router-link :to="{ name: 'CandidatProfile', params: { id: candidature.candidatId } }" class="btn btn-sm btn-ghost border-base-300 text-base-content font-bold">
+  Voir le profil
+</router-link>
 
                 <!-- Actions rapides -->
                 <div class="flex gap-2" v-if="candidature.status === 'en_etude'">
