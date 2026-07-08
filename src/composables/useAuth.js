@@ -299,6 +299,41 @@ export function useAuth() {
       router.push({ name: "Home" });
     }
   };
+  /**
+   * Change le mot de passe de l'utilisateur connecté.
+   * @param {string} currentPassword
+   * @param {string} newPassword
+   */
+  const changePassword = async (currentPassword, newPassword) => {
+    if (!currentUser.value) return false;
+    loading.value = true;
+    error.value = null;
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const localUsers = JSON.parse(
+        localStorage.getItem("mosalah_database_users") || "[]",
+      );
+      const userIndex = localUsers.findIndex(
+        (u) => u.id === currentUser.value.id,
+      );
+      if (userIndex === -1) throw new Error("Utilisateur introuvable.");
+      if (localUsers[userIndex].password !== currentPassword) {
+        throw new Error("Mot de passe actuel incorrect.");
+      }
+      localUsers[userIndex].password = newPassword;
+      localStorage.setItem(
+        "mosalah_database_users",
+        JSON.stringify(localUsers),
+      );
+      success.value = "Mot de passe mis à jour avec succès.";
+      return true;
+    } catch (err) {
+      error.value = err.message || "Impossible de changer le mot de passe.";
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
 
   return {
     currentUser: userProfile,
