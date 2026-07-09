@@ -165,12 +165,14 @@
     </main>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useDb } from '../../composables/useDb'; // Vérifie bien ce chemin vers tes composables
 
 const route = useRoute();
+const { getUserById, fetchAnnonces } = useDb();
+
 const loading = ref(true);
 const company = ref(null);
 
@@ -179,73 +181,55 @@ const breadcrumbs = computed(() => [
   { title: company.value?.name || 'Détails entreprise', path: route.fullPath },
 ]);
 
-// Catalogue global simulé (Mock Database) incluant tes plateformes clés
-const companiesDatabase = [
-  {
-    id: 1,
-    name: "TechCongo Solutions",
-    sector: "Technologies / IT",
-    location: "Brazzaville, Congo",
-    size: "10-25",
-    founded: "2023",
-    headquarters: "Brazzaville (République du Congo)",
-    structureType: "SARL",
-    website: "https://techcongo.cg",
-    logo: "",
-    coverImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
-    description: "Agence spécialisée dans le développement de solutions web, d'applications mobiles sur mesure et l'intégration d'architectures cloud.",
-    jobs: [
-      { id: 101, title: "Développeur Full-Stack JavaScript (MERN)", type: "CDI", salary: "À débattre", postedAt: "il y a 2 jours" },
-      { id: 102, title: "Développeur Vue.js Júnior", type: "Temps plein", salary: "Motivant", postedAt: "il y a 4 jours" }
-    ]
-  },
-  {
-    id: 2,
-    name: "IMMOcool Agency",
-    sector: "Immobilier",
-    location: "Brazzaville, Centre-ville",
-    size: "5-15",
-    founded: "2025",
-    headquarters: "Brazzaville (République du Congo)",
-    structureType: "EURL",
-    website: "https://immocool.cg",
-    logo: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=150&auto=format&fit=crop",
-    coverImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
-    description: "Plateforme moderne et agence de services immobiliers connectant propriétaires et locataires partout en République du Congo.",
-    jobs: [
-      { id: 201, title: "Commercial Terrain & Immobilier", type: "Commission", salary: "Fixe + Pourcentage", postedAt: "il y a 1 semaine" }
-    ]
-  },
-  {
-    id: 3,
-    name: "Bantou Digital",
-    sector: "Design / Média",
-    location: "Brazzaville, Plateau des 15ans",
-    size: "20-50",
-    founded: "2021",
-    headquarters: "Brazzaville (République du Congo)",
-    structureType: "SARL",
-    website: "https://bantoudigital.cg",
-    logo: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=150&auto=format&fit=crop",
-    coverImage: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1200&auto=format&fit=crop",
-    description: "Studio créatif axé sur l'identité visuelle, la production de médias numériques interactifs, le prototypage UI/UX et la communication.",
-    jobs: [
-      { id: 301, title: "Designer UI/UX (Figma Expert)", type: "CDI", salary: "Fixe + Bonus", postedAt: "il y a 3 jours" }
-    ]
-  }
-];
+onMounted(async () => {
+  // 1. Tenter de convertir l'ID en Nombre car useAuth génère des ID numériques avec Date.now()
+  const paramId = route.params.id;
+  const companyId = isNaN(paramId) ? paramId : Number(paramId);
 
-onMounted(() => {
-  // 1. Récupération de l'ID depuis l'URL (ex: /companies/2 -> companyId = 2)
-  const companyId = parseInt(route.params.id);
+  try {
+    // 2. Récupération du profil depuis le localStorage via useDb[cite: 1]
+    const fetchedUser = await getUserById(companyId);
 
-  // 2. Simulation d'un léger délai réseau pour l'effet de transition
-  setTimeout(() => {
-    const foundCompany = companiesDatabase.find(c => c.id === companyId);
-    if (foundCompany) {
-      company.value = foundCompany;
+    // Debugging pour voir ce que l'application reçoit réellement (à ouvrir dans la console F12)
+    console.log("ID recherché :", companyId, "Type :", typeof companyId);
+    console.log("Utilisateur trouvé :", fetchedUser);
+
+    if (fetchedUser && fetchedUser.role === 'entreprise') {
+      // 3. Récupération des annonces globales[cite: 1]
+      const allAnnonces = await fetchAnnonces() || [];
+      
+      // Sécurité sur le filtrage (on compare en transformant en String pour éviter les conflits)
+      const companyJobs = allAnnonces.filter(annonce => 
+        String(annonce.entrepriseId) === String(companyId)
+      );
+
+      // 4. Mapping complet pour ton template
+      company.value = {
+        id: fetchedUser.id,
+        name: fetchedUser.name,
+        sector: fetchedUser.sector || "Technologies / IT",
+        location: fetchedUser.location || "Brazzaville, Congo",
+        size: fetchedUser.size || "10-25",
+        founded: fetchedUser.founded || "—",
+        headquarters: fetchedUser.headquarters || fetchedUser.location || "—",
+        structureType: fetchedUser.structureType || "SARL",
+        website: fetchedUser.website || "#",
+        logo: fetchedUser.avatar || fetchedUser.logo || "",
+        coverImage: fetchedUser.coverImage || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
+        description: fetchedUser.bio || "Aucune description disponible pour le moment.",
+        jobs: companyJobs.map(job => ({
+          id: job.id,
+          title: job.title,
+          type: job.type,
+          salary: job.salary || "À débattre",
+          postedAt: job.createdAt || "Récemment"
+        }))
+      };
     }
+  } catch (error) {
+    console.error("Erreur critique lors du chargement :", error);
+  } finally {
     loading.value = false;
-  }, 400);
+  }
 });
 </script>
