@@ -10,9 +10,19 @@
             Consultez les profils créés par les candidats en recherche active.
           </p>
         </div>
-        <span class="badge bg-[#006643] border-none text-white font-bold px-3 py-4 text-xs h-7 self-start md:self-auto">
-          {{ filteredDemandes.length }} demande(s) disponible(s)
-        </span>
+        <div class="flex items-center gap-3 self-start md:self-auto">
+          <span v-if="lastRefreshedAt" class="text-[11px] text-base-content/40 font-semibold">
+            Actualisé à {{ lastRefreshedAt }}
+          </span>
+          <button @click="loadDemandes" :disabled="loading" class="btn btn-sm btn-outline border-base-300 rounded-xl font-bold gap-2">
+            <span v-if="loading" class="loading loading-spinner loading-xs"></span>
+            <span v-else>↻</span>
+            Actualiser
+          </button>
+          <span class="badge bg-[#006643] border-none text-white font-bold px-3 py-4 text-xs h-7">
+            {{ filteredDemandes.length }} demande(s)
+          </span>
+        </div>
       </div>
     </header>
 
@@ -34,8 +44,7 @@
           <div v-for="demande in filteredDemandes" :key="demande.id"
             class="bg-base-100 border border-base-200/60 rounded-2xl p-5 hover:border-emerald-300 hover:shadow-md transition-all duration-300 flex flex-col justify-between shadow-sm">
 
-            <!-- AUTEUR mis en avant en premier, avant même le titre de la demande -->
-            <div class="flex items-center gap-3 mb-4 pb-4 border-b border-base-100">
+            <router-link :to="`/demandes/${demande.id}`" class="flex items-center gap-3 mb-4 pb-4 border-b border-base-100">
               <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-base-200">
                 <img v-if="demande.author.avatar" :src="demande.author.avatar" :alt="demande.author.name" class="object-cover w-full h-full" />
                 <div v-else class="w-full h-full flex items-center justify-center font-black text-sm" :class="[demande.author.avatarColor.bg, demande.author.avatarColor.text]">
@@ -50,7 +59,7 @@
                 :class="demande.author.isAvailable ? 'bg-emerald-50 text-[#006643]' : 'bg-base-200 text-base-content/40'">
                 {{ demande.author.isAvailable ? 'Disponible' : 'Indisponible' }}
               </span>
-            </div>
+            </router-link>
 
             <div>
               <div class="flex items-start justify-between gap-2 mb-2">
@@ -60,9 +69,11 @@
                 <span class="text-[11px] text-base-content/50 font-bold">⏱️ {{ demande.createdAt || 'Récemment' }}</span>
               </div>
 
-              <h3 class="text-lg font-extrabold text-base-content tracking-tight line-clamp-1">
-                {{ demande.title }}
-              </h3>
+              <router-link :to="`/demandes/${demande.id}`" class="hover:text-[#006643] transition-colors">
+                <h3 class="text-lg font-extrabold text-base-content tracking-tight line-clamp-1">
+                  {{ demande.title }}
+                </h3>
+              </router-link>
 
               <p class="text-xs text-base-content/70 font-medium line-clamp-3 leading-relaxed mt-2 mb-4">
                 {{ demande.description || 'Aucun détail supplémentaire fourni.' }}
@@ -83,13 +94,10 @@
               <p class="text-[11px] text-base-content/60 font-semibold">
                 📍 {{ demande.author.location || 'Non spécifié' }}
               </p>
-              <router-link :to="`/demandes/${demande.id}`" class="text-xs font-bold text-base-content/50 hover:text-[#006643] hover:underline">
-  Voir la fiche complète →
-</router-link>
-              <button @click="handleContact(demande.author.id)" :disabled="contactingId === demande.author.id"
+              <router-link :to="`/demandes/${demande.id}`"
                 class="btn bg-[#006643] hover:bg-[#004d32] border-none text-white font-bold text-xs min-h-0 h-9 px-4 rounded-xl">
-                Contacter
-              </button>
+                Voir la fiche
+              </router-link>
             </div>
           </div>
         </div>
@@ -105,19 +113,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { useDb } from '../../composables/useDb';
 import { useAuth } from '../../composables/useAuth';
-import { useMessages } from '../../composables/useMessages';
 
-const router = useRouter();
 const { fetchDemandesEmploi } = useDb();
 const { currentUser } = useAuth();
-const { getOrCreateConversation } = useMessages();
 
 const loading = ref(true);
 const rawDemandes = ref([]);
-const contactingId = ref(null);
+const lastRefreshedAt = ref('');
 
 const isEntreprise = computed(() => currentUser.value?.role === 'entreprise');
 
@@ -155,18 +159,16 @@ const filteredDemandes = computed(() => {
   });
 });
 
-onMounted(async () => {
-  if (isEntreprise.value) {
-    rawDemandes.value = (await fetchDemandesEmploi()) || [];
+const loadDemandes = async () => {
+  if (!isEntreprise.value) {
+    loading.value = false;
+    return;
   }
+  loading.value = true;
+  rawDemandes.value = (await fetchDemandesEmploi()) || [];
+  lastRefreshedAt.value = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   loading.value = false;
-});
-
-const handleContact = async (candidatId) => {
-  if (!currentUser.value || !candidatId) return;
-  contactingId.value = candidatId;
-  const conv = await getOrCreateConversation(candidatId, currentUser.value.id);
-  contactingId.value = null;
-  if (conv) router.push(`/message?conversation=${conv.id}`);
 };
+
+onMounted(loadDemandes);
 </script>

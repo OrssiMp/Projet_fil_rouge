@@ -61,9 +61,15 @@
       </router-link>
     </BaseCard>
 
-    <BaseButton variant="accent" class="w-full" :loading="contacting" @click="handleContact">
-      Contacter {{ author.name }}
-    </BaseButton>
+   <!-- Bouton "Contacter" uniquement pour une entreprise consultant le profil d'un candidat -->
+<BaseButton v-if="isEntreprise" variant="accent" class="w-full" :loading="contacting" @click="handleContact">
+  Contacter {{ author.name }}
+</BaseButton>
+
+<!-- Bouton "Supprimer" uniquement pour le candidat, propriétaire de sa propre demande -->
+<BaseButton v-if="isOwner" variant="ghost" class="w-full border border-error/30 text-error hover:bg-error/10" :loading="deleting" @click="handleDelete">
+  Supprimer ma demande
+</BaseButton>
   </div>
 </template>
 
@@ -76,9 +82,9 @@ import { useMessages } from '../../composables/useMessages';
 
 const route = useRoute();
 const router = useRouter();
-const { getDemandeById } = useDb();
 const { currentUser } = useAuth();
 const { getOrCreateConversation } = useMessages();
+const { getDemandeById, deleteDemandeEmploi } = useDb(); // deleteDemandeEmploi ajouté
 
 const loading = ref(true);
 const notFound = ref(false);
@@ -92,6 +98,18 @@ onMounted(async () => {
   loading.value = false;
 });
 
+
+const isOwner = computed(() => currentUser.value?.id === author.value.id);
+const isEntreprise = computed(() => currentUser.value?.role === 'entreprise');
+const deleting = ref(false);
+
+const handleDelete = async () => {
+  if (!confirm('Voulez-vous vraiment supprimer cette demande ? Cette action est irréversible.')) return;
+  deleting.value = true;
+  const success = await deleteDemandeEmploi(demande.value.id);
+  deleting.value = false;
+  if (success) router.push('/candidat/job-requests');
+};
 const author = computed(() => demande.value?.author || {});
 const isAvailable = computed(() => author.value.availability === true || (typeof author.value.availability === 'string' && author.value.availability.length > 0));
 

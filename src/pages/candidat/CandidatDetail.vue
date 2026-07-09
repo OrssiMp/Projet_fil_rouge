@@ -102,6 +102,26 @@
               {{ isOwnProfile ? "Vous n'avez pas encore ajouté d'expérience." : "Ce candidat n'a pas encore renseigné d'expérience." }}
             </p>
           </BaseCard>
+          <!-- Dans lg:col-span-8, après "Parcours & Expériences" -->
+<BaseCard density="spacious" data-aos="fade-up" data-aos-delay="125">
+  <h2 class="text-xl font-black text-base-content tracking-tight mb-6">Formations</h2>
+  <div v-if="candidate.formations && candidate.formations.length > 0" class="relative border-l-2 border-base-200 pl-6 ml-2 flex flex-col gap-8">
+    <div v-for="(formation, index) in candidate.formations" :key="index" class="relative">
+      <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-sky-500 border-4 border-base-100 shadow-sm"></span>
+      <span class="text-xs font-black text-sky-700 bg-sky-50 px-2 py-1 rounded-md">
+        {{ formation.start || '?' }} → {{ formation.end || 'Présent' }}
+      </span>
+      <h3 class="text-lg font-extrabold text-base-content tracking-tight mt-2">{{ formation.degree }}</h3>
+      <p class="text-sm font-bold text-base-content/60 mb-1">
+        {{ formation.school }}<span v-if="formation.field"> — {{ formation.field }}</span>
+      </p>
+    </div>
+  </div>
+  <p v-else class="text-xs text-base-content/40 font-semibold italic">
+    {{ isOwnProfile ? "Vous n'avez pas encore ajouté de formation." : "Ce candidat n'a pas encore renseigné de formation." }}
+  </p>
+</BaseCard>
+          
 
           <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="150">
             <h2 class="text-xl font-black text-base-content tracking-tight px-1">Projets mis en avant</h2>
@@ -147,10 +167,49 @@
             <p v-else class="text-xs text-base-content/40 font-semibold italic">Langues non renseignées.</p>
           </BaseCard>
 
-          <BaseCard density="normal" class="border-base-200/60">
-            <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">Contact</h3>
-            <p class="text-xs md:text-sm font-medium text-base-content/70">✉️ {{ candidate.email || 'Email non renseigné' }}</p>
-          </BaseCard>
+         <!-- Dans lg:col-span-4, après la carte "Langues" -->
+<BaseCard density="normal" class="border-base-200/60">
+  <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">Informations</h3>
+  <div class="flex flex-col gap-2.5 text-xs md:text-sm font-medium">
+    <div v-if="candidate.gender" class="flex justify-between items-center">
+      <span class="text-base-content/50 font-semibold">Sexe</span>
+      <span class="text-base-content/80 font-bold">{{ candidate.gender }}</span>
+    </div>
+    <div v-if="candidate.nationality" class="flex justify-between items-center">
+      <span class="text-base-content/50 font-semibold">Nationalité</span>
+      <span class="text-base-content/80 font-bold">{{ candidate.nationality }}</span>
+    </div>
+    <p v-if="!candidate.gender && !candidate.nationality" class="text-xs text-base-content/30 italic">
+      Aucune information complémentaire renseignée.
+    </p>
+  </div>
+</BaseCard>
+
+<!-- Carte Contact  -->
+<BaseCard density="normal" class="border-base-200/60">
+  <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">Contact</h3>
+  <p class="text-xs md:text-sm font-medium text-base-content/70 mb-3">
+    ✉️ {{ candidate.email || 'Email non renseigné' }}
+  </p>
+  <p class="text-[11px] text-base-content/40 font-medium italic">
+    Le numéro de téléphone n'est communiqué qu'après une prise de contact via la messagerie Mosalah.
+  </p>
+
+  <div v-if="hasAnyNetwork" class="flex flex-col gap-2 text-xs md:text-sm font-medium mt-4 pt-4 border-t border-base-100">
+    <a v-if="candidate.networks?.linkedin" :href="candidate.networks.linkedin" target="_blank" class="text-emerald-700 hover:underline flex items-center gap-1.5">
+      🔗 LinkedIn
+    </a>
+    <a v-if="candidate.networks?.github" :href="candidate.networks.github" target="_blank" class="text-emerald-700 hover:underline flex items-center gap-1.5">
+      🔗 GitHub
+    </a>
+    <a v-if="candidate.networks?.portfolio" :href="candidate.networks.portfolio" target="_blank" class="text-emerald-700 hover:underline flex items-center gap-1.5">
+      🔗 Portfolio
+    </a>
+    <a v-for="net in candidate.networks?.additional || []" :key="net.name" :href="net.url" target="_blank" class="text-emerald-700 hover:underline flex items-center gap-1.5">
+      🔗 {{ net.name }}
+    </a>
+  </div>
+</BaseCard>
         </div>
 
       </div>
@@ -243,4 +302,9 @@ const handleContact = async () => {
 
   if (conv) router.push(`/message?conversation=${conv.id}`);
 };
+const hasAnyNetwork = computed(() => {
+  const n = candidate.value?.networks;
+  if (!n) return false;
+  return !!(n.linkedin || n.github || n.portfolio || (n.additional && n.additional.length > 0));
+});
 </script>
