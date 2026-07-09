@@ -193,6 +193,7 @@ const getDemandeById = async (demandeId) => {
     }
   };
 
+
   // --- 2. GESTION DES ANNONCES (Entreprises) ---
 
   /**
@@ -240,7 +241,54 @@ const getDemandeById = async (demandeId) => {
       loading.value = false;
     }
   };
+/**
+ * Modifie une annonce existante (titre, description, statut, etc.).
+ * @param {string} annonceId
+ * @param {Object} updates
+ */
+const updateAnnonce = async (annonceId, updates) => {
+  loading.value = true;
+  try {
+    await simulateNetwork();
+    const allAnnonces = getLocal("mosalah_database_annonces");
+    const idx = allAnnonces.findIndex((a) => a.id === annonceId);
+    if (idx === -1) throw new Error("Annonce introuvable.");
+    allAnnonces[idx] = { ...allAnnonces[idx], ...updates };
+    setLocal("mosalah_database_annonces", allAnnonces);
+    annonces.value = allAnnonces;
+    return allAnnonces[idx];
+  } catch (err) {
+    error.value = err.message || "Impossible de modifier l'annonce.";
+    return null;
+  } finally {
+    loading.value = false;
+  }
+};
 
+/**
+ * Supprime une annonce et nettoie les candidatures liées (évite les orphelines).
+ * @param {string} annonceId
+ */
+const deleteAnnonce = async (annonceId) => {
+  loading.value = true;
+  try {
+    await simulateNetwork();
+    const allAnnonces = getLocal("mosalah_database_annonces");
+    setLocal("mosalah_database_annonces", allAnnonces.filter((a) => a.id !== annonceId));
+
+    const allCandidatures = getLocal("mosalah_database_candidatures");
+    setLocal(
+      "mosalah_database_candidatures",
+      allCandidatures.filter((c) => c.annonceId !== annonceId),
+    );
+    return true;
+  } catch (err) {
+    error.value = "Impossible de supprimer l'annonce.";
+    return false;
+  } finally {
+    loading.value = false;
+  }
+};
   /**
    * Récupère toutes les annonces, avec le compteur de candidatures pour chacune.
    * @returns {Promise<Array>} Tableau de toutes les annonces enrichies
@@ -676,8 +724,11 @@ const fetchDemandesEmploi = async () => {
 
     // Méthodes Annonces (Entreprise)
     createAnnonce,
+    updateAnnonce,
+    deleteAnnonce,
     fetchAnnonces,
     getAnnonceById,
+
 
 
     // Méthodes Candidatures (Mixte)

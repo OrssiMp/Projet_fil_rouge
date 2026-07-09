@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+import { seedDatabase } from "./utils/seedDatabase";
 import App from "./App.vue";
 import "./style.css";
 import router from "./router/index.js";
@@ -48,7 +49,7 @@ app.component("Sidebar", SideBar);
 app.component("SideBarCandidat", SidebarCandidat);
 app.component("PublicLayout", PublicLayout);
 app.component("EntrepriseLayout", EntrepriseLayout);
-
+seedDatabase()
 // 🚨 2. Initialisation globale de AOS
 AOS.init({
   duration: 800, // Durée de l'animation en millisecondes (ex: 800ms)

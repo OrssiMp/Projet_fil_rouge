@@ -596,5 +596,4 @@ const handlePublishSubmit = async () => {
     isSubmitting.value = false;
   }
 };
-
 </script>
