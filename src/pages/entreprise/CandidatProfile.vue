@@ -47,9 +47,11 @@
             </div>
           </div>
           <div class="flex gap-2 w-full md:w-auto">
-            <button class="btn btn-accent text-white border-none flex-1 md:flex-none">
+<router-link to="/message">
+              <button class="btn btn-accent text-white border-none flex-1 md:flex-none">
               <i class="fa-solid fa-envelope mr-2"></i> Contacter
             </button>
+</router-link>
             <button class="btn btn-outline flex-1 md:flex-none" disabled title="CV non disponible pour l'instant">
               <i class="fa-solid fa-download mr-2"></i> CV
             </button>

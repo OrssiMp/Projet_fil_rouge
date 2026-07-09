@@ -243,7 +243,7 @@ const trackingMenu = computed(() => [
 ]);
 
 const visibilityMenu = [
-  { label: "Créer une demande d'emploi", to: "/candidat/job-requests", icon: "fa-solid fa-bullhorn" },
+  // { label: "Créer une demande d'emploi", to: "/candidat/job-requests", icon: "fa-solid fa-bullhorn" },
   { label: "Mon profil public", to: "/candidat/profile", icon: "fa-solid fa-id-card-clip" },
   { label: "Paramètre", to: "/candidat/settings", icon: "fa-solid fa-gear" },
 ];

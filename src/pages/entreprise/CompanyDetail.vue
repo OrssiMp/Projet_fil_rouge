@@ -115,10 +115,12 @@
                       <span>⏳ Publié {{ job.postedAt }}</span>
                     </div>
                   </div>
-
-                  <BaseButton :to="`/jobs/${job.id}`" variant="accent" class="sm:w-auto w-full text-xs h-10">
+<router-link :to="`/offres/${job.id}`">
+  
+                  <BaseButton  variant="accent" class="sm:w-auto w-full text-xs h-10">
                     Voir l'offre
                   </BaseButton>
+</router-link>
                 </div>
               </BaseCard>
             </div>
