@@ -348,5 +348,6 @@ export function useAuth() {
     updateProfile,
     addExperience,
     addProject,
+    changePassword
   };
 }

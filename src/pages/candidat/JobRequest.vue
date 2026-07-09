@@ -83,6 +83,9 @@
               <p class="text-[11px] text-base-content/60 font-semibold">
                 📍 {{ demande.author.location || 'Non spécifié' }}
               </p>
+              <router-link :to="`/demandes/${demande.id}`" class="text-xs font-bold text-base-content/50 hover:text-[#006643] hover:underline">
+  Voir la fiche complète →
+</router-link>
               <button @click="handleContact(demande.author.id)" :disabled="contactingId === demande.author.id"
                 class="btn bg-[#006643] hover:bg-[#004d32] border-none text-white font-bold text-xs min-h-0 h-9 px-4 rounded-xl">
                 Contacter

@@ -132,7 +132,31 @@ export function useDb() {
       loading.value = false;
     }
   };
-
+/**
+ * Récupère une demande d'emploi spécifique, enrichie du profil complet de son auteur.
+ * @param {string} demandeId
+ */
+const getDemandeById = async (demandeId) => {
+  loading.value = true;
+  try {
+    await simulateNetwork();
+    const allDemandes = getLocal("mosalah_database_demandes");
+    const demande = allDemandes.find((d) => d.id === demandeId);
+    if (!demande) {
+      error.value = "Demande introuvable.";
+      return null;
+    }
+    const allUsers = getLocal("mosalah_database_users");
+    const author = allUsers.find((u) => u.id === demande.candidatId);
+    const { password, ...safeAuthor } = author || {};
+    return { ...demande, author: author ? safeAuthor : null };
+  } catch (err) {
+    error.value = "Erreur lors de la récupération de la demande.";
+    return null;
+  } finally {
+    loading.value = false;
+  }
+};
   /**
    * Met à jour le profil d'un utilisateur.
    * @param {string} userId
@@ -655,6 +679,7 @@ const fetchDemandesEmploi = async () => {
     fetchAnnonces,
     getAnnonceById,
 
+
     // Méthodes Candidatures (Mixte)
     applyToAnnonce,
     updateCandidatureStatus,
@@ -665,6 +690,7 @@ const fetchDemandesEmploi = async () => {
     createDemandeEmploi,
     fetchDemandesEmploi,
     deleteDemandeEmploi,
+    getDemandeById,
     // Méthodes Candidatures (Candidat)
     fetchCandidaturesForCandidat,
     withdrawCandidature,

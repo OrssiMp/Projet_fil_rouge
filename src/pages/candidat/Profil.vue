@@ -80,7 +80,7 @@
             </p>
             <EmptySectionPrompt v-else text="Vous n'avez pas encore rédigé de présentation. Les recruteurs voient en priorité les profils avec une bio." />
           </BaseCard>
-
+<!-- parcours & expériences -->
           <BaseCard density="spacious" data-aos="fade-up" data-aos-delay="100">
             <h2 class="text-xl font-black text-base-content tracking-tight mb-6">Parcours & Expériences</h2>
             <div v-if="candidate.experiences && candidate.experiences.length > 0" class="relative border-l-2 border-base-200 pl-6 ml-2 flex flex-col gap-8">
@@ -96,7 +96,24 @@
             </div>
             <EmptySectionPrompt v-else text="Aucune expérience ajoutée. Ajoutez votre parcours pour rassurer les recruteurs." />
           </BaseCard>
-
+          <!-- formations -->
+<BaseCard density="spacious" data-aos="fade-up" data-aos-delay="125">
+  <h2 class="text-xl font-black text-base-content tracking-tight mb-6">Formations</h2>
+  <div v-if="candidate.formations && candidate.formations.length > 0" class="relative border-l-2 border-base-200 pl-6 ml-2 flex flex-col gap-8">
+    <div v-for="(formation, index) in candidate.formations" :key="index" class="relative">
+      <span class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-sky-500 border-4 border-base-100 shadow-sm"></span>
+      <span class="text-xs font-black text-sky-700 bg-sky-50 px-2 py-1 rounded-md">
+        {{ formation.start || '?' }} → {{ formation.end || 'Présent' }}
+      </span>
+      <h3 class="text-lg font-extrabold text-base-content tracking-tight mt-2">{{ formation.degree }}</h3>
+      <p class="text-sm font-bold text-base-content/60 mb-1">
+        {{ formation.school }}<span v-if="formation.field"> — {{ formation.field }}</span>
+      </p>
+      <p v-if="formation.mention" class="text-xs text-base-content/50 font-semibold">Mention : {{ formation.mention }}</p>
+    </div>
+  </div>
+  <EmptySectionPrompt v-else text="Aucune formation ajoutée. Renseignez votre parcours académique." />
+</BaseCard>
           <div class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="150">
             <h2 class="text-xl font-black text-base-content tracking-tight px-1">Projets mis en avant</h2>
             <div v-if="candidate.projects && candidate.projects.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -121,6 +138,7 @@
         </div>
 
         <div class="lg:col-span-4 flex flex-col gap-6" data-aos="fade-up" data-aos-delay="200">
+          <!-- compétences -->
           <BaseCard density="normal" class="border-base-200/60">
             <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">Compétences</h3>
             <div v-if="candidate.skills && candidate.skills.length > 0" class="flex flex-wrap gap-1.5">
@@ -130,7 +148,20 @@
             </div>
             <EmptySectionPrompt v-else text="Aucune compétence renseignée." compact />
           </BaseCard>
-
+          <!-- informations personnelles -->
+<BaseCard density="normal" class="border-base-200/60">
+  <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">Informations personnelles</h3>
+  <div class="flex flex-col gap-2.5 text-xs md:text-sm font-medium">
+    <div class="flex justify-between items-center">
+      <span class="text-base-content/50 font-semibold">Sexe</span>
+      <span class="text-base-content/80 font-bold">{{ candidate.gender || 'Non renseigné' }}</span>
+    </div>
+    <div class="flex justify-between items-center">
+      <span class="text-base-content/50 font-semibold">Nationalité</span>
+      <span class="text-base-content/80 font-bold">{{ candidate.nationality || 'Non renseignée' }}</span>
+    </div>
+  </div>
+</BaseCard>
           <BaseCard density="normal" class="border-base-200/60">
             <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">Langues</h3>
             <div v-if="candidate.languages && candidate.languages.length > 0" class="flex flex-wrap gap-1.5">
@@ -140,11 +171,32 @@
             </div>
             <EmptySectionPrompt v-else text="Langues non renseignées." compact />
           </BaseCard>
+<!-- contact -->
+         <BaseCard density="normal" class="border-base-200/60">
+  <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">Contact</h3>
+  <div class="flex flex-col gap-2 text-xs md:text-sm font-medium text-base-content/70">
+    <p>✉️ {{ candidate.email || 'Email non renseigné' }}</p>
+    <p v-if="candidate.phone">📞 {{ candidate.phone }}</p>
+  </div>
 
-          <BaseCard density="normal" class="border-base-200/60">
-            <h3 class="text-xs font-black text-base-content/40 tracking-tight mb-4 uppercase">Contact</h3>
-            <p class="text-xs md:text-sm font-medium text-base-content/70">✉️ {{ candidate.email || 'Email non renseigné' }}</p>
-          </BaseCard>
+  <div v-if="hasAnyNetwork" class="flex flex-col gap-2 text-xs md:text-sm font-medium mt-4 pt-4 border-t border-base-100">
+    <a v-if="candidate.networks?.linkedin" :href="candidate.networks.linkedin" target="_blank" class="text-emerald-700 hover:underline flex items-center gap-1.5">
+      🔗 LinkedIn
+    </a>
+    <a v-if="candidate.networks?.github" :href="candidate.networks.github" target="_blank" class="text-emerald-700 hover:underline flex items-center gap-1.5">
+      🔗 GitHub
+    </a>
+    <a v-if="candidate.networks?.portfolio" :href="candidate.networks.portfolio" target="_blank" class="text-emerald-700 hover:underline flex items-center gap-1.5">
+      🔗 Portfolio
+    </a>
+    <a v-for="net in candidate.networks?.additional || []" :key="net.name" :href="net.url" target="_blank" class="text-emerald-700 hover:underline flex items-center gap-1.5">
+      🔗 {{ net.name }}
+    </a>
+  </div>
+  <p v-else class="text-xs text-base-content/30 font-semibold italic mt-4 pt-4 border-t border-base-100">
+    Aucun réseau professionnel renseigné.
+  </p>
+</BaseCard>
         </div>
 
       </div>
@@ -237,4 +289,10 @@ const EmptySectionPrompt = (props) => h(
     ),
   ],
 );
+
+const hasAnyNetwork = computed(() => {
+  const n = candidate.value?.networks;
+  if (!n) return false;
+  return !!(n.linkedin || n.github || n.portfolio || (n.additional && n.additional.length > 0));
+});
 </script>

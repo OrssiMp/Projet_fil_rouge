@@ -285,7 +285,18 @@ const routes = [
       role: "entreprise",
       title: "Créer une annonce",
     },
+  },{
+  path: "/demandes/:id",
+  name: "DemandeDetail",
+  component: () => import("../pages/entreprise/DemandeDetail.vue"),
+  props: true,
+  meta: {
+    layout: "DashboardLayout",
+    requiresAuth: true,
+    role: "entreprise",
+    title: "Détail de la demande",
   },
+},
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
