@@ -171,7 +171,62 @@
               ></textarea>
             </div>
           </div>
+<!-- 4. Profil recherché -->
+<div class="space-y-4 mt-2">
+  <h3 class="text-sm font-bold text-base-content border-b border-base-100 pb-2 mb-4">
+    Profil recherché
+  </h3>
 
+  <div class="flex flex-col">
+    <label class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5">
+      Responsabilités du poste
+    </label>
+    <textarea
+      v-model="form.responsibilities"
+      rows="4"
+      placeholder="Ex: Développer et maintenir les fonctionnalités frontend, collaborer avec l'équipe design, participer aux revues de code..."
+      class="textarea textarea-bordered w-full rounded-xl text-sm font-medium bg-white border-base-300 focus:outline-none focus:border-[#006643] focus:ring-1 focus:ring-[#006643] leading-relaxed p-4 resize-y"
+    ></textarea>
+  </div>
+
+  <div class="flex flex-col">
+    <label class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5">
+      Compétences requises
+    </label>
+    <div class="flex gap-2">
+      <input
+        v-model="newRequiredSkill"
+        type="text"
+        placeholder="Ex: Vue.js"
+        @keyup.enter.prevent="addRequiredSkill"
+        class="input input-bordered w-full rounded-xl text-sm font-medium bg-white border-base-300 focus:outline-none focus:border-[#006643] h-11"
+      />
+      <button type="button" @click="addRequiredSkill" :disabled="!newRequiredSkill"
+        class="btn rounded-xl bg-[#006643] hover:bg-[#004d32] text-white border-none px-4 shrink-0">
+        Ajouter
+      </button>
+    </div>
+    <div v-if="form.requiredSkills.length > 0" class="flex flex-wrap gap-2 mt-3">
+      <span v-for="(skill, index) in form.requiredSkills" :key="skill"
+        class="badge badge-lg bg-base-200 text-base-content/80 border-none font-bold gap-2">
+        {{ skill }}
+        <button type="button" @click="removeRequiredSkill(index)" class="text-rose-600">×</button>
+      </span>
+    </div>
+  </div>
+
+  <div class="flex flex-col">
+    <label class="block text-xs font-black uppercase tracking-wider text-base-content/50 mb-1.5">
+      Profil recherché
+    </label>
+    <textarea
+      v-model="form.profileSought"
+      rows="4"
+      placeholder="Ex: Vous justifiez d'au moins 2 ans d'expérience en développement web, vous êtes rigoureux et autonome..."
+      class="textarea textarea-bordered w-full rounded-xl text-sm font-medium bg-white border-base-300 focus:outline-none focus:border-[#006643] focus:ring-1 focus:ring-[#006643] leading-relaxed p-4 resize-y"
+    ></textarea>
+  </div>
+</div>
           <!-- Bannière d'information Mosalah -->
           <div
             class="bg-amber-50/60 border border-amber-200/60 rounded-xl p-4 text-xs font-semibold text-amber-800 leading-relaxed flex gap-3 mt-6"
@@ -240,7 +295,22 @@ const form = reactive({
   salary: "",
   highlight: "",
   description: "",
+  responsibilities: "",     // ← nouveau
+  requiredSkills: [],       // ← nouveau
+  profileSought: "",        // ← nouveau
 });
+
+const newRequiredSkill = ref("");
+const addRequiredSkill = () => {
+  const value = newRequiredSkill.value.trim();
+  if (value && !form.requiredSkills.includes(value)) {
+    form.requiredSkills.push(value);
+  }
+  newRequiredSkill.value = "";
+};
+const removeRequiredSkill = (index) => {
+  form.requiredSkills.splice(index, 1);
+};
 
 onMounted(() => {
   form.company = currentUser.value?.name || "";
@@ -263,18 +333,21 @@ const handlePublishSubmit = async () => {
   isSubmitting.value = true;
 
   try {
-    const newAnnonce = await createAnnonce({
-      entrepriseId: currentUser.value.id,
-      title: form.title,
-      company: form.company,
-      companyTag: form.companyTag,
-      contractType: form.contractType,
-      category: form.category,
-      location: form.location,
-      salary: form.salary || "À débattre",
-      highlight: form.highlight,
-      description: form.description,
-    });
+   const newAnnonce = await createAnnonce({
+  entrepriseId: currentUser.value.id,
+  title: form.title,
+  company: form.company,
+  companyTag: form.companyTag,
+  contractType: form.contractType,
+  category: form.category,
+  location: form.location,
+  salary: form.salary || "À débattre",
+  highlight: form.highlight,
+  description: form.description,
+  responsibilities: form.responsibilities, // ← nouveau
+  requiredSkills: form.requiredSkills,      // ← nouveau
+  profileSought: form.profileSought,        // ← nouveau
+});
 
     if (!newAnnonce) throw new Error("Impossible de publier l'annonce.");
 

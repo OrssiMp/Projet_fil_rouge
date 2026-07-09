@@ -450,25 +450,27 @@ export function useDb() {
   /**
    * Récupère toutes les demandes d'emploi (Pour les entreprises qui cherchent des profils).
    */
-  const fetchDemandesEmploi = async () => {
-    loading.value = true;
-    try {
-      await simulateNetwork();
-      const allDemandes = getLocal("mosalah_database_demandes");
-      const allUsers = getLocal("mosalah_database_users");
+const fetchDemandesEmploi = async () => {
+  loading.value = true;
+  try {
+    await simulateNetwork();
+    const allDemandes = getLocal("mosalah_database_demandes");
+    const allUsers = getLocal("mosalah_database_users");
 
-      demandesEmploi.value = allDemandes.map((demande) => {
-        const author = allUsers.find((u) => u.id === demande.candidatId);
-        return { ...demande, authorProfile: author || null };
-      });
+    demandesEmploi.value = allDemandes.map((demande) => {
+      const author = allUsers.find((u) => u.id === demande.candidatId);
+      // Retrait du mot de passe avant d'exposer le profil (fuite corrigée)
+      const authorProfile = author ? (({ password, ...safe }) => safe)(author) : null;
+      return { ...demande, authorProfile };
+    });
 
-      return demandesEmploi.value;
-    } catch (err) {
-      error.value = "Erreur lors du chargement des demandes d'emploi.";
-    } finally {
-      loading.value = false;
-    }
-  };
+    return demandesEmploi.value;
+  } catch (err) {
+    error.value = "Erreur lors du chargement des demandes d'emploi.";
+  } finally {
+    loading.value = false;
+  }
+};
   /**
    * Récupère toutes les demandes d'emploi publiées par un candidat spécifique.
    * @param {number} candidatId

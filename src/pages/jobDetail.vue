@@ -91,75 +91,52 @@
           </div>
         </BaseCard>
 
-        <BaseCard density="spacious">
-          <div
-            class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3"
-          >
-            <BaseIcon name="validation" class="text-accent text-base" />
-            <h2 class="text-lg font-black text-base-content tracking-tight">
-              Responsabilités
-            </h2>
-          </div>
-          <ul class="space-y-4 font-medium">
-            <li
-              v-for="(item, index) in job.responsibilities"
-              :key="index"
-              class="flex items-start gap-3 text-sm md:text-base text-base-content/80"
-            >
-              <BaseIcon
-                name="validation"
-                class="text-accent mt-1 text-xs shrink-0"
-              />
-              <span>{{ item }}</span>
-            </li>
-          </ul>
-        </BaseCard>
+        <!-- Responsabilités -->
+<BaseCard density="spacious">
+  <div class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3">
+    <BaseIcon name="validation" class="text-accent text-base" />
+    <h2 class="text-lg font-black text-base-content tracking-tight">Responsabilités</h2>
+  </div>
+  <ul v-if="job.responsibilities.length > 0" class="space-y-4 font-medium">
+    <li v-for="(item, index) in job.responsibilities" :key="index"
+      class="flex items-start gap-3 text-sm md:text-base text-base-content/80">
+      <BaseIcon name="validation" class="text-accent mt-1 text-xs shrink-0" />
+      <span>{{ item }}</span>
+    </li>
+  </ul>
+  <p v-else class="text-xs text-base-content/40 font-semibold italic">Non précisé par l'entreprise.</p>
+</BaseCard>
 
-        <BaseCard density="spacious">
-          <div
-            class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3"
-          >
-            <BaseIcon name="dashboard" class="text-accent text-base" />
-            <h2 class="text-lg font-black text-base-content tracking-tight">
-              Compétences requises
-            </h2>
-          </div>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <BaseBadge
-              v-for="(skill, index) in job.skills"
-              :key="index"
-              class="font-bold text-xs tracking-wide rounded-xl px-4 py-3.5 border"
-              :class="
-                skill.highlight
-                  ? 'bg-accent text-white border-accent shadow-sm'
-                  : 'bg-transparent border-base-300 text-base-content/70'
-              "
-            >
-              {{ skill.name }}
-            </BaseBadge>
-          </div>
-          <p class="text-sm md:text-base text-base-content/80 leading-relaxed">
-            {{ job.skillsDescription }}
-          </p>
-        </BaseCard>
+<!-- Compétences requises -->
+<BaseCard density="spacious">
+  <div class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3">
+    <BaseIcon name="dashboard" class="text-accent text-base" />
+    <h2 class="text-lg font-black text-base-content tracking-tight">Compétences requises</h2>
+  </div>
+  <div v-if="job.skills.length > 0" class="flex flex-wrap gap-2 mb-4">
+    <BaseBadge v-for="(skill, index) in job.skills" :key="index"
+      class="font-bold text-xs tracking-wide rounded-xl px-4 py-3.5 border"
+      :class="skill.highlight ? 'bg-accent text-white border-accent shadow-sm' : 'bg-transparent border-base-300 text-base-content/70'">
+      {{ skill.name }}
+    </BaseBadge>
+  </div>
+  <p v-else class="text-xs text-base-content/40 font-semibold italic mb-4">Aucune compétence spécifique renseignée.</p>
+  <p v-if="job.skillsDescription" class="text-sm md:text-base text-base-content/80 leading-relaxed">
+    {{ job.skillsDescription }}
+  </p>
+</BaseCard>
 
-        <BaseCard density="spacious">
-          <div
-            class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3"
-          >
-            <BaseIcon name="candidat" class="text-accent text-base" />
-            <h2 class="text-lg font-black text-base-content tracking-tight">
-              Profil recherché
-            </h2>
-          </div>
-          <ul
-            class="list-disc pl-5 space-y-3 text-sm md:text-base text-base-content/80 leading-relaxed font-medium"
-          >
-            <li v-for="(item, index) in job.profile" :key="index">
-              {{ item }}
-            </li>
-          </ul>
-        </BaseCard>
+<!-- Profil recherché -->
+<BaseCard density="spacious">
+  <div class="flex items-center gap-2.5 mb-4 border-b border-base-100 pb-3">
+    <BaseIcon name="candidat" class="text-accent text-base" />
+    <h2 class="text-lg font-black text-base-content tracking-tight">Profil recherché</h2>
+  </div>
+  <ul v-if="job.profile.length > 0" class="list-disc pl-5 space-y-3 text-sm md:text-base text-base-content/80 leading-relaxed font-medium">
+    <li v-for="(item, index) in job.profile" :key="index">{{ item }}</li>
+  </ul>
+  <p v-else class="text-xs text-base-content/40 font-semibold italic">Non précisé par l'entreprise.</p>
+</BaseCard>
       </div>
 
       <aside class="lg:col-span-4 space-y-6">
@@ -251,7 +228,7 @@
   </div>
 </template>
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted,ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuth } from "../composables/useAuth";
 import { useDb } from "../composables/useDb";
@@ -267,6 +244,7 @@ const {
   annonces,
   fetchUsers,
   users,
+  fetchCandidaturesForCandidat
 } = useDb();
 
 const jobs = [
@@ -340,12 +318,21 @@ onMounted(async () => {
   await fetchAnnonces();
 });
 
-// Obtenir l'annonce depuis la database ou les données mockées
+// Convertit un texte multi-lignes en tableau de puces, en ignorant les lignes vides
+const splitLines = (text) => {
+  if (!text) return [];
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+};
+
 const dbJob = computed(() => {
   const annonce = annonces.value.find((a) => a.id === jobId.value);
   if (!annonce) return null;
 
   const entreprise = users.value.find((u) => u.id === annonce.entrepriseId);
+
   return {
     id: annonce.id,
     title: annonce.title,
@@ -357,11 +344,18 @@ const dbJob = computed(() => {
     description: annonce.description
       ? [annonce.description]
       : ["Aucune description disponible"],
-    responsibilities: annonce.responsibilities || [],
-    skills: annonce.skills || [],
-    skillsDescription: annonce.skillsDescription || "",
-    profile: annonce.profile || [],
-    companyDescription: annonce.companyDescription || "",
+
+    // Texte multi-lignes → liste de puces
+    responsibilities: splitLines(annonce.responsibilities),
+    profile: splitLines(annonce.profileSought),
+
+    // string[] → objets {name, highlight} attendus par le template
+    skills: (annonce.requiredSkills || []).map((name) => ({ name, highlight: false })),
+    skillsDescription: annonce.highlight || "", // "Mise en avant" du formulaire, réutilisé ici
+
+    // Aucun champ dédié dans useAuth pour une description longue d'entreprise :
+    // on retombe sur bio, avec un message honnête si vide
+    companyDescription: entreprise?.bio || "Aucune description disponible pour cette entreprise.",
   };
 });
 
@@ -380,15 +374,17 @@ const job = computed(() => {
   return jobs.find((item) => item.id === Number(jobId.value)) || jobs[0];
 });
 
-// Vérifier si l'utilisateur a déjà postulé
+const myCandidatures = ref([]);
+onMounted(async () => {
+  await fetchUsers();
+  await fetchAnnonces();
+  if (currentUser.value) {
+    myCandidatures.value = await fetchCandidaturesForCandidat(currentUser.value.id);
+  }
+});
+
 const hasApplied = computed(() => {
-  if (!currentUser.value || !jobId.value) return false;
-  const allCandidatures = JSON.parse(
-    localStorage.getItem("mosalah_database_candidatures") || "[]",
-  );
-  return allCandidatures.some(
-    (c) => c.annonceId === jobId.value && c.candidatId === currentUser.value.id,
-  );
+  return myCandidatures.value.some((c) => c.annonceId === jobId.value);
 });
 
 async function postule() {
@@ -440,4 +436,5 @@ const jobOverview = computed(() => {
     { label: "Salaire", value: job.value.salary, icon: "dashboard" },
   ];
 });
+
 </script>
