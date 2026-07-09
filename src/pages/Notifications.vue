@@ -134,8 +134,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuth } from '@/composables/useAuth'; // Vérifie le chemin selon ton projet
-import { useNotifications } from '@/composables/useNotifications'; // Idem
+import {useNotifications }from '../composables/useNotifications';
+import { useAuth } from '../composables/useAuth';
+
 
 const router = useRouter();
 const { currentUser } = useAuth();
