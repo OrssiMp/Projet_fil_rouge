@@ -25,7 +25,7 @@
 const setLocal = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
 export function seedDatabase() {
-  const password = "password123"; // Mot de passe commun à tous les comptes de test
+  const password = "123"; // Mot de passe commun à tous les comptes de test
 
   // --- 1. UTILISATEURS ---
   const users = [
@@ -77,7 +77,7 @@ export function seedDatabase() {
     {
       id: 2002,
       name: "Sarah Nkouka",
-      email: "sarah.nkouka@example.com",
+      email: "s@g.com",
       password,
       role: "candidat",
       createdAt: "02/04/2026",
