@@ -309,6 +309,11 @@ const recruitmentMenu = computed(() => [
   },
   { label: "Tous les candidats", icon: "candidats", to: "/candidats" },
   {
+    label: "Les demandes candidats",
+    to:"/demandes",
+    icon:""
+  },
+  {
     label: "Candidats reçus",
     icon: "inbox",
     to: "/entreprise/candidats",

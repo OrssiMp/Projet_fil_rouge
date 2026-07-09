@@ -296,6 +296,16 @@ const routes = [
     role: "entreprise",
     title: "Détail de la demande",
   },
+},{
+  path: "/demandes",
+  name: "DemandesList",
+  component: () => import("../pages/entreprise/DemandesList.vue"),
+  meta: {
+    layout: "DashboardLayout",
+    requiresAuth: true,
+    role: "entreprise",
+    title: "Demandes des candidats",
+  },
 },
   {
     path: "/:pathMatch(.*)*",
